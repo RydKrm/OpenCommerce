@@ -20,3 +20,19 @@ export const negativeResponse = (res: Response, message: string) => {
     message,
   });
 };
+
+export const positiveResponse = (
+  res: Response,
+  message: string,
+  option: any = {}
+) => {
+  const data: any = {
+    status: true,
+    message,
+  };
+
+  for (const key in option) {
+    data[key] = option[key];
+  }
+  res.status(statusCodes.OK).json(data);
+};

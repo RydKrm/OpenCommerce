@@ -1,10 +1,10 @@
 import express from "express";
-import userProfileRouter from "./routes/user_profile.router";
-import orderRouter from "./routes/order.router";
+import userController from "./controller/user.controller";
+import validator from "../../../utils/validator";
+import { userDto } from "./dto/user.dto";
 
 const userRouter = express.Router();
 
-userRouter.use("/profile", userProfileRouter);
-userRouter.use("/order", orderRouter);
+userRouter.post("/login", validator(userDto.login), userController.login);
 
 export default userRouter;

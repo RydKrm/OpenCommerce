@@ -9,7 +9,7 @@ interface JwtVarify {
   role: ROLES;
 }
 
-const auth = (...roleList: ROLES[]) => {
+const auth = (roleList: ROLES[]) => {
   return (req: IRequest, res: Response, next: NextFunction) => {
     try {
       if (!req.headers?.authorization) {
