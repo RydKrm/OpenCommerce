@@ -1,10 +1,8 @@
 import express from "express";
-import userController from "./controller/user.controller";
-import validator from "../../../utils/validator";
-import { userDto } from "./dto/user.dto";
+import userProfileRouter from "./routes/user_profile.router";
 
 const userRouter = express.Router();
 
-userRouter.post("/login", validator(userDto.login), userController.login);
+userRouter.use("/profile", userProfileRouter);
 
 export default userRouter;

@@ -2,11 +2,15 @@ import express, { Request, Response } from "express";
 import v1_route from "./modules/v1/v1.router";
 import { errorHandler } from "./middleware/errorMiddleware";
 import rateLimiter from "./utils/rate-limiter";
+import { checkDatabaseConnection } from "./database/prisma";
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+
+// checking database connection
+checkDatabaseConnection();
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello, TypeScript with Express!");
