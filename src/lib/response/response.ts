@@ -29,10 +29,11 @@ export const positiveResponse = (
   const data: any = {
     status: true,
     message,
+    ...option,
   };
 
-  for (const key in option) {
-    data[key] = option[key];
-  }
+  // for (const key in option) {
+  //   data[key] = option[key];
+  // }
   res.status(statusCodes.OK).json(data);
 };

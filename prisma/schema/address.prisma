@@ -1,0 +1,11 @@
+model Address {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  road      String
+  house     String
+  district  String
+  division  String
+
+  User      User     @relation(fields: [userId], references: [id])
+  Orders Orders[]
+}

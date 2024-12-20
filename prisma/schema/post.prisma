@@ -1,0 +1,15 @@
+model Post {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  title         String
+  readTime      DateTime   @map("read_time")
+  tags          String[]
+  description   String
+  titleImage    String     @map("title_image")
+  images        String[]
+  type          String
+
+  User          User       @relation(fields: [userId], references: [id])
+  Comment       Comment[]
+  Reaction      Reaction[]
+}

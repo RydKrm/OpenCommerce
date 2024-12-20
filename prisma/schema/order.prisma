@@ -1,0 +1,16 @@
+model Orders {
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  shippingAddress String    @map("shipping_address")
+  orderDate       DateTime  @map("order_date")
+  status          String
+  totalAmount     Float     @map("total_amount")
+  addressId       Int
+
+  User            User      @relation(fields: [userId], references: [id])
+  Address         Address   @relation(fields: [addressId], references: [id])
+  OrderItem       OrderItem[]
+  Payments        Payments[]
+  Deliveries      Deliveries[]
+  Returns         Returns[]
+}

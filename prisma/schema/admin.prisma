@@ -1,0 +1,11 @@
+model Admin {
+  id          Int     @id @default(autoincrement())
+  name        String
+  phoneNumber String  @unique @map("phone_number")
+  email       String  @unique
+  password    String
+  status      Boolean @default(true)
+  role        String  @default("admin")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

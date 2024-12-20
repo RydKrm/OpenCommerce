@@ -1,6 +1,17 @@
-model user {
-  id       Int      @id @default(autoincrement())
-  name     String
-  email    String   @unique
-  password String
+model User {
+  id         Int         @id @default(autoincrement())
+  name       String
+  email      String      @unique
+  phoneNumber String      @unique
+  password   String
+  role       String @default("user")
+  createdAt  DateTime    @default(now())
+  Address    Address[]
+  WishList   WishList[]
+  Post       Post[]
+  Comment    Comment[]
+  Reaction   Reaction[]
+  Reviews    Reviews[]
+  Orders     Orders[]
+  Payments   Payments[]
 }

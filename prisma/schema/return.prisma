@@ -1,0 +1,11 @@
+model Returns {
+  id          Int      @id @default(autoincrement())
+  orderId     Int
+  userId      Int
+  orderItemId Int
+  returnDate  DateTime @map("return_date")
+  status      String
+  reason      String
+
+  Orders      Orders   @relation(fields: [orderId], references: [id])
+}

@@ -1,9 +1,10 @@
+import IRequest from "@/types/IRequest";
 import { Request, Response, NextFunction } from "express";
 import { ZodSchema, ZodError } from "zod";
 
 // Middleware to validate data using Zod schema
 const validator = (schema: ZodSchema<any>) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: IRequest, res: Response, next: NextFunction) => {
     try {
       schema.parse(req.body);
       next();

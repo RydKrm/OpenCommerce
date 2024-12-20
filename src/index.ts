@@ -12,8 +12,8 @@ app.use(express.json());
 // checking database connection
 checkDatabaseConnection();
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, TypeScript with Express!");
+app.get("/health", (req: Request, res: Response) => {
+  res.send("Hello, Server is running");
 });
 
 app.use("/api/v1", v1_route);
