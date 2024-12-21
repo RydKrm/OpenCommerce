@@ -12,6 +12,7 @@ const validator = (schema: ZodSchema<any>) => {
       if (error instanceof ZodError) {
         return res.status(400).json({
           success: false,
+          message: "Validation failed",
           errors: error.errors,
         });
       }

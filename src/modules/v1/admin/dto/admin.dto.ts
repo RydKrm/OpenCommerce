@@ -12,7 +12,9 @@ export class AdminDto {
     .trim()
     .min(6, { message: "Password must be atleast 6 characters long" });
 
-  #phoneNumber = z.string().min(11, { message: "Phone number is required" });
+  #phoneNumber = z
+    .string({ message: "Phone number is required" })
+    .min(11, { message: "Phone number must be atleast 6 character longs" });
 
   login = z.object({
     email: this.#email,

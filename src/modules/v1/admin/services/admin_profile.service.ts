@@ -11,7 +11,7 @@ export class AdminProfileService {
     });
 
     if (isAdminExists) {
-      throw new Error("Admin already exists");
+      throw new Error("Admin already exists with this email");
     }
 
     data.password = bycrpt.hashSync(data.password, 10);
