@@ -2,7 +2,7 @@ model Images {
   image_id     Int    @id @default(autoincrement())
   image_url    String
   imageble_id  Int
-  imageble_type String 
+  imageble_type String
 
   // Relation to Product
   Product      Product? @relation(fields: [imageble_id], references: [id], map: "Images_Product_fkey")

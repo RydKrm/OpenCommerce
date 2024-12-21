@@ -1,21 +1,17 @@
 model Vendor {
   id            Int      @id @default(autoincrement())
-  name          String
-  email         String
+  name          String   @unique
+  email         String   @unique
   description   String
-  sellerId      Int      @unique
-  status        String
-  rating        Float
-  phoneNumber   String   @map("phone_number")
+  status        Boolean  @default(false)
+  rating        Float    @default(0)
+  phoneNumber   String   @map("phone_number") @unique
   password      String
   address       String
-  totalProduct  Int      @map("total_product")
-  totalReviews  Int      @map("total_reviews")
+  totalProduct  Int      @map("total_product") @default(0)
+  totalReviews  Int      @map("total_reviews") @default(0)
   logo          String
-  fbLink        String   @map("fb_link")
-  twitterLink   String   @map("twitter_link")
-  instagramLink String   @map("instragram_link")
 
-  Seller        Seller   @relation(fields: [sellerId], references: [id])
+  socialLinks   SocialLink[]
   Product Product[]
 }

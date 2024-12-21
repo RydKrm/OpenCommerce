@@ -6,5 +6,4 @@ model Seller {
   phoneNumber String @unique
   role       String    @default("seller")
   createdAt  DateTime  @default(now())
-  Vendor     Vendor?
 }

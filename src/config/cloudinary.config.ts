@@ -7,4 +7,11 @@ cloudinary.config({
   secure: true,
 });
 
+async function uploadImage(file: any) {
+  const result = await cloudinary.uploader.upload(file, {
+    resource_type: "auto",
+  });
+  return result.secure_url;
+}
+
 export default cloudinary;
