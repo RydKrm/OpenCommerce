@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export class AdminDto {
   #email = z
-    .string()
+    .string({ message: "Email is required" })
     .trim()
     .min(5, { message: "email is required" })
     .email({ message: "Invalid email formet" });

@@ -7,7 +7,9 @@ class CategoryCrudController {
   create = async (req: IRequest, res: Response) => {
     try {
       const category = await categoryService.create(req.body);
-      return positiveResponse(res, "Category created successfully", category);
+      return positiveResponse(res, "Category created successfully", {
+        data: category,
+      });
     } catch (err: any) {
       return negativeResponse(res, err.message);
     }
@@ -16,11 +18,9 @@ class CategoryCrudController {
   getAllCategory = async (req: IRequest, res: Response) => {
     try {
       const categories = await categoryService.getAllCategory();
-      return positiveResponse(
-        res,
-        "Categories retrieved successfully",
-        categories
-      );
+      return positiveResponse(res, "Categories retrieved successfully", {
+        data: categories,
+      });
     } catch (err: any) {
       return negativeResponse(res, err.message);
     }
@@ -30,7 +30,7 @@ class CategoryCrudController {
     try {
       const category = await categoryService.getSingle(Number(req.params.id));
       return positiveResponse(res, "Category retrieved successfully", {
-        category,
+        data: category,
       });
     } catch (err: any) {
       return negativeResponse(res, err.message);
@@ -44,7 +44,7 @@ class CategoryCrudController {
         req.body
       );
       return positiveResponse(res, "Category updated successfully", {
-        updatedCategory,
+        data: updatedCategory,
       });
     } catch (err: any) {
       return negativeResponse(res, err.message);

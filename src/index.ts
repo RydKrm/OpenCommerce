@@ -3,6 +3,7 @@ import v1_route from "./modules/v1/v1.router";
 import { errorHandler } from "./middleware/errorMiddleware";
 import rateLimiter from "./utils/rate-limiter";
 import { checkDatabaseConnection } from "./database/prisma";
+// import { setupSwagger } from "./config/swagger.config";
 
 const app = express();
 const PORT = 3000;
@@ -12,8 +13,14 @@ app.use(express.json());
 // checking database connection
 checkDatabaseConnection();
 
-app.get("/health", (req: Request, res: Response) => {
-  res.send("Hello, Server is running");
+// Rate Limiting middleware
+app.use(rateLimiter);
+
+// swagger docs
+// setupSwagger(app);
+
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello, TypeScript with Express!");
 });
 
 app.use("/api/v1", v1_route);
@@ -28,8 +35,9 @@ app.use((req, res) => {
 // Error Handling middleware
 app.use(errorHandler);
 
-// Rate Limiting middleware
-app.use(rateLimiter);
+// app.get("/api-docs-json", (req, res) => {
+//   res.json(setupSwagger);
+// });
 
 app.listen(PORT, () => {
   console.log(`Server is running on port : ${PORT}`);

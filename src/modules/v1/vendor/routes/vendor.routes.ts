@@ -5,7 +5,7 @@ import vendorDto from "../dto/vendor_crud.dto";
 const vendorCrudRoutes = express.Router();
 
 vendorCrudRoutes.post(
-  "/create",
+  "/register",
   validator(vendorDto.create),
   vendorCrudController.create
 );
@@ -17,7 +17,7 @@ vendorCrudRoutes.post(
 
 vendorCrudRoutes.get("/all", vendorCrudController.getAll);
 vendorCrudRoutes.get("/single/:id", vendorCrudController.getSingle);
-vendorCrudRoutes.put(
+vendorCrudRoutes.patch(
   "/update/:id",
   validator(vendorDto.updateVendor),
   vendorCrudController.update

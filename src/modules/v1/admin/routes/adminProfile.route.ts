@@ -19,7 +19,7 @@ adminProfileRouter.post(
   adminProfileController.register
 );
 
-adminProfileRouter.put(
+adminProfileRouter.patch(
   "/update/:id",
   auth([ROLES.ADMIN]),
   adminProfileController.updateAdmin
@@ -33,7 +33,7 @@ adminProfileRouter.get(
 
 adminProfileRouter.get(
   "/get",
-  //   auth([ROLES.ADMIN]),
+  auth([ROLES.ADMIN]),
   adminProfileController.getAllAdmin
 );
 

@@ -11,10 +11,23 @@ class AdminProfileController {
     try {
       const { email, password } = req.body;
       const admin = await adminProfileService.login(email, password);
-      const token = generateJwtToken({ id: admin.id, role: "admin" }).token;
+      // generate jwt access token
+      const accessToken = generateJwtToken(
+        { id: admin.id, role: "admin" },
+        { expiresIn: "1d" }
+      ).token;
+
+      // generate jwt refresh token
+      const refreshToken = generateJwtToken(
+        { id: admin.id, role: "admin" },
+        { expiresIn: "7d" }
+      ).token;
+
+      // return response
       return positiveResponse(res, "Admin logged in successfully", {
         user: admin.name,
-        token,
+        accessToken,
+        refreshToken,
         role: admin.role,
       });
     } catch (error: any) {
@@ -25,7 +38,10 @@ class AdminProfileController {
   async register(req: IRequest, res: Response) {
     try {
       const admin = await adminProfileService.register(req.body);
-      return positiveResponse(res, "Admin registered successfully", admin);
+      admin.password = "";
+      return positiveResponse(res, "Admin registered successfully", {
+        data: admin,
+      });
     } catch (error: any) {
       return negativeResponse(res, error.message);
     }
@@ -35,7 +51,9 @@ class AdminProfileController {
     try {
       const { id } = req.params;
       const admin = await adminProfileService.updateAdmin(Number(id), req.body);
-      return positiveResponse(res, "Admin updated successfully", admin);
+      return positiveResponse(res, "Admin updated successfully", {
+        data: admin,
+      });
     } catch (error: any) {
       return negativeResponse(res, error.message);
     }
@@ -45,7 +63,9 @@ class AdminProfileController {
     try {
       const { id } = req.params;
       const admin = await adminProfileService.getSingle(Number(id));
-      return positiveResponse(res, "Admin retrieved successfully", admin);
+      return positiveResponse(res, "Admin retrieved successfully", {
+        data: admin,
+      });
     } catch (error: any) {
       return negativeResponse(res, error.message);
     }
@@ -53,10 +73,8 @@ class AdminProfileController {
 
   async getAllAdmin(req: IRequest, res: Response) {
     try {
-      const admin = await adminProfileService.getAllAdmin();
-      return positiveResponse(res, "Admin retrieved successfully", {
-        data: admin,
-      });
+      const admin = await adminProfileService.getAllAdmin(req);
+      return positiveResponse(res, "Admin retrieved successfully", admin);
     } catch (error: any) {
       return negativeResponse(res, error.message);
     }
@@ -76,7 +94,9 @@ class AdminProfileController {
     try {
       const { email } = req.body;
       const admin = await adminProfileService.forgotPassword(email);
-      return positiveResponse(res, "Admin retrieved successfully", admin);
+      return positiveResponse(res, "Admin retrieved successfully", {
+        data: admin,
+      });
     } catch (error: any) {
       return negativeResponse(res, error.message);
     }
@@ -91,7 +111,9 @@ class AdminProfileController {
         oldPassword,
         newPassword
       );
-      return positiveResponse(res, "Admin updated successfully", admin);
+      return positiveResponse(res, "Admin updated successfully", {
+        data: admin,
+      });
     } catch (error: any) {
       return negativeResponse(res, error.message);
     }

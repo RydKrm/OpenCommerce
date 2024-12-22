@@ -1,17 +1,26 @@
 import prisma from "@/database/prisma";
 import { IAdmin } from "../interface/admin.interface";
 import bycrpt from "bcrypt";
+import pagination from "@/lib/pagination/pagination";
+import { Request } from "express";
 
 export class AdminProfileService {
   register = async (data: IAdmin) => {
     const isAdminExists = await prisma.admin.findFirst({
       where: {
-        email: data.email,
+        OR: [
+          {
+            email: data.email,
+          },
+          {
+            phoneNumber: data.phoneNumber,
+          },
+        ],
       },
     });
 
     if (isAdminExists) {
-      throw new Error("Admin already exists with this email");
+      throw new Error("Admin already exists with this email or phone number");
     }
 
     data.password = bycrpt.hashSync(data.password, 10);
@@ -45,7 +54,6 @@ export class AdminProfileService {
   };
 
   // update admin
-
   updateAdmin = async (id: number, data: IAdmin) => {
     if (data.email) {
       const isAdminExists = await prisma.admin.findFirst({
@@ -55,10 +63,21 @@ export class AdminProfileService {
       });
 
       if (isAdminExists) {
-        throw new Error("Admin already exists");
+        throw new Error("Admin already exists with email");
       }
     }
 
+    if (data.phoneNumber) {
+      const isAdminExists = await prisma.admin.findFirst({
+        where: {
+          phoneNumber: data.phoneNumber,
+        },
+      });
+
+      if (isAdminExists) {
+        throw new Error("Admin already exists with phone number");
+      }
+    }
     const admin = await prisma.admin.update({
       where: {
         id,
@@ -91,22 +110,41 @@ export class AdminProfileService {
   };
 
   // Get All Admin
-  getAllAdmin = async () => {
-    const admins = (await prisma.admin.findMany()) || [];
+  getAllAdmin = async (req: Request) => {
+    const admins = await pagination<IAdmin, any>(
+      req,
+      prisma.admin,
+      {},
+      {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phoneNumber: true,
+          status: true,
+        },
+      }
+    );
     return admins;
   };
 
   // Delete Admin
   deleteAdmin = async (id: number) => {
-    const admin = await prisma.admin.delete({
+    const isExists = await prisma.admin.findFirst({
       where: {
         id,
       },
     });
 
-    if (!admin) {
+    if (!isExists) {
       throw new Error("Admin not found");
     }
+
+    const admin = await prisma.admin.delete({
+      where: {
+        id,
+      },
+    });
 
     return admin;
   };

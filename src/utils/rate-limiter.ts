@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 // Define the type for requestCounts
 const requestCounts: Record<string, number> = {};
@@ -6,7 +6,7 @@ const requestCounts: Record<string, number> = {};
 const rateLimit = 200;
 const interval = 60 * 1000;
 
-const rateLimiter = (req: Request, res: Response) => {
+const rateLimiter = (req: Request, res: Response, next: NextFunction) => {
   const ip = req.ip;
 
   // first check if ip is valid
@@ -31,6 +31,8 @@ const rateLimiter = (req: Request, res: Response) => {
   setTimeout(() => {
     delete requestCounts[ip];
   }, interval);
+
+  next();
 };
 
 export default rateLimiter;

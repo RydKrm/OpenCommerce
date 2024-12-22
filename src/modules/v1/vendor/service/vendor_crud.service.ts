@@ -1,6 +1,8 @@
 import prisma from "@/database/prisma";
 import bcrypt from "bcrypt";
 import { IVendor } from "../interface/vendor_crud.dto";
+import pagination from "@/lib/pagination/pagination";
+import IRequest from "@/types/IRequest";
 
 class VendorCRUDService {
   create = async (data: IVendor) => {
@@ -15,7 +17,9 @@ class VendorCRUDService {
     });
 
     if (isExists) {
-      throw new Error("Vendor already exists with this email or phone number");
+      throw new Error(
+        "Vendor already exists with this name or email or phone number"
+      );
     }
 
     data.password = await bcrypt.hash(data.password, 10);
@@ -25,6 +29,7 @@ class VendorCRUDService {
         ...data,
       },
     });
+    newVendor.password = "";
     return newVendor;
   };
 
@@ -43,16 +48,29 @@ class VendorCRUDService {
     if (!isMatch) {
       throw new Error("Invalid credentials");
     }
+    vendor.password = "";
 
     return vendor;
   };
 
   // get all vendors
-  getAll = async (page: number = 1, limit: number = 15) => {
-    const vendors = await prisma.vendor.findMany({
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+  getAll = async (req: IRequest) => {
+    const vendors = await pagination<IVendor, any>(
+      req,
+      prisma.vendor,
+      {},
+      {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phoneNumber: true,
+          status: true,
+          description: true,
+          address: true,
+        },
+      }
+    );
     return vendors;
   };
 
@@ -71,6 +89,10 @@ class VendorCRUDService {
 
   // update vendor
   update = async (id: number, data: IVendor) => {
+    if (data.password) {
+      throw new Error("Password can't be updated");
+    }
+
     const updatedVendor = await prisma.vendor.update({
       where: { id },
       data: {

@@ -15,7 +15,7 @@ const auth = (roleList: ROLES[]) => {
       if (!req.headers?.authorization) {
         return res.status(403).json({
           status: false,
-          message: "Header not found",
+          message: "Access denied: No token provided",
         });
       }
 

@@ -8,7 +8,9 @@ class CategoryDto {
       .max(255, { message: "Name must be less then 255 character" })
       .nonempty(),
     description: z.string({ message: "Description is required" }).nonempty(),
+    parentId: z.number({ message: "Parent ID is required" }).optional(),
   });
+
   updateCategory = z.object({
     name: z
       .string({ message: "Category name is required" })
@@ -16,6 +18,7 @@ class CategoryDto {
       .max(255, { message: "Name must be less then 255 character" })
       .optional(),
     description: z.string({ message: "Description is required" }).optional(),
+    parentId: z.number({ message: "Parent ID is required" }).optional(),
   });
 }
 

@@ -12,5 +12,8 @@ export interface IVendor {
   description: string;
   address: string;
   logo: string;
-  socalLink: ISocialLink[];
+  socalLink?: ISocialLink[];
+  totalProduct?: number;
+  totalReviews?: number;
+  rating?: number;
 }

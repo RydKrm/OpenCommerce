@@ -7,7 +7,9 @@ class VentorCrudController {
   create = async (req: IRequest, res: Response) => {
     try {
       const vendor = await vendorCrudService.create(req.body);
-      return positiveResponse(res, "Vendor created successfully", vendor);
+      return positiveResponse(res, "Vendor created successfully", {
+        data: vendor,
+      });
     } catch (err: any) {
       return negativeResponse(res, err.message);
     }
@@ -17,7 +19,9 @@ class VentorCrudController {
     try {
       const { email, password } = req.body;
       const vendor = await vendorCrudService.login(email, password);
-      return positiveResponse(res, "Vendor login successfully", vendor);
+      return positiveResponse(res, "Vendor login successfully", {
+        data: vendor,
+      });
     } catch (err: any) {
       return negativeResponse(res, err.message);
     }
@@ -25,11 +29,7 @@ class VentorCrudController {
 
   getAll = async (req: IRequest, res: Response) => {
     try {
-      const { page, limit } = req.query;
-      const vendors = await vendorCrudService.getAll(
-        Number(page),
-        Number(limit)
-      );
+      const vendors = await vendorCrudService.getAll(req);
       return positiveResponse(res, "Vendors retrieved successfully", vendors);
     } catch (err: any) {
       return negativeResponse(res, err.message);
@@ -39,7 +39,10 @@ class VentorCrudController {
   getSingle = async (req: IRequest, res: Response) => {
     try {
       const vendor = await vendorCrudService.getSingle(Number(req.params.id));
-      return positiveResponse(res, "Vendor retrieved successfully", vendor);
+      vendor.password = "";
+      return positiveResponse(res, "Vendor retrieved successfully", {
+        data: vendor,
+      });
     } catch (err: any) {
       return negativeResponse(res, err.message);
     }
@@ -51,11 +54,10 @@ class VentorCrudController {
         Number(req.params.id),
         req.body
       );
-      return positiveResponse(
-        res,
-        "Vendor updated successfully",
-        updatedVendor
-      );
+      updatedVendor.password = "";
+      return positiveResponse(res, "Vendor updated successfully", {
+        data: updatedVendor,
+      });
     } catch (err: any) {
       return negativeResponse(res, err.message);
     }

@@ -11,10 +11,11 @@ class VendorDto {
       .string({ message: "Password is required" })
       .min(6, { message: "Password must be greater then 6 character" })
       .nonempty(),
-    describe: z.string({ message: "Description is required" }).nonempty(),
+    description: z.string({ message: "Description is required" }).nonempty(),
     email: z.string({ message: "Email is required" }).email().nonempty(),
     phoneNumber: z.string({ message: "Phone is required" }).min(10),
     address: z.string({ message: "Address is required" }).nonempty(),
+    logo: z.string({ message: "Logo is required" }).nonempty(),
   });
 
   login = z.object({
