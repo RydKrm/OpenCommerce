@@ -1,21 +1,21 @@
 model Product {
   id              Int        @id @default(autoincrement())
   name            String
-  storeId         Int
+  vendorId        Int
   categoryId      Int
   price           Float
-  previousPrice   String     @map("previous_price")
+  previousPrice   Float     @map("previous_price")
   description     String
   quantity        Int
-  rating          Float
+  rating          Float      @default(0)
   image           String[]
-  visit           Int
-  commentCount    Int        @map("comment")
-  reviewCount     Int        @map("review")
-  status          Boolean
-  tag             String
+  visitCount      Int        @default(0)
+  commentCount    Int        @map("comment") @default(0)
+  reviewCount     Int        @map("review") @default(0)
+  status          Boolean    @default(true)
+  tag             String[]
 
-  Vendor          Vendor     @relation(fields: [storeId], references: [id])
+  Vendor          Vendor     @relation(fields: [vendorId], references: [id])
   Category        Category   @relation(fields: [categoryId], references: [id])
   WishList        WishList[]
   Comment         Comment[]

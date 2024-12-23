@@ -2,6 +2,7 @@ import { negativeResponse, positiveResponse } from "@/lib/response/response";
 import IRequest from "@/types/IRequest";
 import { Response } from "express";
 import vendorCrudService from "../service/vendor_crud.service";
+import { generateJwtToken } from "@/utils/generate-jwt-token";
 
 class VentorCrudController {
   create = async (req: IRequest, res: Response) => {
@@ -19,8 +20,23 @@ class VentorCrudController {
     try {
       const { email, password } = req.body;
       const vendor = await vendorCrudService.login(email, password);
+
+      const accessToken = generateJwtToken(
+        { id: vendor.id, role: "vendor" },
+        { expiresIn: "1d" }
+      ).token;
+
+      // generate jwt refresh token
+      const refreshToken = generateJwtToken(
+        { id: vendor.id, role: "vendor" },
+        { expiresIn: "7d" }
+      ).token;
+
       return positiveResponse(res, "Vendor login successfully", {
         data: vendor,
+        accessToken,
+        refreshToken,
+        role: "vendor",
       });
     } catch (err: any) {
       return negativeResponse(res, err.message);
