@@ -8,6 +8,8 @@ interface DefaultValues {
 
   cloudinaryRootDirectory: string;
   cloudinarySiteBuilderDirectory: string;
+  paginationPage: number;
+  paginationLimit: number;
 }
 
 const defaultValues: DefaultValues = {
@@ -18,6 +20,8 @@ const defaultValues: DefaultValues = {
 
   cloudinaryRootDirectory: "ecommerce",
   cloudinarySiteBuilderDirectory: "/templates",
+  paginationLimit: 10,
+  paginationPage: 1,
 };
 
 export default defaultValues;
