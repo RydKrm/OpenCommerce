@@ -16,7 +16,7 @@ class ProductCrudController {
       const image: string[] = [];
       files.forEach(async (file) => {
         const imageUrl = await imageService.uploadImage(file);
-        image.push(imageUrl);
+        image.push(imageUrl.sourceUrl);
       });
       product.image = image;
 

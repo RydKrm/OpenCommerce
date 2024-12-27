@@ -22,7 +22,7 @@ const pagination = async <T, A>(
     findMany: (args: A) => Promise<T[]>;
     count: (args: any) => Promise<number>;
   },
-  query: A,
+  query: {},
   options: PaginationOptions<A> = {}
 ): Promise<PaginationResult<T>> => {
   let page = 1;

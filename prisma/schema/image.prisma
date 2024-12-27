@@ -3,6 +3,7 @@ model Images {
   image_url    String
   imageble_id  Int
   imageble_type String
+  public_id String
 
   // Relation to Product
   Product      Product? @relation(fields: [imageble_id], references: [id], map: "Images_Product_fkey")

@@ -1,0 +1,10 @@
+model Reply{
+    id Int @id @default(autoincrement())
+    userId Int
+    commentId Int
+    content String
+    createdAt DateTime @default(now())
+
+    User User @relation(fields: [userId], references: [id])
+    Comment Comment @relation(fields: [commentId], references: [id])
+}
