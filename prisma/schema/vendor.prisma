@@ -13,5 +13,6 @@ model Vendor {
   logo          String
 
   socialLinks   SocialLink[]
-  Product Product[]
+  Product       Product[]
+  Orders        Orders[]
 }

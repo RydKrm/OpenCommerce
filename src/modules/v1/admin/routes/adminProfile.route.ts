@@ -27,7 +27,7 @@ adminProfileRouter.patch(
 
 adminProfileRouter.get(
   "/get/:id",
-  auth([ROLES.ADMIN]),
+  // auth([ROLES.ADMIN]),
   adminProfileController.getSingleAdmin
 );
 

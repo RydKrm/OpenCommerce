@@ -8,13 +8,13 @@ interface IOptions {
   include?: { [key: string]: any };
 }
 
-export const getMany = (model: keyof PrismaClient, options: IOptions) => {
+export const getMany = (model: keyof PrismaClient, options: IOptions = {}) => {
   return async function (req: Request, res: Response) {
     try {
       const { select, include, where } = options;
 
       const queryObject = {
-        where: { ...where, id: parseInt(req.params.id) },
+        where: { ...where },
         select,
         include,
       };

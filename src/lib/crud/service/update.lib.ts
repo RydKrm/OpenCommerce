@@ -28,7 +28,7 @@ export const update = (model: keyof PrismaClient, options: IOptions = {}) => {
       };
 
       const data = await (prisma[model] as any).update({
-        where: bodyObject,
+        where: queryObject,
         data: bodyObject,
       });
 

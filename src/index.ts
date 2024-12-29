@@ -39,8 +39,8 @@ app.use(errorHandler);
 //   res.json(setupSwagger);
 // });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port : ${PORT}`);
-});
+// app.listen(0, () => {
+//   console.log(`Server is running on port : ${PORT}`);
+// });
 
 export default app;
