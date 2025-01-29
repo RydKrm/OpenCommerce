@@ -1,8 +1,0 @@
-model SocialLink {
-  id        Int      @id @default(autoincrement())
-  vendorId  Int
-  type      String
-  url       String
-
-  vendor    Vendor   @relation(fields: [vendorId], references: [id])
-}

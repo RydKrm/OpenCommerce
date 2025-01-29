@@ -1,0 +1,17 @@
+model Vendor {
+  id            Int      @id @default(autoincrement())
+  name          String   @unique
+  email         String   @unique
+  description   String
+  status        Boolean  @default(false)
+  rating        Float    @default(0)
+  phoneNumber   String   @map("phone_number") @unique
+  password      String
+  address       String
+  totalProduct  Int      @map("total_product") @default(0)
+  totalReviews  Int      @map("total_reviews") @default(0)
+  logo          String
+
+  socialLinks   SocialLink[]
+  Product       Product[]
+}

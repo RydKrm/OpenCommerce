@@ -1,0 +1,24 @@
+model Orders {
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  orderDate       DateTime  @map("order_date") @default(now())
+  totalAmount     Float     @map("total_amount")
+  addressId       Int
+  status          OrderStatus @default(PENDING)
+
+  User            User      @relation(fields: [userId], references: [id])
+  Address         Address   @relation(fields: [addressId], references: [id])
+  OrderItem       OrderItem[]
+  Payments        Payments[]
+  Deliveries      Deliveries[]
+  Returns         Returns[]
+}
+
+enum OrderStatus{
+  PENDING
+  SHIPPING
+  DELIVERED
+  RETURNED
+  EXPIRED
+  CANCELLED
+}
