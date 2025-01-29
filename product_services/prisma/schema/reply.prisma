@@ -5,6 +5,5 @@ model Reply{
     content String
     createdAt DateTime @default(now())
 
-    User User @relation(fields: [userId], references: [id])
     Comment Comment @relation(fields: [commentId], references: [id])
 }

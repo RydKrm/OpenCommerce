@@ -10,3 +10,10 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+users_services/prisma/migrations
+product_services/prisma/migrations
+order_services/prisma/migrations
+
+users_services/.env
+product_services/.env
+order_services/.env

@@ -8,7 +8,6 @@ model Address {
   country   String?
   description String?
 
-  User      User     @relation(fields: [userId], references: [id])
   Orders Orders[]
 }
 

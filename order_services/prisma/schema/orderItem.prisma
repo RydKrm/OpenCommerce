@@ -6,5 +6,4 @@ model OrderItem {
   price      Float
 
   Orders     Orders  @relation(fields: [orderId], references: [id])
-  Product    Product @relation(fields: [productId], references: [id])
 }

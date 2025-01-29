@@ -5,12 +5,12 @@ model Images {
   imageble_type String
   public_id String
 
-  // Relation to Product
-  Product      Product? @relation(fields: [imageble_id], references: [id], map: "Images_Product_fkey")
+  // // Relation to Product
+  // Product      Product? @relation(fields: [imageble_id], references: [id], map: "Images_Product_fkey")
 
-  // Relation to Comment
-  Comment      Comment? @relation(fields: [imageble_id], references: [id], map: "Images_Comment_fkey")
+  // // Relation to Comment
+  // Comment      Comment? @relation(fields: [imageble_id], references: [id], map: "Images_Comment_fkey")
 
-  // Relation to Reviews
-  Reviews      Reviews? @relation(fields: [imageble_id], references: [id], map: "Images_Reviews_fkey")
+  // // Relation to Reviews
+  // Reviews      Reviews? @relation(fields: [imageble_id], references: [id], map: "Images_Reviews_fkey")
 }

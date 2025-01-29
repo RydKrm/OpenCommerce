@@ -8,9 +8,7 @@ model Comment {
   commentText String    @map("comment_text")
   createdAt   DateTime       @map("created_at") @default(now())
 
-  User        User       @relation(fields: [userId], references: [id])
   Product     Product?   @relation(fields: [productId], references: [id])
-  Post        Post?      @relation(fields: [postId], references: [id])
   Review      Reviews?  @relation(fields: [reviewId], references: [id])
   Images      Images[]
   Reply       Reply[]

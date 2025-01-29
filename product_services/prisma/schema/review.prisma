@@ -5,7 +5,6 @@ model Reviews {
   rating      Int
   description String
 
-  User        User       @relation(fields: [userId], references: [id])
   Product     Product    @relation(fields: [productId], references: [id])
   Images      Images[]
   Comment Comment[]

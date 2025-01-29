@@ -6,12 +6,10 @@ model Orders {
   addressId       Int
   status          OrderStatus @default(PENDING)
 
-  User            User      @relation(fields: [userId], references: [id])
   Address         Address   @relation(fields: [addressId], references: [id])
   OrderItem       OrderItem[]
   Payments        Payments[]
   Deliveries      Deliveries[]
-  Returns         Returns[]
 }
 
 enum OrderStatus{

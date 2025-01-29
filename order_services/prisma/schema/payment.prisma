@@ -8,5 +8,4 @@ model Payments {
   status       String
 
   Orders       Orders   @relation(fields: [orderId], references: [id])
-  User         User     @relation(fields: [userId], references: [id])
 }
