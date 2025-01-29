@@ -9,6 +9,6 @@ model Address {
   description String?
 
   User      User     @relation(fields: [userId], references: [id])
-  Orders Orders[]
+  // Orders Orders[]
 }
 

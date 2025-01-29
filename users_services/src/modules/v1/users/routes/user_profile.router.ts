@@ -1,4 +1,4 @@
-import validator from "@/utils/validator";
+import validator from "../../../../utils/validator";
 import express from "express";
 import { userDto } from "../dto/user.dto";
 import userController from "../controller/user.controller";

@@ -8,11 +8,4 @@ model User {
   createdAt  DateTime    @default(now())
   Address    Address[]
   WishList   WishList[]
-  Post       Post[]
-  Comment    Comment[]
-  Reaction   Reaction[]
-  Reviews    Reviews[]
-  Orders     Orders[]
-  Payments   Payments[]
-  Reply Reply[]
 }

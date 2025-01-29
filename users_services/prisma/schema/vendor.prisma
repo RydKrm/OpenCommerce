@@ -13,5 +13,4 @@ model Vendor {
   logo          String
 
   socialLinks   SocialLink[]
-  Product       Product[]
 }
