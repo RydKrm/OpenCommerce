@@ -31,7 +31,7 @@ interface GenerateJwtTokenOptions {
 }
 
 // Default sign options
-const defaultSignOptions: SignOptions = {
+const defaultSignOptions = {
   expiresIn: defaultValues.accessExpiration,
   algorithm: defaultValues.accessAlgorithm,
 };
@@ -42,10 +42,10 @@ export const generateJwtToken = (
 ): { token: string; expiresAt: Date } => {
   try {
     // Merge default options with provided options
-    const signOptions: SignOptions = { ...defaultSignOptions, ...options };
+    const signOptions = { ...defaultSignOptions, ...options };
 
     // Generate token
-    const token = jwt.sign(payload, defaultValues.accessSecretKey, signOptions);
+    const token = jwt.sign(payload, defaultValues.accessSecretKey);
     const expiresAt = accessExpirationToConvertDate(
       defaultValues.accessExpiration
     );

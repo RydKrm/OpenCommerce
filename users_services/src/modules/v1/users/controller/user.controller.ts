@@ -1,7 +1,10 @@
 import userService, { UserService } from "./../service/user.service";
 import { Request, Response } from "express";
-import { negativeResponse, positiveResponse } from "@/lib/response/response";
-import { generateJwtToken } from "@/utils/generate-jwt-token";
+import {
+  negativeResponse,
+  positiveResponse,
+} from "../../../../lib/response/response";
+import { generateJwtToken } from "../../../../utils/generate-jwt-token";
 
 class UserController {
   private userService: UserService;
