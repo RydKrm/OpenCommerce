@@ -2,16 +2,17 @@ import { Request, Response } from "express";
 import imageService from "../../image/image.service";
 import { negativeResponse, positiveResponse } from "@/lib/response/response";
 import productCrudService from "../service/product_crud.service";
+import IRequest from "@/types/IRequest";
 
 class ProductCrudController {
-  async create(req: Request, res: Response) {
+  async create(req: IRequest, res: Response) {
     try {
       const files = (req.files as Express.Multer.File[]) || [];
       //   check if the file exists
       //   if (files && files.length === 0) {
       //     return negativeResponse(res, "File not found");
       //   }
-
+      const vendorId = req.user_id;
       const product = req.body;
       const image: string[] = [];
       files.forEach(async (file) => {
@@ -20,7 +21,10 @@ class ProductCrudController {
       });
       product.image = image;
 
-      const newProduct = await productCrudService.createProduct(product);
+      const newProduct = await productCrudService.createProduct({
+        ...product,
+        vendorId,
+      });
       return positiveResponse(res, "Product created successfully", {
         data: newProduct,
       });

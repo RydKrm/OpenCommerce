@@ -1,0 +1,66 @@
+@import "./global.rest" 
+
+@baseUrl = http://localhost:3001/api/v1
+
+### Seller Request 
+
+### Registration 
+POST {{baseUrl}}/seller/profile/register
+Content-Type: application/json
+
+{
+    "name": "Seller 02",
+    "email": "seller02@gmail.com",
+    "password": "123456",
+    "phoneNumber": "01234567892"
+}
+
+### Login with response reference
+# @name login
+POST {{baseUrl}}/seller/profile/login
+Content-Type: application/json
+
+{
+    "email": "seller01@gmail.com",
+    "password": "123456"
+}
+
+### Store token from login response
+@sellerToken = {{login.response.body.token}}
+
+### Get single seller
+GET {{baseUrl}}/seller/profile/get/1
+Authorization: Bearer {{sellerToken}}
+
+### Get all sellers
+GET {{baseUrl}}/seller/profile/get
+
+### Update seller
+PUT {{baseUrl}}/seller/profile/update/1
+Content-Type: application/json  
+Authorization: Bearer {{sellerToken}}
+
+{
+    "name": "Seller 01",
+    "email": "seller01@gmail.com"
+}
+
+### Delete seller
+DELETE {{baseUrl}}/seller/profile/1
+
+### Update password
+PATCH {{baseUrl}}/seller/profile/updatePassword/1
+Content-Type: application/json
+
+{
+    "oldPassword": "123456",
+    "newPassword": "123456"
+}
+
+### Forgot password
+POST {{baseUrl}}/seller/profile/forgotPassword
+Content-Type: application/json
+
+{
+    "email": "seller01@gmail.com"
+}

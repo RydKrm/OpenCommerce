@@ -5,7 +5,6 @@ class ProductCrudDto {
     name: z
       .string({ message: "Product name is required" })
       .min(3, { message: "Name must be greater than 5 character" }),
-    vendorId: z.number({ message: "Vendor Id is required" }),
     categoryId: z.number({ message: "Category Id is required" }),
     price: z
       .number({ message: "Price is required" })
@@ -33,7 +32,6 @@ class ProductCrudDto {
       .string({ message: "Product name is required" })
       .min(3, { message: "Name must be greater than 5 character" })
       .optional(),
-    vendorId: z.number({ message: "Vendor Id is required" }).optional(),
     categoryId: z.number({ message: "Category Id is required" }).optional(),
     price: z
       .number({ message: "Price is required" })

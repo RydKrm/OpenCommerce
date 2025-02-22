@@ -6,12 +6,12 @@ export class SellerProfileService {
   register = async (data: ISeller) => {
     const isSellerExists = await prisma.seller.findFirst({
       where: {
-        email: data.email,
+        OR: [{ email: data.email }, { phoneNumber: data.phoneNumber }],
       },
     });
 
     if (isSellerExists) {
-      throw new Error("Seller already exists");
+      throw new Error("Seller already exists with phone number or email");
     }
 
     data.password = bycrpt.hashSync(data.password, 10);

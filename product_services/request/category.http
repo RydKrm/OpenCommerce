@@ -1,0 +1,30 @@
+### Category Controller 
+@baseUrl = http://localhost:3000/api/v1
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzUwNjYxMjYzfQ.Z0000000000000000000000000000000000000000
+### Create Category
+POST {{baseUrl}}/category/crud/create
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+    "name": "Category 9",
+    "description" : "Category 9 description",
+    "parentId" : 2
+}
+
+### Get all Category
+GET {{baseUrl}}/category/crud/all
+
+### Get single Category
+GET {{baseUrl}}/category/crud/single/1
+
+### Update Category
+PUT {{baseUrl}}/category/crud/update/1
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+{
+    "name": "Category 01"
+}
+
+### Delete Category
+DELETE {{baseUrl}}/category/crud/delete/5

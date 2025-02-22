@@ -17,7 +17,7 @@ vendorCrudRoutes.post(
 
 vendorCrudRoutes.get("/all", vendorCrudController.getAll);
 vendorCrudRoutes.get("/single/:id", vendorCrudController.getSingle);
-vendorCrudRoutes.patch(
+vendorCrudRoutes.put(
   "/update/:id",
   validator(vendorDto.updateVendor),
   vendorCrudController.update

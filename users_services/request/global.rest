@@ -1,0 +1,7 @@
+### Global Variables
+@baseUrl = http://localhost:3001/api/v1
+@userToken = null
+@sellerToken = null
+@vendorToken = null
+@contentType = application/json
+

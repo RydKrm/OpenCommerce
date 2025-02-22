@@ -1,0 +1,48 @@
+# Vendor Request 
+
+## Registration 
+POST http://localhost:3001/api/v1/vendor/profile/register
+Content-Type: application/json
+
+{
+    "name": "Vendor 05",
+    "email": "vendor05@gmail.com",
+    "password": "123456",
+    "phoneNumber": "01234567895",
+    "description": "This is a description",
+    "address": "This is a address",
+    "logo": "This is a logo"
+}
+
+### Login 
+POST http://localhost:3001/api/v1/vendor/profile/login
+Content-Type: application/json
+
+{
+    "email": "vendor05@gmail.com",
+    "password": "123456"
+}
+
+### Get all vendors
+GET http://localhost:3001/api/v1/vendor/profile/all
+
+### Get single vendor
+GET http://localhost:3001/api/v1/vendor/profile/single/1
+
+### Update vendor
+PUT http://localhost:3001/api/v1/vendor/profile/update/1
+Content-Type: application/json
+
+{
+    "name": "Vendor 01",
+    "email": "vendor01@gmail.com",
+    "phoneNumber": "01234567890",
+    "description": "This is a description",
+    "address": "This is a address",
+    "logo": "This is a logo"
+}
+
+### Delete vendor
+DELETE http://localhost:3001/api/v1/vendor/profile/delete/1
+
+

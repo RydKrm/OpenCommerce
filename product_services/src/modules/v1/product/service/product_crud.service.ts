@@ -6,6 +6,7 @@ class ProductCrudService {
     const newProduct = await prisma.product.create({
       data: product,
     });
+    return newProduct;
   }
 
   async updateProduct(id: number, updatedProduct: IProduct) {

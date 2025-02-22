@@ -1,7 +1,0 @@
-model WishList {
-  id         Int     @id @default(autoincrement())
-  userId     Int
-  productId  Int
-
-  User       User    @relation(fields: [userId], references: [id])
-}

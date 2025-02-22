@@ -1,0 +1,40 @@
+### Product module
+@baseUrl = http://localhost:3000/api/v1
+@vendorToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InZlbmRvciIsImlhdCI6MTc0MDEyNzAyM30.EqmzcFFrG9Np4ersinpbDsYimP3PlFen_wJKFpgMl80
+### Create Product
+POST {{baseUrl}}/product/crud/create
+Content-Type: application/json
+Authorization: Bearer {{vendorToken}}
+
+{
+    "name": "Product 1",
+    "description": "Product 1 description",
+    "categoryId": 1,
+    "price": 100,
+    "previousPrice": 100,
+    "quantity": 10
+}
+
+### Get all products
+GET {{baseUrl}}/product/crud/all
+
+### Get single product
+GET {{baseUrl}}/product/crud/single/1
+
+### Get product by category
+GET {{baseUrl}}/product/crud/get-all-by-category/1
+
+### Get product by vendor
+GET {{baseUrl}}/product/crud/get-all-by-vendor/1
+
+### Update product
+PUT {{baseUrl}}/product/crud/update/1
+Content-Type: application/json
+Authorization: Bearer {{vendorToken}}
+
+{
+    "name": "Product 1 updated",
+    "description": "Product 1 updated description"
+}
+
+

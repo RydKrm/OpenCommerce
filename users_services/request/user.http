@@ -1,0 +1,45 @@
+### Get all users 
+GET http://localhost:3001/api/v1/user/profile/all
+
+###  Crate users
+POST http://localhost:3001/api/v1/user/profile/register
+Content-Type: application/json
+
+{
+    "name": "User 01",
+    "email": "user01@gmail.com",
+    "password": "123456",
+    "phoneNumber": "01234567890"
+}
+
+### Login with response reference
+# @name login   
+POST http://localhost:3001/api/v1/user/profile/login
+Content-Type: application/json
+
+{
+    "email": "user01@gmail.com",
+    "password": "123456"
+}
+
+### Store token from login response
+@userToken = {{login.response.body.token}}
+
+### Get single user
+GET http://localhost:3001/api/v1/user/profile/1
+Authorization: Bearer {{userToken}}
+
+### Update user
+PATCH http://localhost:3001/api/v1/user/profile/1
+Content-Type: application/json
+
+{
+    "name": "User 01",
+    "email": "user01@gmail.com",
+}
+
+### Delete user
+DELETE http://localhost:3001/api/v1/user/profile/1
+
+### Get all users
+GET http://localhost:3001/api/v1/user/profile/all
