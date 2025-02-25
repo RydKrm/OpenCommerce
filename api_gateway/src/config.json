@@ -5,35 +5,44 @@
       "routes": [
         {
           "path": "v1/product/crud/create",
-          "method": ["POST"]
+          "method": ["POST"],
+          "middlewares": ["auth"],
+          "role": ["seller "]
         },
         {
           "path": "v1/product/crud/update/:productId",
-          "method": ["PATCH"]
+          "method": ["PATCH"],
+          "middlewares": ["auth"]
         },
         {
           "path": "v1/product/crud/update-status/:productId",
-          "method": ["PATCH"]
+          "method": ["PATCH"],
+          "middlewares": ["auth"]
         },
         {
           "path": "v1/product/crud/all",
-          "method": ["GET"]
+          "method": ["GET"],
+          "middlewares": []
         },
         {
           "path": "v1/product/crud/single/:productId",
-          "method": ["GET"]
+          "method": ["GET"],
+          "middlewares": []
         },
         {
           "path": "v1/product/crud/delete/:productId",
-          "method": ["DELETE"]
+          "method": ["DELETE"],
+          "middlewares": ["auth"]
         },
         {
           "path": "v1/product/crud/get-all-by-category/:categoryId",
-          "method": ["GET"]
+          "method": ["GET"],
+          "middlewares": []
         },
         {
           "path": "v1/product/crud/get-all-by-vendor/:vendorId",
-          "method": ["GET"]
+          "method": ["GET"],
+          "middlewares": []
         }
       ]
     },
@@ -42,23 +51,28 @@
       "routes": [
         {
           "path": "v1/category/crud/create",
-          "method": ["POST"]
+          "method": ["POST"],
+          "middlewares": ["auth"]
         },
         {
           "path": "v1/category/crud/all",
-          "method": ["GET"]
+          "method": ["GET"],
+          "middlewares": []
         },
         {
           "path": "v1/category/crud/single/:id",
-          "method": ["GET"]
+          "method": ["GET"],
+          "middlewares": []
         },
         {
           "path": "v1/category/crud/update/:id",
-          "method": ["PUT"]
+          "method": ["PUT"],
+          "middlewares": ["auth"]
         },
         {
           "path": "v1/category/crud/delete/:id",
-          "method": ["DELETE"]
+          "method": ["DELETE"],
+          "middlewares": ["auth"]
         }
       ]
     },
@@ -67,31 +81,38 @@
       "routes": [
         {
           "path": "v1/comment/crud/create",
-          "method": ["POST"]
+          "method": ["POST"],
+          "middlewares": ["auth"]
         },
         {
           "path": "v1/comment/crud/update/:commentId",
-          "method": ["PATCH"]
+          "method": ["PATCH"],
+          "middlewares": ["auth"]
         },
         {
           "path": "v1/comment/crud/get-comments-by-product/:productId",
-          "method": ["GET"]
+          "method": ["GET"],
+          "middlewares": []
         },
         {
           "path": "v1/comment/crud/get-comments-by-user/:userId",
-          "method": ["GET"]
+          "method": ["GET"],
+          "middlewares": []
         },
         {
           "path": "v1/comment/crud/get-comments-by-post/:postId",
-          "method": ["GET"]
+          "method": ["GET"],
+          "middlewares": []
         },
         {
           "path": "v1/comment/crud/get-comments-by-review/:reviewId",
-          "method": ["GET"]
+          "method": ["GET"],
+          "middlewares": []
         },
         {
           "path": "v1/comment/crud/delete/:commentId",
-          "method": ["DELETE"]
+          "method": ["DELETE"],
+          "middlewares": ["auth"]
         }
       ]
     },
@@ -100,27 +121,33 @@
       "routes": [
         {
           "path": "v1/reply/crud/create",
-          "method": ["POST"]
+          "method": ["POST"],
+          "middlewares": ["auth"]
         },
         {
           "path": "v1/reply/crud/update/:replyId",
-          "method": ["PATCH"]
+          "method": ["PATCH"],
+          "middlewares": ["auth"]
         },
         {
           "path": "v1/reply/crud/delete/:replyId",
-          "method": ["DELETE"]
+          "method": ["DELETE"],
+          "middlewares": ["auth"]
         },
         {
           "path": "v1/reply/crud/single/:id",
-          "method": ["GET"]
+          "method": ["GET"],
+          "middlewares": []
         },
         {
           "path": "v1/reply/crud/allByUser/:commentId",
-          "method": ["GET"]
+          "method": ["GET"],
+          "middlewares": []
         },
         {
           "path": "v1/reply/crud/allByComment/:userId",
-          "method": ["GET"]
+          "method": ["GET"],
+          "middlewares": []
         }
       ]
     }
