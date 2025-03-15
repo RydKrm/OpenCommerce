@@ -1,0 +1,129 @@
+/profile/login:
+  post:
+    summary: User login
+    description: Authenticate user with email and password
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: "user@example.com"
+              password:
+                type: string
+                format: password
+                example: "securepassword"
+    responses:
+      "200":
+        description: Login successful
+      "401":
+        description: Unauthorized (Invalid credentials)
+/profile/register:
+  post:
+    summary: User registration
+    description: Register a new user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "John Doe"
+              email:
+                type: string
+                example: "johndoe@example.com"
+              password:
+                type: string
+                format: password
+                example: "strongpassword"
+              phone_number:
+                type: string
+                example: "+1234567890"
+    responses:
+      "201":
+        description: User registered successfully
+      "400":
+        description: Bad request (Validation errors)
+
+/profile/all:
+  get:
+    summary: Get all user profiles
+    description: Retrieve a list of all registered users
+    responses:
+      "200":
+        description: List of users retrieved successfully
+      "403":
+        description: Forbidden (Unauthorized access)
+
+/profile/{id}:
+  get:
+    summary: Get user profile by ID
+    description: Retrieve user profile details by ID
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: "64aeb19b5c1234567890abcd"
+    responses:
+      "200":
+        description: User profile retrieved successfully
+      "404":
+        description: User not found
+
+  patch:
+    summary: Update user profile
+    description: Modify user profile details by ID
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: "64aeb19b5c1234567890abcd"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "John Updated"
+              email:
+                type: string
+                example: "johnupdated@example.com"
+              phone_number:
+                type: string
+                example: "+9876543210"
+    responses:
+      "200":
+        description: User profile updated successfully
+      "400":
+        description: Bad request (Validation errors)
+      "404":
+        description: User not found
+
+  delete:
+    summary: Delete user profile
+    description: Remove a user profile by ID
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: "64aeb19b5c1234567890abcd"
+    responses:
+      "200":
+        description: User profile deleted successfully
+      "404":
+        description: User not found

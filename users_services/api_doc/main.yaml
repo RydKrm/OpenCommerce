@@ -1,0 +1,16 @@
+openapi: "3.0.3"
+info:
+  title: User Profile API
+  version: "1.0"
+servers:
+  - url: https://api.server.test/v1
+
+paths:
+  /api/v1/user/:
+    $ref: "./user_profile.yaml"
+
+  /api/v1/seller/:
+    $ref: "./vendor_profile.yaml"
+
+  /api/v1/vendor/:
+    $ref: "./vendor_profile.yaml"
