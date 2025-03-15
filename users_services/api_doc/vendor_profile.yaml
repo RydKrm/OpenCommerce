@@ -1,0 +1,69 @@
+/profile/login:
+  post:
+    summary: Vendor login
+    description: Authenticate vendor with email and password.
+    requestBody:
+      $ref: "./components/request_body.yaml#/LoginBody"
+    responses:
+      "200":
+        $ref: "./components/response.yaml#/LoginBody"
+      "401":
+        description: Unauthorized (Invalid credentials)
+/profile/register:
+  post:
+    summary: Vendor registration
+    description: Register a new vendor.
+    requestBody:
+      $ref: "./components/request_body.yaml#/RegisterBody"
+    responses:
+      "201":
+        description: Vendor registered successfully.
+      "400":
+        description: Bad request (Validation errors)
+/profile/all:
+  get:
+    summary: Get all vendor profiles
+    description: Retrieve a list of all registered vendors.
+    responses:
+      "200":
+        description: List of vendors retrieved successfully.
+      "403":
+        description: Forbidden (Unauthorized access)
+/profile/{id}:
+  get:
+    summary: Get vendor profile by ID
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: "64aeb19b5c1234567890abcd"
+    responses:
+      "200":
+        description: Vendor profile retrieved successfully.
+      "404":
+        description: Vendor not found.
+
+  patch:
+  summary: Update vendor profile
+  description: Modify vendor profile details.
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "components/request_body.yaml#/components/schemas/UpdateProfileBody"
+  responses:
+    "200":
+      description: Profile updated successfully.
+    "400":
+      description: Bad request (Invalid input).
+
+  delete:
+    summary: Delete vendor profile
+    description: Remove vendor from the system.
+    responses:
+      "200":
+        description: Vendor deleted successfully.
+      "404":
+        description: Vendor not found.
