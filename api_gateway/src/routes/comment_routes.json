@@ -1,0 +1,49 @@
+{
+  "comment": {
+    "url": "http://localhost:3000/api",
+    "routes": [
+      {
+        "path": "v1/comment/crud/create",
+        "method": ["POST"],
+        "middlewares": ["auth"],
+        "role": []
+      },
+      {
+        "path": "v1/comment/crud/update/:commentId",
+        "method": ["PATCH"],
+        "middlewares": ["auth"],
+        "role": []
+      },
+      {
+        "path": "v1/comment/crud/get-comments-by-product/:productId",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/comment/crud/get-comments-by-user/:userId",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/comment/crud/get-comments-by-post/:postId",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/comment/crud/get-comments-by-review/:reviewId",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/comment/crud/delete/:commentId",
+        "method": ["DELETE"],
+        "middlewares": ["auth"],
+        "role": []
+      }
+    ]
+  }
+}

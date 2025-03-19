@@ -1,0 +1,43 @@
+{
+  "wishlist": {
+    "url": "http://localhost:3000/api",
+    "routes": [
+      {
+        "path": "v1/order/crud/create",
+        "method": ["POST"],
+        "middlewares": ["auth"],
+        "role": ["user"]
+      },
+      {
+        "path": "v1/order/crud/single/:orderId",
+        "method": ["GET"],
+        "middlewares": ["auth"],
+        "role": ["user"]
+      },
+      {
+        "path": "v1/order/crud/cancel:/:orderId",
+        "method": ["PATCH"],
+        "middlewares": ["auth"],
+        "role": ["user", "seller"]
+      },
+      {
+        "path": "v1/order/crud/get-by-product/:productId",
+        "method": ["GET"],
+        "middlewares": ["auth"],
+        "role": ["seller"]
+      },
+      {
+        "path": "v1/order/crud/get-by-seller/:sellerId",
+        "method": ["GET"],
+        "middlewares": ["auth"],
+        "role": ["seller"]
+      },
+      {
+        "path": "v1/order/crud/update-status/:orderId",
+        "method": ["PATCH"],
+        "middlewares": ["auth"],
+        "role": ["seller"]
+      }
+    ]
+  }
+}

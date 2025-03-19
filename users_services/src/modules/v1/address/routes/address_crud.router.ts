@@ -21,7 +21,7 @@ addressCrudRouter.get(
 );
 
 addressCrudRouter.get(
-  "/allByUser",
+  "/all-by-user/:userId",
   auth([ROLES.USER]),
   async (req: IRequest, res: Response) => {
     crudLibrary.getMany("address", {
