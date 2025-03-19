@@ -1,0 +1,37 @@
+{
+  "wishlist": {
+    "url": "http://localhost:3000/api",
+    "routes": [
+      {
+        "path": "v1/user/wishlist/create",
+        "method": ["POST"],
+        "middlewares": ["auth"],
+        "role": ["user"]
+      },
+      {
+        "path": "v1/user/wishlist/delete/:userId",
+        "method": ["DELETE"],
+        "middlewares": ["auth"],
+        "role": ["user"]
+      },
+      {
+        "path": "v1/user/wishlist/all",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/user/wishlist/by-user",
+        "method": ["GET"],
+        "middlewares": ["auth"],
+        "role": ["user"]
+      },
+      {
+        "path": "v1/user/wishlist/by-product",
+        "method": ["GET"],
+        "middlewares": ["auth"],
+        "role": ["user"]
+      }
+    ]
+  }
+}

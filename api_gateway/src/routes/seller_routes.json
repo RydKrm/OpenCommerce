@@ -1,0 +1,61 @@
+{
+  "seller": {
+    "url": "http://localhost:3000/api",
+    "routes": [
+      {
+        "path": "v1/seller/profile/register",
+        "method": ["POST"],
+        "middlewares": ["auth"],
+        "role": ["user"]
+      },
+      {
+        "path": "v1/seller/profile/login",
+        "method": ["POST"],
+        "middlewares": ["auth"],
+        "role": ["user"]
+      },
+      {
+        "path": "v1/seller/profile/update/:id",
+        "method": ["PATCH"],
+        "middlewares": ["auth"],
+        "role": ["seller"]
+      },
+      {
+        "path": "v1/seller/profile/get/:id",
+        "method": ["GET"],
+        "middlewares": ["auth"],
+        "role": ["admin", "seller"]
+      },
+      {
+        "path": "v1/seller/profile/get",
+        "method": ["GET"],
+        "middlewares": ["auth"],
+        "role": ["admin"]
+      },
+      {
+        "path": "v1/seller/profile/delete",
+        "method": ["DELETE"],
+        "middlewares": ["auth"],
+        "role": ["admin"]
+      },
+      {
+        "path": "v1/seller/profile/update-status/:id",
+        "method": ["PATCH"],
+        "middlewares": ["auth"],
+        "role": ["admin"]
+      },
+      {
+        "path": "v1/seller/profile/update-password",
+        "method": ["PATCH"],
+        "middlewares": ["auth"],
+        "role": ["seller"]
+      },
+      {
+        "path": "v1/seller/profile/forget-password",
+        "method": ["PATCH"],
+        "middlewares": ["auth"],
+        "role": ["seller"]
+      }
+    ]
+  }
+}

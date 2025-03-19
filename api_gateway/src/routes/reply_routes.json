@@ -1,0 +1,43 @@
+{
+  "reply": {
+    "url": "http://localhost:3000/api",
+    "routes": [
+      {
+        "path": "v1/reply/crud/create",
+        "method": ["POST"],
+        "middlewares": ["auth"],
+        "role": []
+      },
+      {
+        "path": "v1/reply/crud/update/:replyId",
+        "method": ["PATCH"],
+        "middlewares": ["auth"],
+        "role": []
+      },
+      {
+        "path": "v1/reply/crud/delete/:replyId",
+        "method": ["DELETE"],
+        "middlewares": ["auth"],
+        "role": []
+      },
+      {
+        "path": "v1/reply/crud/single/:id",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/reply/crud/allByUser/:commentId",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/reply/crud/allByComment/:userId",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      }
+    ]
+  }
+}

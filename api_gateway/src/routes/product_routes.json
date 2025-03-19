@@ -1,0 +1,60 @@
+{
+  "product": {
+    "url": "http://localhost:3000/api",
+    "routes": [
+      {
+        "path": "v1/product/crud/create",
+        "method": ["POST"],
+        "middlewares": ["auth"],
+        "role": ["seller "]
+      },
+      {
+        "path": "v1/product/crud/update/:productId",
+        "method": ["PATCH"],
+        "middlewares": ["auth"],
+        "role": ["seller "]
+      },
+      {
+        "path": "v1/product/crud/update-status/:productId",
+        "method": ["PATCH"],
+        "middlewares": ["auth"],
+        "role": ["seller", "admin"]
+      },
+      {
+        "path": "v1/product/crud/all",
+        "method": ["GET"],
+        "middlewares": []
+      },
+      {
+        "path": "v1/product/crud/single/:productId",
+        "method": ["GET"],
+        "middlewares": []
+      },
+      {
+        "path": "v1/product/crud/delete/:productId",
+        "method": ["DELETE"],
+        "middlewares": ["auth"]
+      },
+      {
+        "path": "v1/product/crud/get-all-by-category/:categoryId",
+        "method": ["GET"],
+        "middlewares": []
+      },
+      {
+        "path": "v1/product/crud/get-all-by-vendor/:vendorId",
+        "method": ["GET"],
+        "middlewares": []
+      },
+      {
+        "path": "v1/product/crud/search",
+        "method": ["GET"],
+        "middlewares": []
+      },
+      {
+        "path": "v1/product/crud/related-products/:productId",
+        "method": ["GET"],
+        "middlewares": []
+      }
+    ]
+  }
+}

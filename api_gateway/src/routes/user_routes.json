@@ -1,0 +1,61 @@
+{
+  "user": {
+    "url": "http://localhost:3000/api",
+    "routes": [
+      {
+        "path": "v1/user/crud/create",
+        "method": ["POST"],
+        "middlewares": ["auth"],
+        "role": ["seller "]
+      },
+      {
+        "path": "v1/user/crud/login",
+        "method": ["POST"],
+        "middlewares": ["auth"],
+        "role": ["seller "]
+      },
+      {
+        "path": "v1/user/crud/update/:userId",
+        "method": ["PATCH"],
+        "middlewares": ["auth"],
+        "role": []
+      },
+      {
+        "path": "v1/user/crud/update-status/:userId",
+        "method": ["PATCH"],
+        "middlewares": ["auth"],
+        "role": []
+      },
+      {
+        "path": "v1/user/crud/all",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/user/crud/single/:userId",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/user/crud/delete/:userId",
+        "method": ["DELETE"],
+        "middlewares": ["auth"],
+        "role": []
+      },
+      {
+        "path": "v1/user/crud/get-all-by-category/:categoryId",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/user/crud/get-all-by-vendor/:vendorId",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      }
+    ]
+  }
+}

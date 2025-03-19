@@ -1,0 +1,37 @@
+{
+  "category": {
+    "url": "http://localhost:3000/api",
+    "routes": [
+      {
+        "path": "v1/category/crud/create",
+        "method": ["POST"],
+        "middlewares": ["auth"],
+        "role": ["admin"]
+      },
+      {
+        "path": "v1/category/crud/all",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/category/crud/single/:id",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/category/crud/update/:id",
+        "method": ["PUT"],
+        "middlewares": ["auth"],
+        "role": ["admin"]
+      },
+      {
+        "path": "v1/category/crud/delete/:id",
+        "method": ["DELETE"],
+        "middlewares": ["auth"],
+        "role": ["admin"]
+      }
+    ]
+  }
+}
