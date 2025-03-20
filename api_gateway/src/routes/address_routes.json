@@ -1,33 +1,33 @@
 {
   "address": {
-    "url": "http://localhost:3000/api",
+    "url": "http://localhost:3001/api",
     "routes": [
       {
-        "path": "v1/address/create",
+        "path": "v1/address/crud/create",
         "method": ["POST"],
         "middlewares": ["auth"],
         "role": ["user"]
       },
       {
-        "path": "v1/address/single/:id",
+        "path": "v1/address/crud/single/:id",
         "method": ["GET"],
         "middlewares": ["auth"],
         "role": ["user", "admin", "seller"]
       },
       {
-        "path": "v1/address/update/:id",
+        "path": "v1/address/crud/update/:id",
         "method": ["PUT"],
         "middlewares": ["auth"],
         "role": ["user"]
       },
       {
-        "path": "v1/address/delete/:id",
+        "path": "v1/address/crud/delete/:id",
         "method": ["DELETE"],
         "middlewares": ["auth"],
         "role": ["user"]
       },
       {
-        "path": "v1/address/allByUser/:userId",
+        "path": "v1/address/crud/all-by-user/:userId",
         "method": ["GET"],
         "middlewares": ["auth"],
         "role": ["user", "admin"]

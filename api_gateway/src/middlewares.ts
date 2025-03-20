@@ -1,11 +1,31 @@
-import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import { NextFunction, Response } from "express";
+import IRequest from "./types";
+import { ROLES } from "./role";
 
 const auth = (role: string[] = []) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: IRequest, res: Response, next: NextFunction) => {
     if (!req.headers["authorization"]) {
       return res.status(401).json({ message: "Invalid authorization" });
     }
 
+    // check the jwt token from header
+    const token = req.headers["authorization"].split(" ")[1];
+    // check the jwt token from header
+    if (!token) {
+      return res.status(401).json({ message: "Invalid authorization" });
+    }
+    const decoded = jwt.verify(
+      token,
+      process.env.ACCESS_TOKEN_SECRET_KEY as string
+    ) as { role: ROLES; userId: string };
+
+    // check the role
+    if (role.length > 0 && !role.includes(decoded.role)) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    req["user_id"] = decoded.userId;
+    req["role"] = decoded.role;
     // next function called
     next();
   };
