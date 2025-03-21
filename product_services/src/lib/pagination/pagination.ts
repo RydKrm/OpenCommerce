@@ -31,10 +31,10 @@ const pagination = async <T, A>(
 
   let total = await model.count({ where: query });
 
-  if (req.query.page) {
+  if (req.query?.page) {
     page = parseInt(req.query.page as string);
   }
-  if (req.query.limit) {
+  if (req.query?.limit) {
     limit = parseInt(req.query.limit as string);
   }
 

@@ -11,13 +11,13 @@ class CommentCrudService {
   }
 
   async getAllByUser(req: Request) {
-    const userId = req.params.userId;
+    const userId = Number(req.params.userId);
     const commentList = await pagination(req, prisma.comment, { userId }, {});
     return commentList;
   }
 
   async getAllByProduct(req: Request) {
-    const productId = req.params.productId;
+    const productId = Number(req.params.productId);
     const commentList = await pagination(
       req,
       prisma.comment,
@@ -28,14 +28,19 @@ class CommentCrudService {
   }
 
   async getAllByReview(req: Request) {
-    const reviewId = req.params.reviewId;
+    const reviewId = Number(req.params.reviewId);
     const commentList = await pagination(req, prisma.comment, { reviewId }, {});
     return commentList;
   }
 
   async getAllByPost(req: Request) {
-    const postId = req.params.reviewId;
-    const commentList = await pagination(req, prisma.comment, { postId }, {});
+    const postId = Number(req.params.postId);
+    const commentList = await pagination(
+      req,
+      prisma.comment,
+      { postId: postId },
+      {}
+    );
     return commentList;
   }
 
@@ -45,6 +50,9 @@ class CommentCrudService {
         id: commentId,
       },
     });
+    if (!comment) {
+      throw new Error("Comment not found");
+    }
     return comment;
   }
 
@@ -59,11 +67,15 @@ class CommentCrudService {
   }
 
   async deleteComment(commentId: number) {
-    await prisma.comment.delete({
-      where: {
-        id: commentId,
-      },
-    });
+    try {
+      const comment = await prisma.comment.delete({
+        where: {
+          id: commentId,
+        },
+      });
+    } catch (error) {
+      throw new Error("Comment not found");
+    }
   }
 }
 
