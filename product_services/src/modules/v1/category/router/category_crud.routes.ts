@@ -8,7 +8,6 @@ const category_crud_router = express.Router();
 
 category_crud_router.post(
   "/create",
-  // auth([ROLES.ADMIN]),
   validator(categoryDto.create),
   categoryCrudController.create
 );
@@ -22,14 +21,12 @@ category_crud_router.get(
 
 category_crud_router.put(
   "/update/:id",
-  // auth([ROLES.ADMIN]),
   validator(categoryDto.updateCategory),
   categoryCrudController.updateCategory
 );
 
 category_crud_router.delete(
   "/delete/:id",
-  // auth([ROLES.ADMIN]),
   categoryCrudController.deleteCategory
 );
 

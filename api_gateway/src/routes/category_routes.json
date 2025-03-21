@@ -23,13 +23,13 @@
       {
         "path": "v1/category/crud/update/:id",
         "method": ["PUT"],
-        "middlewares": ["auth"],
+        "middlewares": [],
         "role": ["admin"]
       },
       {
         "path": "v1/category/crud/delete/:id",
         "method": ["DELETE"],
-        "middlewares": ["auth"],
+        "middlewares": [],
         "role": ["admin"]
       }
     ]

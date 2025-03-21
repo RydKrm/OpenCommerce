@@ -8,21 +8,18 @@ const productCrudRoute = express.Router();
 
 productCrudRoute.post(
   "/create",
-  auth([ROLES.VENDOR]),
   validator(productCrudDto.create),
   productCrudController.create
 );
 
 productCrudRoute.patch(
   "/update/:productId",
-  auth([ROLES.VENDOR]),
   validator(productCrudDto.update),
   productCrudController.update
 );
 
 productCrudRoute.patch(
   "/update-status/:productId",
-  auth([ROLES.ADMIN, ROLES.VENDOR]),
   productCrudController.updateStatus
 );
 
@@ -40,10 +37,6 @@ productCrudRoute.get(
   productCrudController.getProductByVendor
 );
 
-productCrudRoute.delete(
-  "/delete/:productId",
-  auth([ROLES.VENDOR]),
-  productCrudController.delete
-);
+productCrudRoute.delete("/delete/:productId", productCrudController.delete);
 
 export default productCrudRoute;

@@ -12,7 +12,7 @@ class ProductCrudController {
       //   if (files && files.length === 0) {
       //     return negativeResponse(res, "File not found");
       //   }
-      const vendorId = req.user_id;
+      let sellerId = Number(req.headers.user_id);
       const product = req.body;
       const image: string[] = [];
       files.forEach(async (file) => {
@@ -20,15 +20,19 @@ class ProductCrudController {
         image.push(imageUrl.sourceUrl);
       });
       product.image = image;
+      if (product?.sellerId) {
+        sellerId = product.sellerId;
+      }
 
       const newProduct = await productCrudService.createProduct({
         ...product,
-        vendorId,
+        sellerId,
       });
       return positiveResponse(res, "Product created successfully", {
         data: newProduct,
       });
     } catch (error: any) {
+      console.log(error);
       return negativeResponse(res, error.message);
     }
   }

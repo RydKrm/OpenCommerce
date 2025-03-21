@@ -82,7 +82,7 @@ class ProductCrudService {
   async findAllProductByVendor(vendorId: number) {
     const products = await prisma.product.findMany({
       where: {
-        vendorId: vendorId,
+        sellerId: vendorId,
       },
     });
     return products;

@@ -6,6 +6,7 @@ class ProductCrudDto {
       .string({ message: "Product name is required" })
       .min(3, { message: "Name must be greater than 5 character" }),
     categoryId: z.number({ message: "Category Id is required" }),
+    sellerId: z.number().optional(),
     price: z
       .number({ message: "Price is required" })
       .positive({ message: "Price must me positive number" }),
