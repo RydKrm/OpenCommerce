@@ -18,14 +18,19 @@ const auth = (role: string[] = []) => {
     const decoded = jwt.verify(
       token,
       process.env.ACCESS_TOKEN_SECRET_KEY as string
-    ) as { role: ROLES; userId: string };
+    ) as { role: ROLES; id: string };
 
     // check the role
     if (role.length > 0 && !role.includes(decoded.role)) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    req["user_id"] = decoded.userId;
+
+    req["userId"] = decoded.id;
     req["role"] = decoded.role;
+    req.headers["userId"] = decoded.id;
+    req.headers["role"] = decoded.role;
+    // console.log("headers ", req.headers)
+    // req.body = {...req.body, userId: decoded.userId, role: decoded.role};
     // next function called
     next();
   };

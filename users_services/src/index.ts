@@ -1,6 +1,7 @@
+import morgan from "morgan";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import path from "path";
 import fs from "fs";
 import YAML from "yamljs";
@@ -9,11 +10,12 @@ import { errorHandler } from "./middleware/errorMiddleware";
 import rateLimiter from "./utils/rate-limiter";
 import { checkDatabaseConnection } from "./database/prisma";
 import { setupSwagger } from "./config/swagger.config";
+
 const app = express();
 const PORT = 3001;
 
 app.use(express.json());
-
+app.use(morgan("dev"));
 // checking database connection
 checkDatabaseConnection();
 
@@ -28,6 +30,11 @@ app.use(rateLimiter);
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello, TypeScript with Express!");
 });
+
+// app.use((req: Request, res: Response, next: NextFunction) => {
+//   console.log("request -> ", req.path);
+//   next();
+// });
 
 app.use("/api/v1", v1_route);
 

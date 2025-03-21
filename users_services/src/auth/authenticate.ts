@@ -42,7 +42,7 @@ const auth = (roleList: ROLES[]) => {
       if (Array.isArray(roleList) && roleList.length > 0) {
         if (roleList.includes(isVarify.role)) {
           req.role = isVarify.role;
-          req.user_id = isVarify.id;
+          req.userId = isVarify.id;
           next();
         } else {
           return res.status(403).json({

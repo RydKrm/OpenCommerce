@@ -26,7 +26,9 @@ class UserController {
   register = async (req: Request, res: Response) => {
     try {
       const user = await userService.register(req.body);
-      return positiveResponse(res, "User registered successfully", user);
+      return positiveResponse(res, "User registered successfully", {
+        data: user,
+      });
     } catch (err: any) {
       return negativeResponse(res, err.message);
     }
@@ -35,7 +37,9 @@ class UserController {
   getSingle = async (req: Request, res: Response) => {
     try {
       const user = await userService.getSingle(Number(req.params.id));
-      return positiveResponse(res, "User retrieved successfully", user);
+      return positiveResponse(res, "User retrieved successfully", {
+        data: user,
+      });
     } catch (err: any) {
       return negativeResponse(res, err.message);
     }
@@ -43,8 +47,10 @@ class UserController {
 
   getAllUser = async (req: Request, res: Response) => {
     try {
-      const users = await userService.getAllUser();
-      return positiveResponse(res, "Users retrieved successfully", users);
+      const users = await userService.getAllUser(req);
+      return positiveResponse(res, "Users retrieved successfully", {
+        data: users,
+      });
     } catch (err: any) {
       return negativeResponse(res, err.message);
     }
@@ -52,11 +58,14 @@ class UserController {
 
   updateUser = async (req: Request, res: Response) => {
     try {
+      console.log("update user");
       const updatedUser = await userService.updateUser(
         Number(req.params.id),
         req.body
       );
-      return positiveResponse(res, "User updated successfully", updatedUser);
+      return positiveResponse(res, "User updated successfully", {
+        data: updatedUser,
+      });
     } catch (err: any) {
       return negativeResponse(res, err.message);
     }

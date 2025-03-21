@@ -41,35 +41,21 @@ const createHandler = (hostname: string, path: string, method: string) => {
         data: req.body,
       };
 
-      console.log("Making request with config:", {
-        url: axiosConfig.url,
-        method: axiosConfig.method,
-        headers: axiosConfig.headers,
-      });
-
-      try {
-        const { data } = await axios(axiosConfig);
-        console.log("Response received:", data);
-        res.json(data);
-      } catch (axiosError) {
-        console.error("Axios Error:", axiosError);
-        throw axiosError; // Re-throw to be caught by outer try-catch
-      }
-
-      // Remove problematic headers
+      // Remove problematic headers before making the request
       delete axiosConfig.headers["content-length"];
       delete axiosConfig.headers["connection"];
-      // delete axiosConfig.headers['accept-encoding'];
-      console.log("checking auth ");
+
+      // console.log("Making request with config:", {
+      //   url: axiosConfig.url,
+      //   method: axiosConfig.method,
+      //   headers: axiosConfig.headers,
+      // });
+
       const { data } = await axios(axiosConfig);
-
-      console.log("checking after called");
-
+      // console.log("Response received:", data);
       res.json(data);
     } catch (err) {
-      console.error("Error details:", {
-        message: err,
-      });
+      // console.error("Error details:", err);
 
       if (axios.isAxiosError(err)) {
         return res.status(err.response?.status || 500).json({

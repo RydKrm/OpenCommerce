@@ -12,7 +12,6 @@ export const getMany = (model: keyof PrismaClient, options: IOptions = {}) => {
   return async function (req: Request, res: Response) {
     try {
       const { select, include, where } = options;
-
       const queryObject = {
         where: { ...where },
         select,

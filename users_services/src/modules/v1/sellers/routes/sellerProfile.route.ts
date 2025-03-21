@@ -44,14 +44,14 @@ sellerProfileRouter.delete(
 );
 
 sellerProfileRouter.patch(
-  "/updatePassword/:id",
+  "/update-password/:id",
   auth([ROLES.SELLER]),
   validator(sellerDto.updatePassword),
   adminProfileController.updatePassword
 );
 
 sellerProfileRouter.post(
-  "/forgotPassword",
+  "/forgot-password",
   validator(sellerDto.forgetPassword),
   adminProfileController.forgotPassword
 );

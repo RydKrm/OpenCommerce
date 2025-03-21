@@ -19,10 +19,10 @@ userProfileRouter.post(
 
 userProfileRouter.get("/all", userController.getAllUser);
 
-userProfileRouter.get("/:id", userController.getSingle);
+userProfileRouter.get("/single/:id", userController.getSingle);
 
-userProfileRouter.patch("/:id", userController.updateUser);
+userProfileRouter.patch("/update/:id", userController.updateUser);
 
-userProfileRouter.delete("/:id", userController.deleteUser);
+userProfileRouter.delete("/delete/:id", userController.deleteUser);
 
 export default userProfileRouter;

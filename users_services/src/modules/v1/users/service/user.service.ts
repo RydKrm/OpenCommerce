@@ -1,3 +1,5 @@
+import bycrpt from "bcrypt";
+import { Request } from "express";
 import prisma from "../../../../database/prisma";
 import { IUser, IUserLogin } from "../interface/user.interface";
 
@@ -23,13 +25,19 @@ export class UserService {
     if (isUserExists) {
       throw new Error("User already exists by email");
     }
+
+    // hash password
+    const salt = bycrpt.genSaltSync(10);
+    const hash = bycrpt.hashSync(data.password, salt);
+
     const newUser = await prisma.user.create({
       data: {
         ...data,
+        password: hash,
       },
     });
 
-    return newUser;
+    return { ...newUser, password: null };
   };
 
   getSingle = async (id: number) => {
@@ -43,12 +51,41 @@ export class UserService {
       throw new Error("User not found by id");
     }
 
-    return singleUser;
+    return { ...singleUser, password: null };
   };
 
-  getAllUser = async () => {
-    const allUser = await prisma.user.findMany();
-    return allUser;
+  getAllUser = async (req: Request) => {
+    const { limit = 10, skip = 0, search } = req.params;
+    const where = {};
+    if (search) {
+      Object.assign(where, {
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        ],
+      });
+    }
+    const allUser = await prisma.user.findMany({
+      where,
+      skip: Number(skip),
+      take: Number(limit),
+    });
+
+    const total = await prisma.user.count({
+      where,
+    });
+
+    return { list: allUser, total };
   };
 
   updateUser = async (id: number, user: IUser) => {

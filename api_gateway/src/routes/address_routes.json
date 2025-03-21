@@ -27,7 +27,7 @@
         "role": ["user"]
       },
       {
-        "path": "v1/address/crud/all-by-user/:userId",
+        "path": "v1/address/crud/allByUser/:userId",
         "method": ["GET"],
         "middlewares": ["auth"],
         "role": ["user", "admin"]

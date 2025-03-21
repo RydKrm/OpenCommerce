@@ -1,5 +1,5 @@
 import prisma from "@/database/prisma";
-import { negativeResponse } from "@/lib/response/response";
+import { negativeResponse,positiveResponse } from "@/lib/response/response";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 
@@ -38,6 +38,6 @@ export const create = (model: keyof PrismaClient, options: IOptions = {}) => {
       data: bodyObject,
     });
 
-    return newItem;
+    return positiveResponse(res,"Crated successfully", {data:newItem});
   };
 };
