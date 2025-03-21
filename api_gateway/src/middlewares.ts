@@ -29,9 +29,6 @@ const auth = (role: string[] = []) => {
     req["role"] = decoded.role;
     req.headers["userId"] = decoded.id;
     req.headers["role"] = decoded.role;
-    // console.log("headers ", req.headers)
-    // req.body = {...req.body, userId: decoded.userId, role: decoded.role};
-    // next function called
     next();
   };
 };

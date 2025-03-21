@@ -46,6 +46,7 @@ export class SellerDto {
       .trim()
       .min(6, { message: "Password must be atleast 6 characters long" }),
   });
+  update = this.register.partial();
 }
 
 export const sellerDto = new SellerDto();
