@@ -2,6 +2,7 @@ import prisma from "@/database/prisma";
 import { IOrder, IOrderItem } from "../interface/order.interface";
 import crudLibrary from "@/lib/crud/crud.lib";
 import { Request } from "express";
+import { OrderStatus } from "@prisma/client";
 
 class OrderCrudService {
   createOrder = async (data: IOrder) => {
@@ -32,7 +33,7 @@ class OrderCrudService {
     return true;
   };
 
-  getsingleOrder = async (orderId: number) => {
+  getSingleOrder = async (orderId: number) => {
     const order = await prisma.orders.findFirst({
       where: {
         id: orderId,
@@ -42,7 +43,7 @@ class OrderCrudService {
       },
     });
 
-    return this.getsingleOrder;
+    return this.getSingleOrder;
   };
 
   getAllOrderOfUser = async (userId: number) => {
@@ -67,7 +68,53 @@ class OrderCrudService {
     return list;
   };
 
-  updateOrder = async (orderId: number, data: IOrder) => {};
+  getOrdersByProductId = async (productId: number) => {
+    const orderList = await prisma.orderItem.findMany({
+      where: {
+        productId: productId,
+      },
+      include: {
+        Orders: true,
+      },
+    });
+    return orderList;
+  };
+
+  getOrdersByUserId = async (userId: number) => {
+    const orderList = await prisma.orders.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        OrderItem: true,
+      },
+    });
+    return orderList;
+  };
+
+  updateStatus = async (orderId: number, status: OrderStatus) => {
+    const updatedOrder = await prisma.orders.update({
+      where: {
+        id: orderId,
+      },
+      data: {
+        status: status,
+      },
+    });
+
+    return updatedOrder;
+  };
+
+  updateOrder = async (orderId: number, orderData: any) => {
+    await prisma.orders.update({
+      where: {
+        id: orderId,
+      },
+      data: orderData,
+    });
+  };
+
+  deleteOrder = async (orderId: number) => {};
 }
 
 const orderCrudService = new OrderCrudService();
