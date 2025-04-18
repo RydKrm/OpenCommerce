@@ -1,6 +1,6 @@
 {
   "user": {
-    "url": "http://localhost:3000/api",
+    "url": "http://localhost:3001/api",
     "routes": [
       {
         "path": "v1/user/crud/create",
