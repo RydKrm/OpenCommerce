@@ -57,9 +57,9 @@ export const configureRoutes = (app: Express) => {
         const role = route?.role ? route?.role : [];
         const middleware = getMiddleware(route.middlewares, role);
 
-        console.log(
-          `${method} - ${role ? role : "public"} - ${hostname}/${route.path} `
-        );
+        // console.log(
+        //   `${method} - ${role ? role : "public"} - ${hostname}/${route.path} `
+        // );
 
         app[method.toLowerCase() as HttpMethod](
           `/api/${route.path}`,

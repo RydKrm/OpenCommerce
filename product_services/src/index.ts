@@ -23,7 +23,7 @@ app.use(rateLimiter);
 // setupSwagger(app);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, TypeScript with Express!");
+  res.send("Hello, Product Server is UP");
 });
 
 app.use("/api/v1", v1_route);

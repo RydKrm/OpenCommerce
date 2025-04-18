@@ -7,7 +7,7 @@
     "test-all": "jest --watchAll",
     "build": "tsc",
     "start": "node -r tsconfig-paths/register dist/index.js",
-    "dev": "nodemon -r tsconfig-paths/register src/index.ts"
+    "dev": "nodemon --legacy-watch -r tsconfig-paths/register src/index.ts"
   },
   "author": "",
   "license": "ISC",

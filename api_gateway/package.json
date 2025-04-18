@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node -r tsconfig-paths/register dist/index.js",
-    "dev": "nodemon -r tsconfig-paths/register src/index.ts"
+    "dev": "nodemon --legacy-watch -r tsconfig-paths/register src/index.ts"
   },
   "keywords": [],
   "author": "",

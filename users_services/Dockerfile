@@ -46,10 +46,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY ./ ./
+RUN npx prisma generate
 
 # Stage 2: RUN
 FROM node:22-alpine
 WORKDIR /app
 COPY --from=builder /app ./
-EXPOSE 8081
+EXPOSE 3001
 CMD ["npm","run","dev"]
