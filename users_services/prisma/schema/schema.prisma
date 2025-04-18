@@ -5,8 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
-  // for sliting the database into multiple file
+  provider        = "prisma-client-js"
+  // for splitting the database into multiple file
   // every file will be located in the same directory prisma-schema files
   // prisma will automatically merge all the files int one file
   previewFeatures = ["prismaSchemaFolder"]
