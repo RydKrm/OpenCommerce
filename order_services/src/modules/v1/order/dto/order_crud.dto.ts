@@ -1,11 +1,15 @@
 import z from "zod";
 import express from "express";
+import { OrderStatus } from "@prisma/client";
 
 class OrderCrudDto {
   create = z.object({
     userId: z.number({ message: "User id is required" }),
     addressId: z.string({ message: "Address id is required" }),
     totalAmount: z.number({ message: "Total price is required" }),
+    status: z
+      .enum(Object.values(OrderStatus) as [string, ...string[]])
+      .optional(),
     orderItems: z.array(
       z.object({
         productId: z.number({ message: "Product id is required" }),
