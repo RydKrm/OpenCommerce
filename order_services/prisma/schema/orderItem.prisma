@@ -1,9 +1,0 @@
-model OrderItem {
-  id         Int     @id @default(autoincrement())
-  orderId    Int
-  productId  Int
-  quantity   Int
-  price      Float
-
-  Orders     Orders  @relation(fields: [orderId], references: [id])
-}

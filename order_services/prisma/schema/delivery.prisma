@@ -1,8 +1,10 @@
 model Deliveries {
-  id            Int      @id @default(autoincrement())
-  orderId       Int
-  deliveryDate  DateTime @map("delivery_date")
-  deliveryStatus String  @map("delivery_status")
+  id             Int       @id @default(autoincrement())
+  orderId        Int
+  deliveryDate   DateTime  @map("delivery_date")
+  deliveryStatus String    @map("delivery_status")
+  createdAt      DateTime? @default(now())
+  updateAt       DateTime? @updatedAt
 
-  Orders        Orders   @relation(fields: [orderId], references: [id])
+  Orders Orders @relation(fields: [orderId], references: [id])
 }

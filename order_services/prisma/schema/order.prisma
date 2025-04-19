@@ -1,18 +1,32 @@
 model Orders {
-  id              Int       @id @default(autoincrement())
-  userId          Int
-  orderDate       DateTime  @map("order_date") @default(now())
-  totalAmount     Float     @map("total_amount")
-  addressId       Int
-  status          OrderStatus @default(PENDING)
+  id          Int         @id @default(autoincrement())
+  userId      Int
+  orderDate   DateTime    @default(now()) @map("order_date")
+  totalAmount Float       @map("total_amount")
+  addressId   Int
+  status      OrderStatus @default(PENDING)
+  createdAt   DateTime?   @default(now())
+  updateAt    DateTime?   @updatedAt
 
-  Address         Address   @relation(fields: [addressId], references: [id])
-  OrderItem       OrderItem[]
-  Payments        Payments[]
-  Deliveries      Deliveries[]
+  Address    Address      @relation(fields: [addressId], references: [id])
+  OrderItem  OrderItem[]
+  Payments   Payments[]
+  Deliveries Deliveries[]
 }
 
-enum OrderStatus{
+model OrderItem {
+  id        Int       @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  price     Float
+  createdAt DateTime? @default(now())
+  updateAt  DateTime? @updatedAt
+
+  Orders Orders @relation(fields: [orderId], references: [id])
+}
+
+enum OrderStatus {
   PENDING
   SHIPPING
   DELIVERED
