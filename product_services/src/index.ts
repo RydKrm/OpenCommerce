@@ -4,9 +4,11 @@ import { errorHandler } from "./middleware/errorMiddleware";
 import rateLimiter from "./utils/rate-limiter";
 import { checkDatabaseConnection } from "./database/prisma";
 import cors from "cors";
+import morgan from "morgan";
 // import { setupSwagger } from "./config/swagger.config";
 
 const app = express();
+
 const PORT = 3000;
 
 app.use(express.json());
@@ -15,7 +17,7 @@ app.use(express.json());
 checkDatabaseConnection();
 
 app.use(cors());
-
+app.use(morgan("dev"));
 // Rate Limiting middleware
 app.use(rateLimiter);
 

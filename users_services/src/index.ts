@@ -1,3 +1,4 @@
+import morgan from "morgan";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import express, { Request, Response } from "express";
@@ -24,8 +25,9 @@ app.use(rateLimiter);
 
 // swagger docs
 // setupSwagger(app);
+app.use(morgan("dev"));
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/health", (req: Request, res: Response) => {
   res.send("Hello, User Services is UP!");
 });
 
