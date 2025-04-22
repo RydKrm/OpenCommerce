@@ -10,8 +10,11 @@ import { errorHandler } from "./middleware/errorMiddleware";
 import rateLimiter from "./utils/rate-limiter";
 import { checkDatabaseConnection } from "./database/prisma";
 import { setupSwagger } from "./config/swagger.config";
+import dotenv from "dotenv";
+
 const app = express();
 const PORT = 3001;
+dotenv.config();
 
 app.use(express.json());
 
@@ -19,6 +22,10 @@ app.use(express.json());
 checkDatabaseConnection();
 
 app.use(cors());
+app.use((req, res, next) => {
+  console.log("Request headers from services", req.headers);
+  next();
+});
 
 // Rate Limiting middleware
 app.use(rateLimiter);
@@ -26,6 +33,8 @@ app.use(rateLimiter);
 // swagger docs
 // setupSwagger(app);
 app.use(morgan("dev"));
+const database_url = process.env.DATABASE_URL;
+console.log(database_url);
 
 app.get("/health", (req: Request, res: Response) => {
   res.send("Hello, User Services is UP!");

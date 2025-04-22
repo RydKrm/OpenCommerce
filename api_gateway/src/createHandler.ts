@@ -27,14 +27,22 @@ const createHandler = (hostname: string, path: string, method: string) => {
         });
       }
 
-      console.log(`Forwarding request to: ${url}`);
-      console.log("Content-Type:", req.headers["content-type"]);
-      console.log("Request body:", req.body);
+      // console.log(`Forwarding request to: ${url}`);
+      console.log("Request headers form api-gateway", req.headers);
+      // console.log("Request body:", req.body);
+
+      // building the header object
+      const header_object = {
+        "user-agent": req.headers["user-agent"],
+        "cache-control": req.headers["cache-control"],
+        cookie: req.headers["cookie"],
+        host: req.headers["host"],
+      };
 
       let axiosConfig = {
         url,
         method,
-        headers: { ...req.headers },
+        headers: header_object,
         data: req.body,
         timeout: 5000,
       };

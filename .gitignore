@@ -17,3 +17,4 @@ order_services/prisma/migrations
 users_services/.env
 product_services/.env
 order_services/.env
+file_storage_services/node_modules
