@@ -3,22 +3,25 @@ import express, { Request, Response } from "express";
 import path from "path";
 import dotenv from "dotenv";
 import { error_handler } from "./error/error_handler";
+import router from "./routes/routes";
 
 const app = express();
-const PORT = 3001;
+const PORT = 3004;
 dotenv.config();
 
 app.use(express.json());
 
 app.use(cors());
 app.use((req, res, next) => {
-  console.log("Request headers from services", req.headers);
+  console.log("Methods ", req.method, "- URL", req.originalUrl);
   next();
 });
 
 app.get("/health", (req: Request, res: Response) => {
-  res.send("Hello, User Services is UP!");
+  res.send("Hello, File storing Services is UP!");
 });
+
+app.use("/api", router);
 
 app.use((req, res) => {
   res.status(404).json({

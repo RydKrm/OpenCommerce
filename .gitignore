@@ -18,3 +18,4 @@ users_services/.env
 product_services/.env
 order_services/.env
 file_storage_services/node_modules
+file_storage_services/uploads

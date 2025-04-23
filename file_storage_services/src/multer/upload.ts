@@ -3,8 +3,8 @@ import path from "path";
 import fs from "fs";
 import helper from "./utilis";
 
-const uploadFile = (folderName: string) =>
-  multer({
+const uploadFile = (folderName: string) => {
+  return multer({
     storage: multer.diskStorage({
       destination: async function (req, file, cb) {
         const folder = path.join("uploads", folderName);
@@ -16,5 +16,6 @@ const uploadFile = (folderName: string) =>
       },
     }),
   });
+};
 
 export default uploadFile;
