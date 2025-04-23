@@ -12,14 +12,13 @@ export const deleteSingle = asyncHandler(
         .json({ message: "Relative file path is required" });
     }
 
-    const filePath = path.resolve(__dirname, "..", relativeFilePath); // adjust `..` if needed
-
+    const filePath = path.resolve("", relativeFilePath);
     fs.unlink(filePath, (err) => {
       if (err) {
         console.error("Error deleting file:", err.message);
+        return res.status(404).json({ message: "File not found" });
       }
+      return res.status(200).json({ message: "File deleted successfully" });
     });
-
-    return res.status(200).json({ message: "File deleted successfully" });
   }
 );

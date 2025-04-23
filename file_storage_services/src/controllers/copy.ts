@@ -14,9 +14,9 @@ export const copyFileController = asyncHandler(
     }
 
     try {
-      const fileName = path.basename(sourcePath); // Extracts filename from full path
-      const absoluteSourcePath = path.resolve(__dirname, "..", sourcePath);
-      const absoluteTargetFolder = path.resolve(__dirname, "..", targetFolder);
+      const fileName = path.basename(sourcePath);
+      const absoluteSourcePath = path.resolve("", sourcePath);
+      const absoluteTargetFolder = path.resolve("./uploads", targetFolder);
       const absoluteTargetPath = path.join(absoluteTargetFolder, fileName);
 
       // Ensure the target folder exists
@@ -28,7 +28,7 @@ export const copyFileController = asyncHandler(
       return res.status(200).json({
         message: "File copied successfully",
         from: sourcePath,
-        to: path.join(targetFolder, fileName),
+        to: path.join("uploads", targetFolder, fileName),
       });
     } catch (error: any) {
       return res.status(500).json({ error: error.message });

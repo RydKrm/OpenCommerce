@@ -14,8 +14,8 @@ export const move = asyncHandler(async (req: Request, res: Response) => {
 
   try {
     const fileName = path.basename(sourcePath); // filename.ext
-    const absoluteSourcePath = path.resolve(__dirname, "..", sourcePath);
-    const absoluteTargetFolder = path.resolve(__dirname, "..", targetFolder);
+    const absoluteSourcePath = path.resolve("", sourcePath);
+    const absoluteTargetFolder = path.resolve("", targetFolder);
     const absoluteTargetPath = path.join(absoluteTargetFolder, fileName);
 
     // Ensure the target folder exists
