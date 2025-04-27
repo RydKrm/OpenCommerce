@@ -1,5 +1,4 @@
-import { Express, Request, Response } from "express";
-import axios from "axios";
+import { Express } from "express";
 import app_routes from "./routes";
 import middlewares from "./middlewares";
 import createHandler from "./createHandler";
@@ -22,11 +21,6 @@ export const configureRoutes = (app: Express) => {
         const handler = createHandler(hostname, route.path, method);
         const role = route?.role ? route?.role : [];
         const middleware = getMiddleware(route.middlewares, role);
-
-        // console.log(
-        //   `${method} - ${role ? role : "public"} - ${hostname}/${route.path} `
-        // );
-
         app[method.toLowerCase() as HttpMethod](
           `/api/${route.path}`,
           // middlewares.auth(role),
