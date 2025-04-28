@@ -17,7 +17,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/health", (req: Request, res: Response) => {
+app.get("/health", (_req: Request, res: Response) => {
   res.send("Hello, File storing Services is UP!");
 });
 

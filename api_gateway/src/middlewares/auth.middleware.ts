@@ -10,7 +10,7 @@ interface JwtVerify {
 }
 
 const auth = (roleList?: ROLES[]) => {
-  return (req: IRequest, res: Response, next: NextFunction) => {
+  return async (req: IRequest, res: Response, next: NextFunction) => {
     try {
       if (roleList && roleList.length === 0) {
         return res.status(403).json({
@@ -50,7 +50,7 @@ const auth = (roleList?: ROLES[]) => {
         if (roleList.includes(isVerify.role)) {
           req.role = isVerify.role;
           req.user_id = isVerify.id;
-          next();
+          return next();
         } else {
           return res.status(403).json({
             status: false,
@@ -58,6 +58,7 @@ const auth = (roleList?: ROLES[]) => {
           });
         }
       }
+      return next();
     } catch (error) {
       res.status(500).json({
         status: false,

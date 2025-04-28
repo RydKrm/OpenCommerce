@@ -5,7 +5,7 @@
       {
         "path": "v1/product/crud/create",
         "method": ["POST"],
-        "middlewares": ["auth"],
+        "middlewares": ["upload"],
         "role": ["seller "]
       },
       {

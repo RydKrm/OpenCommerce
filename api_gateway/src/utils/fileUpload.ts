@@ -2,10 +2,10 @@ import { Request } from "express";
 
 const multer = require("multer");
 const path = require("path");
-const { allocateDirectory } = require("./utility");
+const { allocateDirectory } = require("./allocateFolder");
 
-const uploadFile = (folderName: string) =>
-  multer({
+const uploadFile = (folderName: string) => {
+  return multer({
     storage: multer.diskStorage({
       destination: async function (
         req: Request,
@@ -25,5 +25,6 @@ const uploadFile = (folderName: string) =>
       },
     }),
   });
+};
 
 export default uploadFile;
