@@ -1,15 +1,15 @@
 model Comment {
-  id          Int       @id @default(autoincrement())
-  productId   Int?
-  userId      Int
-  postId      Int?
-  reviewId    Int?
+  id        String  @id @default(cuid())
+  productId String?
+  userId    String
+  postId    String?
+  reviewId  String?
 
-  commentText String    @map("comment_text")
-  createdAt   DateTime       @map("created_at") @default(now())
+  commentText String
+  createdAt   DateTime @default(now())
 
-  Product     Product?   @relation(fields: [productId], references: [id])
-  Review      Reviews?  @relation(fields: [reviewId], references: [id])
-  Images      Images[]
-  Reply       Reply[]
+  Product Product? @relation(fields: [productId], references: [id])
+  Review  Reviews? @relation(fields: [reviewId], references: [id])
+  Images  Images[]
+  Reply   Reply[]
 }
