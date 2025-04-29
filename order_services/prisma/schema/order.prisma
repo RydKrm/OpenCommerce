@@ -1,9 +1,9 @@
 model Orders {
-  id          Int         @id @default(autoincrement())
-  userId      Int
+  id          String      @id @default(cuid())
+  userId      String
   orderDate   DateTime    @default(now()) @map("order_date")
   totalAmount Float       @map("total_amount")
-  addressId   Int
+  addressId   String
   status      OrderStatus @default(PENDING)
   createdAt   DateTime?   @default(now())
   updateAt    DateTime?   @updatedAt
@@ -15,10 +15,10 @@ model Orders {
 }
 
 model OrderItem {
-  id        Int       @id @default(autoincrement())
-  orderId   Int
-  productId Int
-  quantity  Int
+  id        String    @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  String
   price     Float
   createdAt DateTime? @default(now())
   updateAt  DateTime? @updatedAt

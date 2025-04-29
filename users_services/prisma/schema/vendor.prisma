@@ -1,16 +1,16 @@
-model Vendor {
-  id           Int     @id @default(autoincrement())
-  name         String  @unique
-  email        String  @unique
-  description  String
-  status       Boolean @default(false)
-  rating       Float   @default(0)
-  phoneNumber  String  @unique @map("phone_number")
-  password     String
-  address      String
-  totalProduct Int     @default(0) @map("total_product")
-  totalReviews Int     @default(0) @map("total_reviews")
-  logo         String
+// model Vendor {
+//   id           Int     @id @default(autoincrement())
+//   name         String  @unique
+//   email        String  @unique
+//   description  String
+//   status       Boolean @default(false)
+//   rating       Float   @default(0)
+//   phoneNumber  String  @unique @map("phone_number")
+//   password     String
+//   address      String
+//   totalProduct Int     @default(0) @map("total_product")
+//   totalReviews Int     @default(0) @map("total_reviews")
+//   logo         String
 
-  socialLinks SocialLink[]
-}
+//   socialLinks SocialLink[]
+// }

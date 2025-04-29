@@ -33,8 +33,6 @@ app.use(rateLimiter);
 // swagger docs
 // setupSwagger(app);
 app.use(morgan("dev"));
-const database_url = process.env.DATABASE_URL;
-console.log(database_url);
 
 app.get("/health", (req: Request, res: Response) => {
   res.send("Hello, User Services is UP!");

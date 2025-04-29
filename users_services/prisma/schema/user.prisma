@@ -1,5 +1,5 @@
 model User {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
   name        String
   email       String    @unique
   phoneNumber String    @unique
@@ -7,4 +7,13 @@ model User {
   role        String    @default("user")
   createdAt   DateTime  @default(now())
   Address     Address[]
+}
+
+model SocialLink {
+  id   String @id @default(cuid())
+  // vendorId Int
+  type String
+  url  String
+
+  // vendor Vendor @relation(fields: [vendorId], references: [id])
 }

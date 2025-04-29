@@ -1,5 +1,5 @@
 model Images {
-  image_id      Int       @id @default(autoincrement())
+  image_id      String    @id @default(cuid())
   image_url     String
   imageble_id   Int
   imageble_type String

@@ -1,14 +1,13 @@
 model Address {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  road      String?
-  house     String?
-  district  String?
-  division  String?
-  country   String?
+  id          String  @id @default(cuid())
+  userId      String
+  road        String?
+  house       String?
+  district    String?
+  division    String?
+  country     String?
   description String?
 
-  User      User     @relation(fields: [userId], references: [id])
+  User User @relation(fields: [userId], references: [id])
   // Orders Orders[]
 }
-
