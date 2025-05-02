@@ -1,9 +1,16 @@
 export interface IUser {
-  id: number;
+  id?: number;
   name: string;
   email: string;
   password: string;
   phoneNumber: string;
+}
+
+export interface IUpdateUser {
+  name?: string;
+  email?: string;
+  password?: string;
+  phoneNumber?: string;
 }
 
 export interface IUserLogin {
