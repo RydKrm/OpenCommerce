@@ -1,0 +1,10 @@
+model wishlist {
+    id         String @id @default(cuid())
+    user_id    String
+    product_id String
+
+    user User @relation(fields: [user_id], references: [id])
+
+    @@unique([product_id, user_id])
+    @@map("wishlist")
+}

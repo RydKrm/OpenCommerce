@@ -31,10 +31,10 @@ export class UserService {
     return sendData(200, "User created successfully", newUser);
   };
 
-  getSingle = async (id: number): Promise<IResponse> => {
+  getSingle = async (id: string): Promise<IResponse> => {
     const singleUser = await prisma.user.findUnique({
       where: {
-        id,
+        id: id,
       },
     });
 
@@ -69,7 +69,7 @@ export class UserService {
   };
 
   updateUser = async (
-    id: number,
+    id: string,
     user: IUpdateUser | undefined
   ): Promise<IResponse> => {
     const updateUser = await prisma.user.update({
@@ -83,7 +83,7 @@ export class UserService {
     return sendData(200, "User updated successfully", updateUser);
   };
 
-  deleteUser = async (id: number): Promise<IResponse> => {
+  deleteUser = async (id: string): Promise<IResponse> => {
     const user = await prisma.user.delete({ where: { id } });
     if (!user) {
       return sendData(400, "User not found by id");

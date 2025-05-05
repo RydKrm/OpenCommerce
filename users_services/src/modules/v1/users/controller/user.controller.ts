@@ -24,10 +24,7 @@ class UserController {
   });
 
   getSingle = asyncHandler(async (req: Request, res: Response) => {
-    return sendResponse(
-      res,
-      await userService.getSingle(Number(req.params.id))
-    );
+    return sendResponse(res, await userService.getSingle(req.params.id));
   });
 
   getAllUser = asyncHandler(async (req: Request, res: Response) => {
@@ -39,12 +36,12 @@ class UserController {
 
   updateUser = asyncHandler(async (req: Request, res: Response) => {
     const reqBody = userDto.updateUser.parse(req.body);
-    const user = await userService.updateUser(Number(req.params.id), reqBody);
+    const user = await userService.updateUser(req.params.id, reqBody);
     return sendResponse(res, user);
   });
 
   deleteUser = asyncHandler(async (req: Request, res: Response) => {
-    const userId = Number(req.params.userId);
+    const userId = req.params.userId;
     return sendResponse(res, await userService.deleteUser(userId));
   });
 }
