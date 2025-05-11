@@ -23,19 +23,22 @@ export class UserDto {
     })
     .strict();
 
-  register = z
-    .object({
-      name: z
-        .string()
-        .trim()
-        .min(6, { message: "user name must be at least 6 characters long" }),
-      email: this.#email,
-      password: this.#password,
-      phoneNumber: this.#phoneNumber,
-    })
-    .strict();
+  register = z.object({
+    name: z
+      .string()
+      .trim()
+      .min(6, { message: "user name must be at least 6 characters long" }),
+    email: this.#email,
+    password: this.#password,
+    phoneNumber: this.#phoneNumber,
+  });
 
-  updateUser = this.register.optional();
+  updateUser = z.object({
+    name: z.string().trim().optional(),
+    email: this.#email.optional(),
+    phoneNumber: this.#phoneNumber.optional(),
+    password: this.#password.optional(),
+  });
 
   forgetPassword = z
     .object({

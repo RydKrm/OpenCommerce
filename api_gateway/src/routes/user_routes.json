@@ -27,13 +27,13 @@
         "role": []
       },
       {
-        "path": "v1/user/profile/all",
+        "path": "v1/user/profile/list",
         "method": ["GET"],
         "middlewares": [],
         "role": []
       },
       {
-        "path": "v1/user/profile/single/:userId",
+        "path": "v1/user/profile/details/:userId",
         "method": ["GET"],
         "middlewares": [],
         "role": []

@@ -28,8 +28,8 @@ class UserController {
   });
 
   getAllUser = asyncHandler(async (req: Request, res: Response) => {
-    const limit = Number(req?.query?.limit);
-    const skip = Number(req?.query?.skip);
+    const limit = Number(req?.query?.limit) || 10;
+    const skip = Number(req?.query?.skip) || 0;
     const search = req?.query?.search as string;
     return sendResponse(res, await userService.getAllUser(limit, skip, search));
   });
