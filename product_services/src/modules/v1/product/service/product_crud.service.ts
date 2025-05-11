@@ -1,94 +1,95 @@
-import prisma from "@/database/prisma";
-import { IProduct } from "../interface/product.interface";
+// import prisma from "@/database/prisma";
+// import { CreateProductType, UpdateProductType } from "../dto/product.crud.dto";
+// import sendData from "@/lib/response/send_data";
 
-class ProductCrudService {
-  async createProduct(product: IProduct) {
-    const newProduct = await prisma.product.create({
-      data: product,
-    });
-    return newProduct;
-  }
+// interface ICreateProductType extends CreateProductType {
+//   image: string[];
+// }
 
-  async updateProduct(id: number, updatedProduct: IProduct) {
-    await prisma.product.update({
-      where: { id },
-      data: updatedProduct,
-    });
-  }
+// class ProductCrudService {
+//   async createProduct(product: ICreateProductType) {
+//     const { categoryId, ...rest } = product;
+//     const newProduct = await prisma.product.create({
+//       data: { ...rest, Category: { connect: { id: categoryId } } },
+//     });
+//     return sendData(200, "Product created successfully", newProduct);
+//   }
 
-  async updateProductStatus(id: number) {
-    const isExists = await prisma.product.findFirst({
-      where: { id },
-    });
+//   async updateProduct(id: number, updatedProduct: UpdateProductType) {
+//     const updateProduct = await prisma.product.update({
+//       where: { id },
+//       data: updatedProduct,
+//     });
 
-    if (!isExists) {
-      throw new Error("Product not found by id");
-    }
+//     return sendData(200, "Product updated successfully", updateProduct);
+//   }
 
-    const updatedProduct = await prisma.product.update({
-      where: { id },
-      data: { status: !isExists.status },
-    });
-    return updatedProduct;
-  }
+//   async updateProductStatus(productId: string) {
+//     const isExists = await prisma.product.findFirst({
+//       where: { id: productId },
+//     });
 
-  async deleteProduct(id: number) {
-    const isExist = await prisma.product.findFirst({
-      where: { id },
-    });
-    if (!isExist) {
-      throw new Error("Product not found by id");
-    }
+//     if (!isExists) {
+//       throw new Error("Product not found by id");
+//     }
 
-    await prisma.product.delete({
-      where: { id },
-    });
-  }
+//     const updatedProduct = await prisma.product.update({
+//       where: { id: productId },
+//       data: { status: !isExists.status },
+//     });
+//     return sendData(200, "Product status updated successfully", updatedProduct);
+//   }
 
-  async getAllProducts() {
-    const products = await prisma.product.findMany({});
-    return products;
-  }
+//   async deleteProduct(id: number) {
+//     const isExist = await prisma.product.findFirst({
+//       where: { id },
+//     });
+//     if (!isExist) {
+//       throw new Error("Product not found by id");
+//     }
 
-  async getProductById(id: number) {
-    const product = await prisma.product.findUnique({
-      where: { id },
-    });
-    if (!product) {
-      throw new Error("Product not found by id");
-    }
-    return product;
-  }
+//     await prisma.product.delete({
+//       where: { id },
+//     });
 
-  // Search product by name
-  async searchProductByName(name: string) {
-    const products = await prisma.product.findMany({
-      where: {
-        name: { contains: name },
-      },
-    });
-    return products;
-  }
+//     return sendData(200, "Product deleted successfully");
+//   }
 
-  async findAllProductByCategory(category: number) {
-    const products = await prisma.product.findMany({
-      where: {
-        categoryId: category,
-      },
-    });
-    return products;
-  }
+//   async getAllProducts() {
+//     const products = await prisma.product.findMany({});
+//     return products;
+//   }
 
-  async findAllProductByVendor(vendorId: number) {
-    const products = await prisma.product.findMany({
-      where: {
-        vendorId: vendorId,
-      },
-    });
-    return products;
-  }
-}
+//   async getProductById(id: number) {
+//     const product = await prisma.product.findUnique({
+//       where: { id },
+//     });
+//     if (!product) {
+//       throw new Error("Product not found by id");
+//     }
+//     return product;
+//   }
 
-const productCrudService = new ProductCrudService();
+//   // Search product by name
+//   async searchProductByName(name: string) {
+//     const products = await prisma.product.findMany({
+//       where: {
+//         name: { contains: name },
+//       },
+//     });
+//     return products;
+//   }
 
-export default productCrudService;
+//   async findAllProductByCategory(category: number) {
+//     const products = await prisma.product.findMany({
+//       where: {
+//         categoryId: category,
+//       },
+//     });
+//     return products;
+//   }
+// }
+
+// const productCrudService = new ProductCrudService();
+
+// export default productCrudService;
