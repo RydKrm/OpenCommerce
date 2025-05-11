@@ -7,9 +7,11 @@ RUN npm install
 COPY ./ ./
 RUN npx prisma generate
 
-# Stage 2: RUN
+# Stage 2: Run
 FROM node:22-alpine
 WORKDIR /app
 COPY --from=builder /app ./
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 EXPOSE 3000
-CMD ["npm","run","dev"]
+ENTRYPOINT ["/app/entrypoint.sh"]

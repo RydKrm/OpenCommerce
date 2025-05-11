@@ -1,3 +1,5 @@
+import * as jwt from "jsonwebtoken";
+import * as bcrypt from "bcrypt";
 import IResponse from "@/types/IResponse";
 import prisma from "../../../../database/prisma";
 import { IUpdateUser, IUser, IUserLogin } from "../interface/user.interface";
@@ -13,28 +15,57 @@ export class UserService {
     if (!user) {
       return sendData(400, "User not found by id");
     }
-    return sendData(200, "User Data", user);
+
+    // compare password
+
+    if (!bcrypt.compareSync(data.password, user.password)) {
+      return sendData(400, "Password is incorrect");
+    }
+
+    // generate jwt token
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.ACCESS_TOKEN_SECRET_KEY || "",
+      {
+        expiresIn: "30d",
+      }
+    );
+
+    return sendData(200, "User Data", {
+      user: { ...user, password: null },
+      token,
+    });
   };
 
   register = async (data: IUser): Promise<IResponse> => {
-    const isUserExists = await prisma.user.findUnique({
+    const isUserExists = await prisma.user.findFirst({
       where: {
-        email: data.email,
+        OR: [{ email: data.email }, { phoneNumber: data.phoneNumber }],
       },
     });
     if (isUserExists) {
-      return sendData(400, "User already exists with this email");
+      return sendData(
+        400,
+        "User already exists with this email or phone number"
+      );
     }
+
+    // create a hash password from bcrypt
+    const hashPassword = bcrypt.hashSync(data.password, 10);
+
     const newUser = await prisma.user.create({
-      data,
+      data: {
+        ...data,
+        password: hashPassword,
+      },
     });
     return sendData(200, "User created successfully", newUser);
   };
 
-  getSingle = async (id: number): Promise<IResponse> => {
+  getSingle = async (id: string): Promise<IResponse> => {
     const singleUser = await prisma.user.findUnique({
       where: {
-        id,
+        id: id,
       },
     });
 
@@ -69,21 +100,21 @@ export class UserService {
   };
 
   updateUser = async (
-    id: number,
+    id: string,
     user: IUpdateUser | undefined
   ): Promise<IResponse> => {
-    const updateUser = await prisma.user.update({
-      where: { id },
-      data: { ...user },
-    });
-
-    if (!updateUser) {
+    try {
+      const updateUser = await prisma.user.update({
+        where: { id },
+        data: { ...user },
+      });
+      return sendData(200, "User updated successfully", updateUser);
+    } catch (error) {
       return sendData(400, "User not found by id");
     }
-    return sendData(200, "User updated successfully", updateUser);
   };
 
-  deleteUser = async (id: number): Promise<IResponse> => {
+  deleteUser = async (id: string): Promise<IResponse> => {
     const user = await prisma.user.delete({ where: { id } });
     if (!user) {
       return sendData(400, "User not found by id");

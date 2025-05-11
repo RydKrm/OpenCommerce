@@ -52,8 +52,6 @@ const serverUpload = () => {
 
       const filesList = response.data.files;
 
-      console.log("files list ", filesList);
-
       const fileData: any = {};
 
       for (const files in filesList) {
@@ -66,11 +64,8 @@ const serverUpload = () => {
           req.body[fieldName] = fileData[file.fieldname];
         }
       }
-
       // Delete the uploaded files from API Gateway after sending
       await Promise.all(fileList.map((file) => unlink(file.path)));
-      console.log("Files deleted from api gateway upload folder");
-      console.log("Request body:", req.body);
 
       return next();
     } catch (err) {

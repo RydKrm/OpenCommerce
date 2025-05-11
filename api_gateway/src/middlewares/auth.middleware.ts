@@ -34,10 +34,9 @@ const auth = (roleList?: ROLES[]) => {
         });
       }
 
-      const isVerify = jwt.verify(
-        token,
-        defaultValues.accessSecretKey as string
-      ) as JwtVerify;
+      const jwt_secret = process.env.ACCESS_TOKEN_SECRET_KEY;
+
+      const isVerify = jwt.verify(token, jwt_secret as string) as JwtVerify;
 
       if (!isVerify) {
         return res.status(403).json({

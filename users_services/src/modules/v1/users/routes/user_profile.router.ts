@@ -9,9 +9,9 @@ userProfileRouter.post("/create", userController.register);
 
 userProfileRouter.post("/register", userController.register);
 
-userProfileRouter.get("/all", userController.getAllUser);
+userProfileRouter.get("/list", userController.getAllUser);
 
-userProfileRouter.get("/single/:id", userController.getSingle);
+userProfileRouter.get("/details/:id", userController.getSingle);
 
 userProfileRouter.patch("/update/:id", userController.updateUser);
 

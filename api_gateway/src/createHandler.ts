@@ -28,7 +28,7 @@ const createHandler = (hostname: string, path: string, method: string) => {
       }
 
       // console.log(`Forwarding request to: ${url}`);
-      console.log("Request headers form api-gateway", req.headers);
+      // console.log("Request headers form api-gateway", req.headers);
       // console.log("Request body:", req.body);
 
       // building the header object
@@ -82,15 +82,12 @@ const createHandler = (hostname: string, path: string, method: string) => {
 
       try {
         const { data } = await axios(axiosConfig);
-        console.log("✅ Axios request successful");
-        console.log("Checking axios is calling or not");
         return res.json(data);
       } catch (err) {
-        console.log("❌ Axios request failed");
 
         if (axios.isAxiosError(err)) {
-          console.log("Axios error message:", err.message);
-          console.log("Axios error response:", err.response?.data);
+          // console.log("Axios error message:", err.message);
+          // console.log("Axios error response:", err.response?.data);
 
           return res.status(err.response?.status || 500).json({
             message: err.response?.data || "Server calling error",
