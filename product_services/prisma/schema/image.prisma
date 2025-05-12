@@ -1,16 +1,17 @@
 model Images {
-  image_id      String @id @default(cuid())
-  image_url     String
-  imageble_id   String
-  imageble_type String
-  public_id     String
+  image_id   String @id @default(cuid())
+  image_url  String
+  image_type String
 
-  // Relation to Product
-  Product Product? @relation(fields: [imageble_id], references: [id], map: "Images_Product_fkey")
+  // For product
+  product_id String?
+  Product    Product? @relation(fields: [product_id], references: [id], map: "Images_Product_fkey")
 
-  // Relation to Comment
-  Comment Comment? @relation(fields: [imageble_id], references: [id], map: "Images_Comment_fkey")
+  // For comment
+  comment_id String?
+  Comment    Comment? @relation(fields: [comment_id], references: [id], map: "Images_Comment_fkey")
 
-  // Relation to Reviews
-  Reviews Reviews? @relation(fields: [imageble_id], references: [id], map: "Images_Reviews_fkey")
+  // For review
+  review_id String?
+  Reviews   Reviews? @relation(fields: [review_id], references: [id], map: "Images_Reviews_fkey")
 }
