@@ -3,55 +3,56 @@
     "url": "http://localhost:3000/api",
     "routes": [
       {
-        "path": "v1/product/crud/create",
+        "path": "v1/product/basic/create",
         "method": ["POST"],
         "middlewares": ["upload"],
-        "role": ["seller "]
+        "role": ["seller "],
+        "uploadFolder": "products"
       },
       {
-        "path": "v1/product/crud/update/:productId",
+        "path": "v1/product/basic/update/:productId",
         "method": ["PATCH"],
-        "middlewares": ["auth"],
+        "middlewares": [],
         "role": ["seller "]
       },
       {
-        "path": "v1/product/crud/update-status/:productId",
+        "path": "v1/product/basic/update-status/:productId",
         "method": ["PATCH"],
         "middlewares": ["auth"],
         "role": ["seller", "admin"]
       },
       {
-        "path": "v1/product/crud/all",
+        "path": "v1/product/basic/list",
         "method": ["GET"],
         "middlewares": []
       },
       {
-        "path": "v1/product/crud/single/:productId",
+        "path": "v1/product/basic/details/:productId",
         "method": ["GET"],
         "middlewares": []
       },
       {
-        "path": "v1/product/crud/delete/:productId",
+        "path": "v1/product/basic/delete/:productId",
         "method": ["DELETE"],
-        "middlewares": ["auth"]
+        "middlewares": []
       },
       {
-        "path": "v1/product/crud/get-all-by-category/:categoryId",
+        "path": "v1/product/basic/get-all-by-category/:categoryId",
         "method": ["GET"],
         "middlewares": []
       },
       {
-        "path": "v1/product/crud/get-all-by-vendor/:vendorId",
+        "path": "v1/product/basic/get-all-by-vendor/:vendorId",
         "method": ["GET"],
         "middlewares": []
       },
       {
-        "path": "v1/product/crud/search",
+        "path": "v1/product/basic/search",
         "method": ["GET"],
         "middlewares": []
       },
       {
-        "path": "v1/product/crud/related-products/:productId",
+        "path": "v1/product/basic/related-products/:productId",
         "method": ["GET"],
         "middlewares": []
       }

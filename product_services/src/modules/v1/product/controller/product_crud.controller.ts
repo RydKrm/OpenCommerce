@@ -1,133 +1,53 @@
-// import { Request, Response } from "express";
-// import imageService from "../../image/image.service";
-// import { negativeResponse, positiveResponse } from "@/lib/response/response";
-// import productCrudService from "../service/product_crud.service";
-// import IRequest from "@/types/IRequest";
+import { Request, Response } from "express";
+import productCrudService from "../service/product_crud.service";
+import IRequest from "@/types/IRequest";
+import { CreateProductDto } from "../dto/product.crud.dto";
+import { asyncHandler } from "@/middleware";
+import sendResponse from "@/lib/response/send_response";
 
-// class ProductCrudController {
-//   async create(req: IRequest, res: Response) {
-//     try {
-//       const files = (req.files as Express.Multer.File[]) || [];
-//       const vendorId = req.user_id;
-//       const product = req.body;
-//       const image: string[] = [];
-//       files.forEach(async (file) => {
-//         const imageUrl = await imageService.uploadImage(file);
-//         image.push(imageUrl.sourceUrl);
-//       });
-//       product.image = image;
+class ProductCrudController {
+  create = asyncHandler(async (req: IRequest, res: Response) => {
+    const data = CreateProductDto.parse(req.body);
+    const result = await productCrudService.createProduct(data);
+    return sendResponse(res, result);
+  });
 
-//       const newProduct = await productCrudService.createProduct({
-//         ...product,
-//         vendorId,
-//       });
-//       return positiveResponse(res, "Product created successfully", {
-//         data: newProduct,
-//       });
-//     } catch (error: any) {
-//       return negativeResponse(res, error.message);
-//     }
-//   }
+  update = asyncHandler(async (req: Request, res: Response) => {
+    const productId = req.params.productId;
+    const updateProduct = await productCrudService.updateProduct(
+      productId,
+      req.body
+    );
+    return sendResponse(res, updateProduct);
+  });
 
-//   async update(req: Request, res: Response) {
-//     try {
-//       const productId = parseInt(req.params.productId);
-//       const updateProduct = await productCrudService.updateProduct(
-//         productId,
-//         req.body
-//       );
-//       return positiveResponse(res, "Product updated successfully", {
-//         data: updateProduct,
-//       });
-//     } catch (error: any) {
-//       return negativeResponse(res, error.message);
-//     }
-//   }
+  updateStatus = asyncHandler(async (req: Request, res: Response) => {
+    const productId = req.params.productId;
+    const updatedProduct = await productCrudService.updateProductStatus(
+      productId
+    );
+    return sendResponse(res, updatedProduct);
+  });
 
-//   async updateStatus(req: Request, res: Response) {
-//     const productId = parseInt(req.params.productId);
-//     const updatedProduct = await productCrudService.updateProductStatus(
-//       productId
-//     );
-//     return positiveResponse(res, "Product status updated successfully", {
-//       data: updatedProduct,
-//     });
-//   }
+  getAll = asyncHandler(async (req: Request, res: Response) => {
+    const query = req.query;
+    const products = await productCrudService.getAllProducts(query);
+    return sendResponse(res, products);
+  });
 
-//   async getAll(req: Request, res: Response) {
-//     try {
-//       const products = await productCrudService.getAllProducts();
-//       return positiveResponse(res, "Products retrieved successfully", {
-//         data: products,
-//       });
-//     } catch (error: any) {
-//       return negativeResponse(res, error.message);
-//     }
-//   }
+  details = asyncHandler(async (req: Request, res: Response) => {
+    const productId = req.params.productId;
+    const product = await productCrudService.getProductById(productId);
+    return sendResponse(res, product);
+  });
 
-//   async getSingle(req: Request, res: Response) {
-//     try {
-//       const productId = parseInt(req.params.productId);
-//       const product = await productCrudService.getProductById(productId);
-//       return positiveResponse(res, "Product retrieved successfully", {
-//         data: product,
-//       });
-//     } catch (error: any) {
-//       return negativeResponse(res, error.message);
-//     }
-//   }
+  delete = asyncHandler(async (req: Request, res: Response) => {
+    const productId = req.params.productId;
+    const deletedProduct = await productCrudService.deleteProduct(productId);
+    return sendResponse(res, deletedProduct);
+  });
+}
 
-//   async search(req: Request, res: Response) {
-//     try {
-//       const keyword = req.query.name as string;
-//       const products = await productCrudService.searchProductByName(keyword);
-//       return positiveResponse(res, "Products retrieved successfully", {
-//         data: products,
-//       });
-//     } catch (error: any) {
-//       return negativeResponse(res, error.message);
-//     }
-//   }
+const productCrudController = new ProductCrudController();
 
-//   async getProductByCategory(req: Request, res: Response) {
-//     try {
-//       const categoryId = parseInt(req.params.categoryId);
-//       const products = await productCrudService.findAllProductByCategory(
-//         categoryId
-//       );
-//       return positiveResponse(res, "Products retrieved successfully", {
-//         data: products,
-//       });
-//     } catch (error: any) {
-//       return negativeResponse(res, error.message);
-//     }
-//   }
-
-//   async getProductByVendor(req: Request, res: Response) {
-//     try {
-//       const vendorId = parseInt(req.params.vendorId);
-//       const products = await productCrudService.findAllProductByVendor(
-//         vendorId
-//       );
-//       return positiveResponse(res, "Products retrieved successfully", {
-//         data: products,
-//       });
-//     } catch (error: any) {
-//       return negativeResponse(res, error.message);
-//     }
-//   }
-
-//   async delete(req: Request, res: Response) {
-//     try {
-//       const productId = parseInt(req.params.productId);
-//       await productCrudService.deleteProduct(productId);
-//       return positiveResponse(res, "Product deleted successfully");
-//     } catch (error: any) {
-//       return negativeResponse(res, error.message);
-//     }
-//   }
-// }
-
-// const productCrudController = new ProductCrudController();
-
-// export default productCrudController;
+export default productCrudController;
