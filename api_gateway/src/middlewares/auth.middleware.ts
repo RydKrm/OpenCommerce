@@ -49,6 +49,9 @@ const auth = (roleList?: ROLES[]) => {
         if (roleList.includes(isVerify.role)) {
           req.role = isVerify.role;
           req.user_id = isVerify.id;
+
+          console.log("req.user_id", req.user_id);
+
           return next();
         } else {
           return res.status(403).json({
