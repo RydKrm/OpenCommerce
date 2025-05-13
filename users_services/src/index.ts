@@ -11,6 +11,8 @@ import rateLimiter from "./utils/rate-limiter";
 import { checkDatabaseConnection } from "./database/prisma";
 import { setupSwagger } from "./config/swagger.config";
 import dotenv from "dotenv";
+import { connectRabbitMQ } from "./broker/rabbitmq";
+import IRequest from "./types/IRequest";
 
 const app = express();
 const PORT = 3001;
@@ -21,9 +23,12 @@ app.use(express.json());
 // checking database connection
 checkDatabaseConnection();
 
+// connected to rabbitmq
+connectRabbitMQ();
+
 app.use(cors());
-app.use((req, res, next) => {
-  console.log("Request headers from services", req.headers);
+app.use((req: IRequest, res, next) => {
+  console.log("Request headers from services", req.user_id);
   next();
 });
 

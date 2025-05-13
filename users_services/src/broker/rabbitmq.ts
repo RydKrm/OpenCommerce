@@ -1,10 +1,10 @@
 import amqp from "amqplib";
 
-let channel;
-
-async function connectRabbitMQ() {
-  const conn = await amqp.connect("amqp://rabbitmq:5672");
-  channel = await conn.createChannel();
+export async function connectRabbitMQ() {
+  try {
+    const connection = await amqp.connect("amqp://localhost:5672");
+    console.log("Connected to RabbitMQ");
+  } catch (err) {
+    console.error("Failed to connect to RabbitMQ:");
+  }
 }
-
-export default channel;

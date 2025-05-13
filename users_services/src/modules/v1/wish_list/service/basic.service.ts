@@ -1,14 +1,15 @@
 import IResponse from "@/types/IResponse";
-import { IWishlist } from "../interface/wish_list.dto";
 import prisma from "@/database/prisma";
 import sendData from "@/lib/response/send_data";
+import { CreateWishlistDtoType } from "../dto/wishlist.dto";
+import { getProductListRPC } from "../broker/get_list";
 
 export class wishlistService {
-  create = async (data: IWishlist): Promise<IResponse> => {
+  create = async (data: CreateWishlistDtoType): Promise<IResponse> => {
     const isExists = await prisma.wishlist.findFirst({
       where: {
-        user_id: data.user_id,
-        product_id: data.product_id,
+        product_id: data.productId,
+        user_id: data.userId,
       },
     });
 
@@ -17,7 +18,10 @@ export class wishlistService {
     }
 
     const newWishList = await prisma.wishlist.create({
-      data,
+      data: {
+        product_id: data.productId,
+        user_id: data.userId,
+      },
     });
     return sendData(200, "WishList created successfully", newWishList);
   };
@@ -55,6 +59,10 @@ export class wishlistService {
       take: limit,
     });
 
+    const productIds = wishLists.map((item) => item.product_id);
+
+    const product_list = await getProductListRPC(productIds);
+
     const totalCount = await prisma.wishlist.count({
       where: {
         user_id,
@@ -62,9 +70,18 @@ export class wishlistService {
     });
 
     return sendData(200, "WishList retrieved successfully", {
-      wishLists,
+      product_list,
       totalCount,
     });
+  };
+
+  deleteWishList = async (id: string): Promise<IResponse> => {
+    const wishList = await prisma.wishlist.delete({
+      where: {
+        id,
+      },
+    });
+    return sendData(200, "WishList deleted successfully", wishList);
   };
 }
 

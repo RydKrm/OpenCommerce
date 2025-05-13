@@ -1,13 +1,13 @@
 import z from "zod";
 
-class WishListDto {
-  create = z.object({
-    productId: z.number({ message: "Product id is required" }),
-    userId: z.number({ message: "User id is required" }),
-  });
-  update = this.create.partial();
-}
+export const CreateWishlistDto = z
+  .object({
+    productId: z.string({ message: "Product id is required" }),
+    userId: z.string({ message: "User id is required" }),
+  })
+  .strict();
 
-const wishListDto = new WishListDto();
+export const UpdateWishlistDto = CreateWishlistDto.partial();
 
-export default wishListDto;
+export type CreateWishlistDtoType = z.infer<typeof CreateWishlistDto>;
+export type UpdateWishlistDtoType = z.infer<typeof UpdateWishlistDto>;

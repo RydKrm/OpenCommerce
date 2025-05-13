@@ -5,6 +5,8 @@ import rateLimiter from "./utils/rate-limiter";
 import { checkDatabaseConnection } from "./database/prisma";
 import cors from "cors";
 import morgan from "morgan";
+import { connectRabbitMQ } from "./broker/rabbitmq";
+import { startRPCServer } from "./modules/v1/product/broker/send_cart.broker";
 // import { setupSwagger } from "./config/swagger.config";
 
 const app = express();
@@ -15,6 +17,12 @@ app.use(express.json());
 
 // checking database connection
 checkDatabaseConnection();
+
+// connect to rabbitmq
+connectRabbitMQ();
+
+// consumer called
+startRPCServer();
 
 app.use(cors());
 app.use(morgan("dev"));
