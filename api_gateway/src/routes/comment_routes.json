@@ -6,6 +6,12 @@
         "path": "v1/comment/crud/create",
         "method": ["POST"],
         "middlewares": ["auth"],
+        "role": ["user"]
+      },
+      {
+        "path": "v1/comment/crud/single/:id",
+        "method": ["GET"],
+        "middlewares": [],
         "role": []
       },
       {

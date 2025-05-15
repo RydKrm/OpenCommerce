@@ -1,7 +1,5 @@
 import express from "express";
 import categoryCrudController from "../controller/category_crud.controller";
-import auth from "@/auth/authenticate";
-import { ROLES } from "@/types/role";
 const category_crud_router = express.Router();
 
 category_crud_router.post(
@@ -17,15 +15,10 @@ category_crud_router.get(
   categoryCrudController.getSingleCategory
 );
 
-category_crud_router.put(
-  "/update/:id",
-  // auth([ROLES.ADMIN]),
-  categoryCrudController.updateCategory
-);
+category_crud_router.put("/update/:id", categoryCrudController.updateCategory);
 
 category_crud_router.delete(
   "/delete/:id",
-  // auth([ROLES.ADMIN]),
   categoryCrudController.deleteCategory
 );
 

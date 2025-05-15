@@ -1,7 +1,7 @@
 import morgan from "morgan";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import path from "path";
 import fs from "fs";
 import YAML from "yamljs";
@@ -13,13 +13,14 @@ import { setupSwagger } from "./config/swagger.config";
 import dotenv from "dotenv";
 import { connectRabbitMQ } from "./broker/rabbitmq";
 import IRequest from "./types/IRequest";
+import { ROLES } from "./types/role";
 
 const app = express();
 const PORT = 3001;
 dotenv.config();
 
 app.use(express.json());
-
+app.use(morgan("dev"));
 // checking database connection
 checkDatabaseConnection();
 
@@ -28,7 +29,8 @@ connectRabbitMQ();
 
 app.use(cors());
 app.use((req: IRequest, res, next) => {
-  console.log("Request headers from services", req.user_id);
+  req.userId = req.headers.userid as string;
+  req.role = req.headers.role as ROLES;
   next();
 });
 
@@ -42,6 +44,11 @@ app.use(morgan("dev"));
 app.get("/health", (req: Request, res: Response) => {
   res.send("Hello, User Services is UP!");
 });
+
+// app.use((req: Request, res: Response, next: NextFunction) => {
+//   console.log("request -> ", req.path);
+//   next();
+// });
 
 app.use("/api/v1", v1_route);
 

@@ -7,7 +7,7 @@ import { negativeResponse, positiveResponse } from "@/lib/response/response";
 class CommentCrudController {
   async create(req: Request, res: Response) {
     try {
-      const newComment = await commentCrudService.create(req.body);
+      const userId = Number(req.headers.userid);
 
       const imageFiles = (req.files as Express.Multer.File[]) || [];
 
@@ -25,8 +25,12 @@ class CommentCrudController {
           },
         });
       });
+      const newComment = await commentCrudService.create({
+        ...req.body,
+        userId,
+      });
       return positiveResponse(res, "New comment created successfully", {
-        data: newComment,
+        data: { ...newComment, userId },
         imageList,
       });
     } catch (err: any) {
@@ -37,9 +41,9 @@ class CommentCrudController {
   async getSingleComment(req: Request, res: Response) {
     try {
       const comment = await commentCrudService.getSingleComment(
-        Number(req.params.commentId)
+        Number(req.params.id)
       );
-      return positiveResponse(res, "Comment created successfully", {
+      return positiveResponse(res, "Comment found successfully", {
         data: comment,
       });
     } catch (err: any) {
@@ -146,6 +150,7 @@ class CommentCrudController {
   async deleteComment(req: Request, res: Response) {
     try {
       await commentCrudService.deleteComment(Number(req.params.commentId));
+      return positiveResponse(res, "Comment deleted successfully");
     } catch (err: any) {
       negativeResponse(res, err.message);
     }

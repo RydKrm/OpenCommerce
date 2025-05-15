@@ -9,7 +9,7 @@ class VentorCrudController {
     try {
       const vendor = await vendorCrudService.create(req.body);
       return positiveResponse(res, "Vendor created successfully", {
-        data: vendor,
+        data: { ...vendor, password: null },
       });
     } catch (err: any) {
       return negativeResponse(res, err.message);

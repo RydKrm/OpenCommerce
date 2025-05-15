@@ -12,7 +12,7 @@ export const update = (model: keyof PrismaClient, options: IOptions = {}) => {
     try {
       const bodyObject = req.body;
 
-      const { where, notUpdate } = options;
+      const { notUpdate } = options;
 
       if (notUpdate) {
         for (const key of notUpdate) {
@@ -21,10 +21,8 @@ export const update = (model: keyof PrismaClient, options: IOptions = {}) => {
       }
 
       const queryObject = {
-        where: {
-          ...where,
-          id: parseInt(req.params.id),
-        },
+        ...options?.where,
+        id: parseInt(req.params.id),
       };
 
       const data = await (prisma[model] as any).update({

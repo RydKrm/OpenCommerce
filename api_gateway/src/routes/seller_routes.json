@@ -1,22 +1,22 @@
 {
   "seller": {
-    "url": "http://localhost:3000/api",
+    "url": "http://localhost:3001/api",
     "routes": [
       {
         "path": "v1/seller/profile/register",
         "method": ["POST"],
-        "middlewares": ["auth"],
-        "role": ["user"]
+        "middlewares": [],
+        "role": []
       },
       {
         "path": "v1/seller/profile/login",
         "method": ["POST"],
-        "middlewares": ["auth"],
-        "role": ["user"]
+        "middlewares": [],
+        "role": []
       },
       {
         "path": "v1/seller/profile/update/:id",
-        "method": ["PATCH"],
+        "method": ["put"],
         "middlewares": ["auth"],
         "role": ["seller"]
       },
@@ -30,10 +30,10 @@
         "path": "v1/seller/profile/get",
         "method": ["GET"],
         "middlewares": ["auth"],
-        "role": ["admin"]
+        "role": ["admin", "seller"]
       },
       {
-        "path": "v1/seller/profile/delete",
+        "path": "v1/seller/profile/delete/:id",
         "method": ["DELETE"],
         "middlewares": ["auth"],
         "role": ["admin"]

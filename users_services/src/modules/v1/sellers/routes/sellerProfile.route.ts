@@ -21,13 +21,14 @@ sellerProfileRouter.post(
 
 sellerProfileRouter.put(
   "/update/:id",
-  auth([ROLES.SELLER]),
+  // auth([ROLES.SELLER]),
+  validator(sellerDto.update),
   adminProfileController.updateSeller
 );
 
 sellerProfileRouter.get(
   "/get/:id",
-  auth([ROLES.SELLER]),
+  // auth([ROLES.SELLER]),
   adminProfileController.getSingleSeller
 );
 
@@ -39,19 +40,19 @@ sellerProfileRouter.get(
 
 sellerProfileRouter.delete(
   "/delete/:id",
-  auth([ROLES.SELLER]),
+  // auth([ROLES.SELLER]),
   adminProfileController.deleteSeller
 );
 
 sellerProfileRouter.patch(
-  "/updatePassword/:id",
-  auth([ROLES.SELLER]),
+  "/update-password/:id",
+  // auth([ROLES.SELLER]),
   validator(sellerDto.updatePassword),
   adminProfileController.updatePassword
 );
 
 sellerProfileRouter.post(
-  "/forgotPassword",
+  "/forgot-password",
   validator(sellerDto.forgetPassword),
   adminProfileController.forgotPassword
 );

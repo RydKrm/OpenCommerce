@@ -23,7 +23,7 @@
       {
         "path": "v1/category/profile/update/:id",
         "method": ["PUT"],
-        "middlewares": ["auth"],
+        "middlewares": [],
         "role": ["admin"]
       },
       {

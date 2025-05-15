@@ -11,7 +11,7 @@ class SellerProfileController {
     try {
       const { email, password } = req.body;
       const Seller = await sellerProfileService.login(email, password);
-      const token = generateJwtToken({ id: Seller.id, role: "Seller" }).token;
+      const token = generateJwtToken({ id: Seller.id, role: "seller" }).token;
       return positiveResponse(res, "Seller logged in successfully", {
         user: Seller.name,
         token,
@@ -25,7 +25,10 @@ class SellerProfileController {
   async register(req: IRequest, res: Response) {
     try {
       const Seller = await sellerProfileService.register(req.body);
-      return positiveResponse(res, "Seller registered successfully", Seller);
+      return positiveResponse(res, "Seller registered successfully", {
+        ...Seller,
+        password: null,
+      });
     } catch (error: any) {
       return negativeResponse(res, error.message);
     }
@@ -38,7 +41,9 @@ class SellerProfileController {
         Number(id),
         req.body
       );
-      return positiveResponse(res, "Seller updated successfully", Seller);
+      return positiveResponse(res, "Seller updated successfully", {
+        data: Seller,
+      });
     } catch (error: any) {
       return negativeResponse(res, error.message);
     }
@@ -48,7 +53,9 @@ class SellerProfileController {
     try {
       const { id } = req.params;
       const Seller = await sellerProfileService.getSingle(Number(id));
-      return positiveResponse(res, "Seller retrieved successfully", Seller);
+      return positiveResponse(res, "Seller retrieved successfully", {
+        data: Seller,
+      });
     } catch (error: any) {
       return negativeResponse(res, error.message);
     }
@@ -79,7 +86,9 @@ class SellerProfileController {
     try {
       const { email } = req.body;
       const Seller = await sellerProfileService.forgotPassword(email);
-      return positiveResponse(res, "Seller retrieved successfully", Seller);
+      return positiveResponse(res, "Seller retrieved successfully", {
+        data: Seller,
+      });
     } catch (error: any) {
       return negativeResponse(res, error.message);
     }
@@ -94,7 +103,9 @@ class SellerProfileController {
         oldPassword,
         newPassword
       );
-      return positiveResponse(res, "Seller updated successfully", Seller);
+      return positiveResponse(res, "Seller updated successfully", {
+        data: { ...Seller, password: null },
+      });
     } catch (error: any) {
       return negativeResponse(res, error.message);
     }
