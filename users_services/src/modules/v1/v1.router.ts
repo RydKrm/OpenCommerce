@@ -7,6 +7,6 @@ v1_route.use("/user", userRouter);
 
 v1_route.use("/wishlist", wishlistRouter);
 
-v1_route.use("/address", addressRoute);
+// v1_route.use("/address", addressRoute);
 
 export default v1_route;

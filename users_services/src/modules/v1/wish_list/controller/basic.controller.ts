@@ -7,9 +7,12 @@ import IRequest from "@/types/IRequest";
 
 export class BasicWishListController {
   create = asyncHandler(async (req: IRequest, res: Response) => {
-    const user_id = req.user_id;
+    const userId = req.userId;
 
-    const data = CreateWishlistDto.parse(req.body);
+    const data = CreateWishlistDto.parse({
+      productId: req.body.productId,
+      userId,
+    });
     const result = await wishlistService.create(data);
     return sendResponse(res, result);
   });

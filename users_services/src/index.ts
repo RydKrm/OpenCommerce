@@ -13,6 +13,7 @@ import { setupSwagger } from "./config/swagger.config";
 import dotenv from "dotenv";
 import { connectRabbitMQ } from "./broker/rabbitmq";
 import IRequest from "./types/IRequest";
+import { ROLES } from "./types/role";
 
 const app = express();
 const PORT = 3001;
@@ -28,7 +29,8 @@ connectRabbitMQ();
 
 app.use(cors());
 app.use((req: IRequest, res, next) => {
-  console.log("Request headers from services", req.user_id);
+  req.userId = req.headers.userid as string;
+  req.role = req.headers.role as ROLES;
   next();
 });
 
