@@ -1,12 +1,12 @@
 model Category {
-  id          Int        @id @default(autoincrement())
+  id          String     @id @default(cuid())
   name        String
   image       String?
   description String
   totalItem   Int        @default(0) @map("total_item")
   createdAt   DateTime   @default(now())
-  parentId    Int?       @map("parent_id")
+  parentId    String?    @map("parent_id")
   parent      Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
-  childern    Category[] @relation("CategoryToCategory")
+  children    Category[] @relation("CategoryToCategory")
   Product     Product[]
 }

@@ -1,10 +1,8 @@
 import userService, { UserService } from "./../service/user.service";
 import { Request, Response } from "express";
-import {
-  negativeResponse,
-  positiveResponse,
-} from "../../../../lib/response/response";
-import { generateJwtToken } from "../../../../utils/generate-jwt-token";
+import { asyncHandler } from "@/middleware";
+import sendResponse from "@/lib/response/send_response";
+import { userDto } from "../dto/user.dto";
 
 class UserController {
   private userService: UserService;
@@ -13,72 +11,39 @@ class UserController {
     this.userService = new UserService();
   }
 
-  login = async (req: Request, res: Response) => {
-    try {
-      const user = await userService.login(req.body);
-      const token = generateJwtToken({ id: user.id, role: "user" });
-      return positiveResponse(res, "Login successfully", { token });
-    } catch (err: any) {
-      return negativeResponse(res, err.message);
-    }
-  };
+  login = asyncHandler(async (req: Request, res: Response) => {
+    const validated = userDto.login.parse(req.body);
+    const result = await userService.login(validated);
+    return sendResponse(res, result);
+  });
 
-  register = async (req: Request, res: Response) => {
-    try {
-      const user = await userService.register(req.body);
-      return positiveResponse(res, "User registered successfully", {
-        data: user,
-      });
-    } catch (err: any) {
-      return negativeResponse(res, err.message);
-    }
-  };
+  register = asyncHandler(async (req: Request, res: Response) => {
+    const reqBody = userDto.register.parse(req.body);
+    const user = await userService.register(reqBody);
+    return sendResponse(res, user);
+  });
 
-  getSingle = async (req: Request, res: Response) => {
-    try {
-      const user = await userService.getSingle(Number(req.params.id));
-      return positiveResponse(res, "User retrieved successfully", {
-        data: user,
-      });
-    } catch (err: any) {
-      return negativeResponse(res, err.message);
-    }
-  };
+  getSingle = asyncHandler(async (req: Request, res: Response) => {
+    return sendResponse(res, await userService.getSingle(req.params.id));
+  });
 
-  getAllUser = async (req: Request, res: Response) => {
-    try {
-      const users = await userService.getAllUser(req);
-      return positiveResponse(res, "Users retrieved successfully", {
-        data: users,
-      });
-    } catch (err: any) {
-      return negativeResponse(res, err.message);
-    }
-  };
+  getAllUser = asyncHandler(async (req: Request, res: Response) => {
+    const limit = Number(req?.query?.limit) || 10;
+    const skip = Number(req?.query?.skip) || 0;
+    const search = req?.query?.search as string;
+    return sendResponse(res, await userService.getAllUser(limit, skip, search));
+  });
 
-  updateUser = async (req: Request, res: Response) => {
-    try {
-      console.log("update user");
-      const updatedUser = await userService.updateUser(
-        Number(req.params.id),
-        req.body
-      );
-      return positiveResponse(res, "User updated successfully", {
-        data: updatedUser,
-      });
-    } catch (err: any) {
-      return negativeResponse(res, err.message);
-    }
-  };
+  updateUser = asyncHandler(async (req: Request, res: Response) => {
+    const reqBody = userDto.updateUser.parse(req.body);
+    const user = await userService.updateUser(req.params.id, reqBody);
+    return sendResponse(res, user);
+  });
 
-  deleteUser = async (req: Request, res: Response) => {
-    try {
-      await userService.deleteUser(Number(req.params.id));
-      return positiveResponse(res, "User deleted successfully");
-    } catch (err: any) {
-      return negativeResponse(res, err.message);
-    }
-  };
+  deleteUser = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.params.userId;
+    return sendResponse(res, await userService.deleteUser(userId));
+  });
 }
 
 const userController = new UserController();

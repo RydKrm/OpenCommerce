@@ -1,103 +1,101 @@
+// create a crud controller
+
 import { Request, Response } from "express";
-import orderCrudService from "../service/order_crud.service";
 import { negativeResponse, positiveResponse } from "@/lib/response/response";
+import IRequest from "@/types/IRequest";
+import OrderCRUDService from "../service/order_crud.service";
+import { ROLES } from "@/types/role";
+
 import { OrderStatus } from "@prisma/client";
+import { IOrder } from "../interface/order.interface";
 
-class OrderCrudController {
-  async create(req: Request, res: Response) {
-    try {
-      const order = await orderCrudService.createOrder(req.body);
-      return positiveResponse(res, "Order created successfully", {
-        data: order,
-      });
-    } catch (err: any) {
-      return negativeResponse(res, err.message);
-    }
+class OrderCRUDController {
+  // Add your methods and properties here
+  constructor() {
+    // Initialization code
   }
 
-  async getAllOrder(req: Request, res: Response) {
+  async createOrder(req: IRequest, res: Response) {
     try {
-      const userId = Number(req.headers.userid);
-      const orders = await orderCrudService.getAllOrderOfUser(userId);
-      return positiveResponse(res, "Orders retrieved successfully", {
-        data: orders,
-      });
-    } catch (err: any) {
-      return negativeResponse(res, err.message);
-    }
-  }
+      const { orderItems, ...data } = req.body;
+      const newOrder = await OrderCRUDService.createOrder(data);
 
-  async singleOrder(req: Request, res: Response) {
-    try {
-      const order = await orderCrudService.getSingleOrder(
-        Number(req.params.orderId)
+      // now push order item to item order table
+      const orderItem = await OrderCRUDService.createOrderItem(
+        orderItems,
+        newOrder.id
       );
+
+      return positiveResponse(res, "Order created successfully");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Error creating order";
+      return negativeResponse(res, errorMessage);
+    }
+  }
+
+  async getSingleOrder(req: IRequest, res: Response) {
+    try {
+      const orderId = Number(req.params.orderId);
+      const order = await OrderCRUDService.getSingleOrder(orderId);
       return positiveResponse(res, "Order retrieved successfully", {
         data: order,
       });
-    } catch (err: any) {
-      return negativeResponse(res, err.message);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Error retrieving order";
+      return negativeResponse(res, errorMessage);
     }
   }
 
-  async getAllOrderByUserId(req: Request, res: Response) {
+  async getAllOrders(req: IRequest, res: Response) {
     try {
-      const userId = Number(req.params.userId);
-      const orders = await orderCrudService.getOrdersByUserId(userId);
-      return positiveResponse(res, "Orders retrieved successfully", {
-        data: orders,
+      const userId = Number(req.user_id);
+      const orderList = await OrderCRUDService.getAllOrderOfUser(userId);
+      return positiveResponse(res, "Order list retrieved successfully", {
+        data: orderList,
       });
-    } catch (err: any) {
-      return negativeResponse(res, err.message);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Error retrieving order list";
+      return negativeResponse(res, errorMessage);
     }
   }
 
-  async getAllOrderByProductId(req: Request, res: Response) {
+  async updateOrderStatus(req: IRequest, res: Response) {
     try {
-      const productId = Number(req.params.productId);
-      const orders = await orderCrudService.getOrdersByProductId(productId);
-      return positiveResponse(res, "Orders retrieved successfully", {
-        data: orders,
-      });
-    } catch (err: any) {
-      return negativeResponse(res, err.message);
-    }
-  }
-
-  async update(req: Request, res: Response) {
-    try {
-      const updatedOrder = await orderCrudService.updateOrder(
-        Number(req.params.orderId),
-        req.body
+      const orderId = req.params.id;
+      const status = req.body.status as OrderStatus;
+      const updatedOrder = await OrderCRUDService.updateOrderStatus(
+        Number(orderId),
+        status
       );
-      return positiveResponse(res, "Order updated successfully", {
+      return positiveResponse(res, "Order status updated successfully", {
         data: updatedOrder,
       });
-    } catch (err: any) {
-      return negativeResponse(res, err.message);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Error updating order status";
+      return negativeResponse(res, errorMessage);
     }
   }
 
-  async updateStatus(req: Request, res: Response) {
-    const orderId = Number(req.params.orderId);
-    const status: OrderStatus = req.body?.status;
-    const updatedOrder = await orderCrudService.updateStatus(orderId, status);
-    return positiveResponse(res, "Order status updated successfully", {
-      data: updatedOrder,
-    });
-  }
-
-  async deleteOrder(req: Request, res: Response) {
+  // Delete an order by ID
+  async deleteOrder(req: IRequest, res: Response) {
     try {
-      const orderId = Number(req.params.orderId);
-      await orderCrudService.deleteOrder(orderId);
-      return positiveResponse(res, "Order deleted successfully");
-    } catch (err: any) {
-      return negativeResponse(res, err.message);
+      const orderId = req.params.id;
+      const deletedOrder = await OrderCRUDService.deleteOrder(Number(orderId));
+      return positiveResponse(res, "Order deleted successfully", {
+        data: deletedOrder,
+      });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Error deleting order";
+      return negativeResponse(res, errorMessage);
     }
   }
 }
 
-const orderCrudController = new OrderCrudController();
+const orderCRUDController = new OrderCRUDController();
 
-export default orderCrudController;
+export default orderCRUDController;

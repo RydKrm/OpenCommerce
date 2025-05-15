@@ -10,25 +10,37 @@ import { errorHandler } from "./middleware/errorMiddleware";
 import rateLimiter from "./utils/rate-limiter";
 import { checkDatabaseConnection } from "./database/prisma";
 import { setupSwagger } from "./config/swagger.config";
+import dotenv from "dotenv";
+import { connectRabbitMQ } from "./broker/rabbitmq";
+import IRequest from "./types/IRequest";
 
 const app = express();
 const PORT = 3001;
+dotenv.config();
 
 app.use(express.json());
 app.use(morgan("dev"));
 // checking database connection
 checkDatabaseConnection();
 
+// connected to rabbitmq
+connectRabbitMQ();
+
 app.use(cors());
+app.use((req: IRequest, res, next) => {
+  console.log("Request headers from services", req.user_id);
+  next();
+});
 
 // Rate Limiting middleware
 app.use(rateLimiter);
 
 // swagger docs
 // setupSwagger(app);
+app.use(morgan("dev"));
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, TypeScript with Express!");
+app.get("/health", (req: Request, res: Response) => {
+  res.send("Hello, User Services is UP!");
 });
 
 // app.use((req: Request, res: Response, next: NextFunction) => {

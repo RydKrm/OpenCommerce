@@ -3,7 +3,7 @@
     "url": "http://localhost:3001/api",
     "routes": [
       {
-        "path": "v1/user/profile/register",
+        "path": "v1/user/profile/create",
         "method": ["POST"],
         "middlewares": [],
         "role": []
@@ -17,7 +17,7 @@
       {
         "path": "v1/user/profile/update/:userId",
         "method": ["PATCH"],
-        "middlewares": ["auth"],
+        "middlewares": [],
         "role": []
       },
       {
@@ -27,13 +27,13 @@
         "role": []
       },
       {
-        "path": "v1/user/profile/all",
+        "path": "v1/user/profile/list",
         "method": ["GET"],
         "middlewares": [],
         "role": []
       },
       {
-        "path": "v1/user/profile/single/:userId",
+        "path": "v1/user/profile/details/:userId",
         "method": ["GET"],
         "middlewares": [],
         "role": []
@@ -41,7 +41,19 @@
       {
         "path": "v1/user/profile/delete/:userId",
         "method": ["DELETE"],
-        "middlewares": ["auth"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/user/profile/get-all-by-category/:categoryId",
+        "method": ["GET"],
+        "middlewares": [],
+        "role": []
+      },
+      {
+        "path": "v1/user/profile/get-all-by-vendor/:vendorId",
+        "method": ["GET"],
+        "middlewares": [],
         "role": []
       }
     ]

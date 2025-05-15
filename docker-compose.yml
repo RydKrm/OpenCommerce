@@ -1,0 +1,133 @@
+version: "3.9"
+
+services:
+  user_service:
+    build:
+      context: ./users_services
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./users_services:/app
+      - /app/node_modules
+    environment:
+      - DATABASE_URL=postgresql://postgres:1234@postgres:5432/ecommerce-users?schema=public
+      - ACCESS_TOKEN_SECRET_KEY=ecommerce_access_token
+      - CLOUDINARY_CLOUD_NAME=dk4ee7pjt
+      - CLOUDINARY_API_KEY=562313272941643
+      - CLOUDINARY_API_SECRET=79NWnDzd8cRs0RegetuDEOEdfN0
+      - PORT=3001
+    networks:
+      - backend
+
+  product_service:
+    build:
+      context: ./product_services
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./product_services:/app
+      - /app/node_modules
+    environment:
+      - DATABASE_URL=postgresql://postgres:1234@postgres:5432/ecommerce-products?schema=public
+      - ACCESS_TOKEN_SECRET_KEY=ecommerce_access_token
+      - CLOUDINARY_CLOUD_NAME=dk4ee7pjt
+      - CLOUDINARY_API_KEY=562313272941643
+      - CLOUDINARY_API_SECRET=79NWnDzd8cRs0RegetuDEOEdfN0
+      - PORT=3000
+    networks:
+      - backend
+
+  order_service:
+    build:
+      context: ./order_services
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./order_services:/app
+      - /app/node_modules
+    environment:
+      - DATABASE_URL=postgresql://postgres:1234@postgres:5432/ecommerce-orders?schema=public
+      - ACCESS_TOKEN_SECRET_KEY=ecommerce_access_token
+      - CLOUDINARY_CLOUD_NAME=dk4ee7pjt
+      - CLOUDINARY_API_KEY=562313272941643
+      - CLOUDINARY_API_SECRET=79NWnDzd8cRs0RegetuDEOEdfN0
+      - PORT=3001
+    networks:
+      - backend
+
+  file_storage_service:
+    build:
+      context: ./file_storage_services
+    ports:
+      - "3004:3004"
+    volumes:
+      - ./file_storage_services:/app
+      - /app/node_modules
+    environment:
+      - ACCESS_TOKEN_SECRET_KEY=ecommerce_access_token
+    networks:
+      - backend
+
+  api_gateway:
+    build:
+      context: ./api_gateway
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./api_gateway:/app
+      - /app/node_modules
+    environment:
+      - ACCESS_TOKEN_SECRET_KEY=ecommerce_access_token
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: user
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - backend
+
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+    ports:
+      - "5431:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "6378:8001"
+    depends_on:
+      - redis
+
+volumes:
+  pgdata:
+  rabbitmq_data:
+  redis_data:
+
+networks:
+  backend:
+    driver: bridge

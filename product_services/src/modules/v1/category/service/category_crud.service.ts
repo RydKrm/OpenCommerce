@@ -1,14 +1,17 @@
 import prisma from "@/database/prisma";
 import { ICategory } from "../interface/category.interface";
+import { CreateCategoryType, UpdateCategoryType } from "../dto/category.dto";
+import { send } from "node:process";
+import sendData from "@/lib/response/send_data";
 
 interface CategoryWithChildren {
-  id: number;
+  id: string;
   name: string;
   children: CategoryWithChildren[]; // Recursive type for children
 }
 
 class CategoryService {
-  create = async (data: ICategory) => {
+  create = async (data: CreateCategoryType) => {
     const isExists = await prisma.category.findFirst({
       where: {
         name: data.name,
@@ -16,36 +19,35 @@ class CategoryService {
     });
 
     if (isExists) {
-      throw new Error("Category already exists with this name");
+      return sendData(400, "Category already exists with this name");
     }
 
     const newCategory = await prisma.category.create({
       data: {
         ...data,
         parentId: data.parentId ? data.parentId : null,
-        totalItem: data.totalItem ? data.totalItem : 0,
       },
     });
-    return newCategory;
+    return sendData(200, "Category created successfully", newCategory);
   };
 
-  updateCategory = async (id: number, data: ICategory) => {
+  updateCategory = async (id: string, data: UpdateCategoryType) => {
     const updatedCategory = await prisma.category.update({
       where: { id },
       data: {
         ...data,
       },
     });
-    return updatedCategory;
+    return sendData(200, "Category updated successfully", updatedCategory);
   };
 
-  getSingle = async (id: number) => {
+  getSingle = async (id: string) => {
     const category = await prisma.category.findUnique({
       where: { id },
       select: {
         id: true,
         name: true,
-        childern: {
+        children: {
           select: {
             id: true,
             name: true,
@@ -55,74 +57,22 @@ class CategoryService {
     });
 
     if (!category) {
-      throw new Error("Category not found by id");
+      return sendData(404, "Category not found");
+      // throw new Error("Category not found by id");
     }
 
-    return category;
+    return sendData(200, "Category found successfully", category);
   };
 
-  // get all categories
-  // getAllCategory = async () => {
-  //   const categories = await prisma.category.findMany({
-  //     include: {
-  //       childern: true,
-  //     },
-  //     where: {
-  //       parentId: null,
-  //     },
-  //   });
-  //   return categories;
-  // };
-
-  // getAllCategory = async () => {
-  //   const categoryList = (await prisma.$queryRaw`
-  //   WITH RECURSIVE category_tree AS (
-  //     SELECT id, name, parent_id
-  //     FROM "Category"
-  //     WHERE parent_id IS NULL
-  //     UNION ALL
-  //     SELECT c.id, c.name, c.parent_id
-  //     FROM "Category" c
-  //     INNER JOIN category_tree ct ON c.parent_id = ct.id
-  //   )
-  //   SELECT * FROM category_tree;
-  // `) as ICategory[];
-
-  //   const categoryMap = new Map();
-  //   const roots: any[] = [];
-
-  //   // Step 1: Map categories by ID
-  //   categoryList.forEach((category) => {
-  //     categoryMap.set(category.id, { ...category, children: [] });
-  //   });
-
-  //   // Step 2: Build the tree structure
-  //   categoryList.forEach((category) => {
-  //     if (category.parentId) {
-  //       // If the category has a parent, push it to the parent's children array
-  //       categoryMap
-  //         .get(category.parentId)
-  //         .children.push(categoryMap.get(category.id));
-  //     } else {
-  //       // If it has no parent (root category), add it to the root categories list
-  //       roots.push(categoryMap.get(category.id));
-  //     }
-  //   });
-
-  //   return roots;
-  // };
-
-  // Recursive function to build the category tree
-
   buildCategoryTree = async (
-    parentId: number | null = null
+    parentId: string | null = null
   ): Promise<CategoryWithChildren[]> => {
     const categories = await prisma.category.findMany({
       where: {
         parentId: parentId,
       },
       include: {
-        childern: true, // Fix typo here from `childern` to `children`
+        children: true,
       },
     });
 
@@ -142,24 +92,24 @@ class CategoryService {
 
   getAllCategory = async () => {
     const categories = await this.buildCategoryTree();
-    return categories;
+    return sendData(200, "Category found successfully", categories);
   };
 
-  deleteTree = async (id: number): Promise<void> => {
+  deleteTree = async (id: string): Promise<void> => {
     // Find the category with its children
     const category = await prisma.category.findUnique({
       where: {
         id,
       },
       include: {
-        childern: true, // Include the children of the category
+        children: true,
       },
     });
 
     if (!category) return;
 
     // Delete all child categories first
-    for (const child of category.childern) {
+    for (const child of category.children) {
       await this.deleteTree(child.id); // Recursively delete the child
       await prisma.category.delete({
         where: {
@@ -170,7 +120,7 @@ class CategoryService {
   };
 
   // delete category
-  deleteCategory = async (id: number) => {
+  deleteCategory = async (id: string) => {
     const isExist = await prisma.category.findFirst({
       where: { id },
     });
@@ -206,7 +156,7 @@ class CategoryService {
             id: parentCategory.id,
           },
           data: {
-            childern: {
+            children: {
               disconnect: {
                 id: category.id,
               },
@@ -222,6 +172,8 @@ class CategoryService {
         id,
       },
     });
+
+    return sendData(200, "Category deleted successfully");
   };
 }
 

@@ -1,64 +1,33 @@
 import { z } from "zod";
 
-class ProductCrudDto {
-  create = z.object({
+export const CreateProductDto = z
+  .object({
     name: z
       .string({ message: "Product name is required" })
       .min(3, { message: "Name must be greater than 5 character" }),
-    categoryId: z.number({ message: "Category Id is required" }),
-    sellerId: z.number().optional(),
+    categoryId: z.string({ message: "Category Id is required" }),
+    images: z.array(z.string()),
     price: z
-      .number({ message: "Price is required" })
-      .positive({ message: "Price must me positive number" }),
+      .string({ message: "Price is required" })
+      .transform((item) => Number(item)),
     previousPrice: z
-      .number()
-      .positive({ message: "Price must be a positive number" })
+      .string()
+      .transform((item) => Number(item))
       .optional(),
     description: z
       .string({ message: "Description is required" })
       .min(10, { message: "Description must be greater than 10 character" }),
     quantity: z
-      .number({ message: "Quantity field is required" })
-      .min(1, { message: "Product quantity must be positive number" }),
+      .string({ message: "Quantity field is required" })
+      .transform((item) => Number(item)),
     rating: z
-      .number()
-      .min(0, { message: "Rating is minimum 0 and max 5 " })
-      .max(5, { message: "Rating is minimum 0 and max 5 " })
+      .string()
+      .transform((item) => Number(item))
       .optional(),
-    tag: z.array(z.string()).optional(),
-  });
+  })
+  .strict();
 
-  update = z.object({
-    name: z
-      .string({ message: "Product name is required" })
-      .min(3, { message: "Name must be greater than 5 character" })
-      .optional(),
-    categoryId: z.number({ message: "Category Id is required" }).optional(),
-    price: z
-      .number({ message: "Price is required" })
-      .positive({ message: "Price must me positive number" })
-      .optional(),
-    previousPrice: z
-      .number()
-      .positive({ message: "Price must be a positive number" })
-      .optional(),
-    description: z
-      .string({ message: "Description is required" })
-      .min(10, { message: "Description must be greater than 10 character" })
-      .optional(),
-    quantity: z
-      .number({ message: "Quantity field is required" })
-      .min(1, { message: "Product quantity must be positive number" })
-      .optional(),
-    rating: z
-      .number()
-      .min(0, { message: "Rating is minimum 0 and max 5 " })
-      .max(5, { message: "Rating is minimum 0 and max 5 " })
-      .optional(),
-    tag: z.array(z.string()).optional(),
-  });
-}
+export const UpdateProductDto = CreateProductDto.partial();
 
-const productCrudDto = new ProductCrudDto();
-
-export default productCrudDto;
+export type CreateProductType = z.infer<typeof CreateProductDto>;
+export type UpdateProductType = z.infer<typeof UpdateProductDto>;

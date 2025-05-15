@@ -1,5 +1,8 @@
 model WishList {
-  id        Int @id @default(autoincrement())
-  userId    Int
-  productId Int
+  id        String @id @default(cuid())
+  userId    String
+  productId String
+
+  //product Product @relation(fields: [productId], references: [id])
+  Products Product @relation(fields: [productId], references: [id])
 }

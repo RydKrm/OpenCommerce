@@ -4,6 +4,7 @@ import { errorHandler } from "./middleware/errorMiddleware";
 import rateLimiter from "./utils/rate-limiter";
 import { checkDatabaseConnection } from "./database/prisma";
 import cors from "cors";
+import morgan from "morgan";
 // import { setupSwagger } from "./config/swagger.config";
 
 const app = express();
@@ -16,6 +17,8 @@ checkDatabaseConnection();
 
 app.use(cors());
 
+app.use(morgan("dev"));
+
 // Rate Limiting middleware
 app.use(rateLimiter);
 
@@ -23,7 +26,7 @@ app.use(rateLimiter);
 // setupSwagger(app);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, TypeScript with Express!");
+  res.send("Hello, Order Server is UP!");
 });
 
 app.use("/api/v1", v1_route);

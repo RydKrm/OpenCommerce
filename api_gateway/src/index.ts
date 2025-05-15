@@ -27,13 +27,14 @@ app.use("/api", limiter);
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 configureRoutes(app);
 
 app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({
-    message: "API Gateway is running",
+    message: "Hello, API Gateway is UP",
   });
 });
 

@@ -1,23 +1,23 @@
 model Product {
-  id            Int      @id @default(autoincrement())
+  id            String   @id @default(cuid())
   name          String
-  sellerId      Int?
-  categoryId    Int
+  categoryId    String
   price         Float
-  previousPrice Float    @map("previous_price")
+  previousPrice Float?   @map("previous_price")
   description   String
   quantity      Int
   rating        Float    @default(0)
-  image         String[]
   visitCount    Int      @default(0)
   commentCount  Int      @default(0) @map("comment")
   reviewCount   Int      @default(0) @map("review")
   status        Boolean  @default(true)
-  tag           String[]
+  createdAt     DateTime @default(now())
 
   Category Category   @relation(fields: [categoryId], references: [id])
   Comment  Comment[]
   Reaction Reaction[]
   Reviews  Reviews[]
   Images   Images[]
+
+  WishList WishList[]
 }

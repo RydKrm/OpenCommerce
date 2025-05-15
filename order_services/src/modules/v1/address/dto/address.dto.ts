@@ -2,13 +2,17 @@ import z from "zod";
 
 class AddressCrudDto {
   create = z.object({
-    userId: z.string({ message: "User id is required" }),
-    road: z.string().optional(),
-    house: z.string().optional(),
-    district: z.string().optional(),
+    userId: z.string().optional(),
+    addressLine1: z.string({ message: "Address line 1 is required" }),
+    addressLine2: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    postalCode: z.string().optional(),
     country: z.string().optional(),
-    description: z.string().optional(),
+    isDefault: z.boolean().optional(),
   });
+
+  update = this.create.partial();
 }
 
 const addressCrudDto = new AddressCrudDto();

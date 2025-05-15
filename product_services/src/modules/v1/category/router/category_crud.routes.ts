@@ -1,14 +1,10 @@
 import express from "express";
 import categoryCrudController from "../controller/category_crud.controller";
-import validator from "@/utils/validator";
-import categoryDto from "../dto/category.dto";
-import auth from "@/auth/authenticate";
-import { ROLES } from "@/types/role";
 const category_crud_router = express.Router();
 
 category_crud_router.post(
   "/create",
-  validator(categoryDto.create),
+  // auth([ROLES.ADMIN]),
   categoryCrudController.create
 );
 
@@ -19,11 +15,7 @@ category_crud_router.get(
   categoryCrudController.getSingleCategory
 );
 
-category_crud_router.put(
-  "/update/:id",
-  validator(categoryDto.updateCategory),
-  categoryCrudController.updateCategory
-);
+category_crud_router.put("/update/:id", categoryCrudController.updateCategory);
 
 category_crud_router.delete(
   "/delete/:id",

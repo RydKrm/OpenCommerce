@@ -1,14 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
-  // for sliting the database into multiple file
-  // every file will be located in the same directory prisma-schema files
-  // prisma will automatically merge all the files int one file
+  provider        = "prisma-client-js"
   previewFeatures = ["prismaSchemaFolder"]
 }
 

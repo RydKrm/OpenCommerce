@@ -1,24 +1,45 @@
 import prisma from "@/database/prisma";
-import { IProduct } from "../interface/product.interface";
+import { CreateProductType, UpdateProductType } from "../dto/product.crud.dto";
+import sendData from "@/lib/response/send_data";
+import { IQuery } from "@/types/IQuery";
 
 class ProductCrudService {
-  async createProduct(product: IProduct) {
+  async createProduct(product: CreateProductType) {
+    const { images, ...rest } = product;
     const newProduct = await prisma.product.create({
-      data: product,
+      data: {
+        ...rest,
+        Images: {
+          create: images.map((image) => ({
+            image_url: image,
+            image_type: "product",
+          })),
+        },
+      },
+      include: {
+        Images: {
+          select: {
+            image_id: true,
+            image_type: true,
+            image_url: true,
+          },
+        },
+      },
     });
-    return newProduct;
-  }
 
-  async updateProduct(id: number, updatedProduct: IProduct) {
-    await prisma.product.update({
+    return sendData(200, "Product created successfully", newProduct);
+  }
+  async updateProduct(id: string, updatedProduct: UpdateProductType) {
+    const updateProduct = await prisma.product.update({
       where: { id },
       data: updatedProduct,
     });
+    return sendData(200, "Product updated successfully", updateProduct);
   }
 
-  async updateProductStatus(id: number) {
+  async updateProductStatus(productId: string) {
     const isExists = await prisma.product.findFirst({
-      where: { id },
+      where: { id: productId },
     });
 
     if (!isExists) {
@@ -26,69 +47,83 @@ class ProductCrudService {
     }
 
     const updatedProduct = await prisma.product.update({
-      where: { id },
+      where: { id: productId },
       data: { status: !isExists.status },
     });
-    return updatedProduct;
+    return sendData(200, "Product status updated successfully", updatedProduct);
   }
 
-  async deleteProduct(id: number) {
+  async deleteProduct(id: string) {
     const isExist = await prisma.product.findFirst({
       where: { id },
     });
     if (!isExist) {
-      throw new Error("Product not found by id");
+      return sendData(400, "Product not found by id");
     }
 
     await prisma.product.delete({
       where: { id },
     });
+
+    return sendData(200, "Product deleted successfully");
   }
 
-  async getAllProducts() {
-    const products = await prisma.product.findMany({});
-    return products;
+  async getAllProducts(query: IQuery) {
+    const { limit = 10, skip = 0, search = "", categoryId } = query;
+
+    const find: any = {};
+
+    if (categoryId) {
+      find["categoryId"] = categoryId;
+    }
+
+    if (search) {
+      find["name"] = {
+        contains: search,
+        mode: "insensitive",
+      };
+    }
+
+    const products = await prisma.product.findMany({
+      where: find,
+      take: Number(limit),
+      skip: Number(skip),
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        Images: true,
+        Category: true,
+      },
+    });
+
+    const total = await prisma.product.count({
+      where: find,
+    });
+
+    return sendData(200, "Products fetched successfully", {
+      list: products,
+      total: total,
+    });
   }
 
-  async getProductById(id: number) {
+  async getProductById(id: string) {
     const product = await prisma.product.findUnique({
       where: { id },
+      include: {
+        Images: true,
+        Category: true,
+        Comment: true,
+        Reaction: true,
+        Reviews: true,
+      },
     });
     if (!product) {
-      throw new Error("Product not found by id");
+      return sendData(400, "Product not found by id");
     }
-    return product;
-  }
-
-  // Search product by name
-  async searchProductByName(name: string) {
-    const products = await prisma.product.findMany({
-      where: {
-        name: { contains: name },
-      },
-    });
-    return products;
-  }
-
-  async findAllProductByCategory(category: number) {
-    const products = await prisma.product.findMany({
-      where: {
-        categoryId: category,
-      },
-    });
-    return products;
-  }
-
-  async findAllProductByVendor(vendorId: number) {
-    const products = await prisma.product.findMany({
-      where: {
-        sellerId: vendorId,
-      },
-    });
-    return products;
+    return sendData(200, "Product fetched successfully", product);
   }
 }
-
 const productCrudService = new ProductCrudService();
 
 export default productCrudService;

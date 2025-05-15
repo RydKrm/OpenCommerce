@@ -1,25 +1,17 @@
-import validator from "../../../../utils/validator";
 import express from "express";
-import { userDto } from "../dto/user.dto";
 import userController from "../controller/user.controller";
 
 const userProfileRouter = express.Router();
 
-userProfileRouter.post(
-  "/login",
-  validator(userDto.login),
-  userController.login
-);
+userProfileRouter.post("/login", userController.login);
 
-userProfileRouter.post(
-  "/register",
-  validator(userDto.register),
-  userController.register
-);
+userProfileRouter.post("/create", userController.register);
 
-userProfileRouter.get("/all", userController.getAllUser);
+userProfileRouter.post("/register", userController.register);
 
-userProfileRouter.get("/single/:id", userController.getSingle);
+userProfileRouter.get("/list", userController.getAllUser);
+
+userProfileRouter.get("/details/:id", userController.getSingle);
 
 userProfileRouter.patch("/update/:id", userController.updateUser);
 

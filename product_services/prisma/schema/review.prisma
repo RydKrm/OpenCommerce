@@ -1,11 +1,11 @@
 model Reviews {
-  id          Int       @id @default(autoincrement())
-  userId      Int
-  productId   Int
+  id          String @id @default(cuid())
+  userId      String
+  productId   String
   rating      Int
   description String
 
-  Product     Product    @relation(fields: [productId], references: [id])
-  Images      Images[]
+  Product Product   @relation(fields: [productId], references: [id])
+  Images  Images[]
   Comment Comment[]
 }

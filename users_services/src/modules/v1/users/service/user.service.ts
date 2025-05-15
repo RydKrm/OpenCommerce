@@ -1,110 +1,125 @@
-import bycrpt from "bcrypt";
-import { Request } from "express";
+import * as jwt from "jsonwebtoken";
+import * as bcrypt from "bcrypt";
+import IResponse from "@/types/IResponse";
 import prisma from "../../../../database/prisma";
-import { IUser, IUserLogin } from "../interface/user.interface";
+import { IUpdateUser, IUser, IUserLogin } from "../interface/user.interface";
+import sendData from "@/lib/response/send_data";
 
 export class UserService {
-  login = async (data: IUserLogin): Promise<IUser> => {
+  login = async (data: IUserLogin): Promise<IResponse> => {
     const user = await prisma.user.findUnique({
       where: {
         email: data.email,
       },
     });
     if (!user) {
-      throw new Error("User not found by id");
+      return sendData(400, "User not found by id");
     }
-    return user;
+
+    // compare password
+
+    if (!bcrypt.compareSync(data.password, user.password)) {
+      return sendData(400, "Password is incorrect");
+    }
+
+    // generate jwt token
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.ACCESS_TOKEN_SECRET_KEY || "",
+      {
+        expiresIn: "30d",
+      }
+    );
+
+    return sendData(200, "User Data", {
+      user: { ...user, password: null },
+      token,
+    });
   };
 
-  register = async (data: IUser) => {
-    const isUserExists = await prisma.user.findUnique({
+  register = async (data: IUser): Promise<IResponse> => {
+    const isUserExists = await prisma.user.findFirst({
       where: {
-        email: data.email,
+        OR: [{ email: data.email }, { phoneNumber: data.phoneNumber }],
       },
     });
     if (isUserExists) {
-      throw new Error("User already exists by email");
+      return sendData(
+        400,
+        "User already exists with this email or phone number"
+      );
     }
 
-    // hash password
-    const salt = bycrpt.genSaltSync(10);
-    const hash = bycrpt.hashSync(data.password, salt);
+    // create a hash password from bcrypt
+    const hashPassword = bcrypt.hashSync(data.password, 10);
 
     const newUser = await prisma.user.create({
       data: {
         ...data,
-        password: hash,
+        password: hashPassword,
       },
     });
-
-    return { ...newUser, password: null };
+    return sendData(200, "User created successfully", newUser);
   };
 
-  getSingle = async (id: number) => {
+  getSingle = async (id: string): Promise<IResponse> => {
     const singleUser = await prisma.user.findUnique({
       where: {
-        id,
+        id: id,
       },
     });
 
     if (!singleUser) {
-      throw new Error("User not found by id");
+      return sendData(400, "User not found by id");
     }
 
-    return { ...singleUser, password: null };
+    return sendData(200, "User Data", singleUser);
   };
 
-  getAllUser = async (req: Request) => {
-    const { limit = 10, skip = 0, search } = req.params;
-    const where = {};
+  getAllUser = async (
+    limit = 10,
+    skip = 0,
+    search = ""
+  ): Promise<IResponse> => {
+    const query: any = {};
+
     if (search) {
-      Object.assign(where, {
-        OR: [
-          {
-            name: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-          {
-            email: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-        ],
-      });
+      query["OR"] = [
+        { name: { contains: search } },
+        { email: { contains: search } },
+        { phoneNumber: { contains: search } },
+      ];
     }
+
     const allUser = await prisma.user.findMany({
-      where,
-      skip: Number(skip),
-      take: Number(limit),
+      skip,
+      take: limit,
     });
-
-    const total = await prisma.user.count({
-      where,
-    });
-
-    return { list: allUser, total };
+    const count = await prisma.user.count();
+    return sendData(200, "User Data", { list: allUser, count });
   };
 
-  updateUser = async (id: number, user: IUser) => {
-    const updateUser = await prisma.user.update({
-      where: { id },
-      data: { ...user },
-    });
-
-    if (!updateUser) {
-      throw new Error("User not found by id");
+  updateUser = async (
+    id: string,
+    user: IUpdateUser | undefined
+  ): Promise<IResponse> => {
+    try {
+      const updateUser = await prisma.user.update({
+        where: { id },
+        data: { ...user },
+      });
+      return sendData(200, "User updated successfully", updateUser);
+    } catch (error) {
+      return sendData(400, "User not found by id");
     }
-    return updateUser;
   };
 
-  deleteUser = async (id: number) => {
+  deleteUser = async (id: string): Promise<IResponse> => {
     const user = await prisma.user.delete({ where: { id } });
     if (!user) {
-      throw new Error("User not found by id");
+      return sendData(400, "User not found by id");
     }
+    return sendData(200, "User deleted successfully");
   };
 }
 

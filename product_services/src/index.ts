@@ -4,9 +4,13 @@ import { errorHandler } from "./middleware/errorMiddleware";
 import rateLimiter from "./utils/rate-limiter";
 import { checkDatabaseConnection } from "./database/prisma";
 import cors from "cors";
+import morgan from "morgan";
+import { connectRabbitMQ } from "./broker/rabbitmq";
+import { startRPCServer } from "./modules/v1/product/broker/send_cart.broker";
 // import { setupSwagger } from "./config/swagger.config";
 
 const app = express();
+
 const PORT = 3000;
 
 app.use(express.json());
@@ -14,8 +18,14 @@ app.use(express.json());
 // checking database connection
 checkDatabaseConnection();
 
-app.use(cors());
+// connect to rabbitmq
+connectRabbitMQ();
 
+// consumer called
+startRPCServer();
+
+app.use(cors());
+app.use(morgan("dev"));
 // Rate Limiting middleware
 app.use(rateLimiter);
 
@@ -23,7 +33,7 @@ app.use(rateLimiter);
 // setupSwagger(app);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, TypeScript with Express!");
+  res.send("Hello, Product Server is UP");
 });
 
 app.use("/api/v1", v1_route);
