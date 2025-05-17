@@ -3,28 +3,25 @@ import { IOrder, IOrderItem } from "../interface/order.interface";
 import crudLibrary from "@/lib/crud/crud.lib";
 import { Request } from "express";
 import { OrderStatus } from "@prisma/client";
+import { CreateOrderType, OrderItemType } from "../dto/order_crud.dto";
 
 class OrderCrudService {
   // Create a new order
-  createOrder = async (data: IOrder) => {
+  createOrder = async (data: CreateOrderType) => {
+    const { orderItems, ...rest } = data;
     const newOrder = await prisma.orders.create({
       data: {
-        userId: data.userId,
-        totalAmount: data.totalAmount,
-        addressId: data.addressId,
-        status: (data?.status as OrderStatus) || OrderStatus.PENDING,
+        ...rest,
       },
     });
     return newOrder;
   };
 
   // Create multiple order items for a specific order
-  createOrderItem = async (data: IOrderItem[], orderId: number) => {
-    const orderItemList: IOrderItem[] = data.map((item) => ({
+  createOrderItem = async (data: OrderItemType[], orderId: string) => {
+    const orderItemList = data.map((item) => ({
       orderId,
-      productId: item.productId,
-      quantity: item.quantity,
-      price: item.price,
+      ...item,
     }));
 
     const newOrderItems = await prisma.orderItem.createMany({
@@ -35,7 +32,7 @@ class OrderCrudService {
   };
 
   // Get a single order by ID, including related items
-  getSingleOrder = async (orderId: number) => {
+  getSingleOrder = async (orderId: string) => {
     const order = await prisma.orders.findFirst({
       where: {
         id: orderId,
@@ -50,7 +47,7 @@ class OrderCrudService {
   };
 
   // Get all orders for a specific user
-  getAllOrderOfUser = async (userId: number) => {
+  getAllOrderOfUser = async (userId: string) => {
     const orderList = await prisma.orders.findMany({
       where: {
         userId,
@@ -78,24 +75,8 @@ class OrderCrudService {
     return list;
   };
 
-  // Update an order by ID
-  updateOrder = async (orderId: number, data: Partial<IOrder>) => {
-    const updatedOrder = await prisma.orders.update({
-      where: {
-        id: orderId,
-      },
-      data: {
-        totalAmount: data.totalAmount,
-        addressId: data.addressId,
-        status: (data?.status as OrderStatus) || OrderStatus.PENDING,
-      },
-    });
-
-    return updatedOrder;
-  };
-
   // update order status
-  updateOrderStatus = async (orderId: number, status: OrderStatus) => {
+  updateOrderStatus = async (orderId: string, status: OrderStatus) => {
     try {
       const updatedOrder = await prisma.orders.update({
         where: {
@@ -113,7 +94,7 @@ class OrderCrudService {
   };
 
   // Delete an order by ID
-  deleteOrder = async (orderId: number) => {
+  deleteOrder = async (orderId: string) => {
     const deletedOrder = await prisma.orders.delete({
       where: {
         id: orderId,
@@ -124,7 +105,7 @@ class OrderCrudService {
   };
 
   // Delete all order items for a specific order
-  deleteOrderItems = async (orderId: number) => {
+  deleteOrderItems = async (orderId: string) => {
     const deletedItems = await prisma.orderItem.deleteMany({
       where: {
         orderId,

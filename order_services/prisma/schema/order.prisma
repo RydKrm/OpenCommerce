@@ -1,12 +1,16 @@
 model Orders {
-  id          String      @id @default(cuid())
-  userId      String
-  orderDate   DateTime    @default(now()) @map("order_date")
-  totalAmount Float       @map("total_amount")
-  addressId   String
-  status      OrderStatus @default(PENDING)
-  createdAt   DateTime?   @default(now())
-  updateAt    DateTime?   @updatedAt
+  id             String      @id @default(cuid())
+  userId         String
+  totalAmount    Float 
+  subTotalAmount Float
+  vat            Int?
+  discount       Int?
+  discountType   DiscountType? @default(NO_DISCOUNT) 
+  addressId      String
+  isDeleted      Boolean @default(false)
+  status         OrderStatus @default(PENDING)
+  createdAt      DateTime?   @default(now())
+  updateAt       DateTime?   @updatedAt
 
   Address    Address      @relation(fields: [addressId], references: [id])
   OrderItem  OrderItem[]
@@ -14,12 +18,17 @@ model Orders {
   Deliveries Deliveries[]
 }
 
+
+
 model OrderItem {
-  id        String    @id @default(cuid())
-  orderId   String
-  productId String
-  quantity  String
-  price     Float
+  id          String    @id @default(cuid())
+  productName String
+  categoryId  String
+  orderId     String
+  productId   String
+  quantity    Int
+  price        Float
+  discountPrice Float?
   createdAt DateTime? @default(now())
   updateAt  DateTime? @updatedAt
 
@@ -33,4 +42,11 @@ enum OrderStatus {
   RETURNED
   EXPIRED
   CANCELLED
+}
+
+enum DiscountType {
+  NO_DISCOUNT
+  CODE
+  YEARLY
+  MEMBERSHIP
 }
