@@ -1,4 +1,4 @@
-# (OPEN-COMMERCE) E-Commerce Microservices Platform 🛍️
+# (OPEN-COMMERCE) An E-Commerce Microservices Platform 🛍️
 
 ![Microservices](https://img.shields.io/badge/architecture-microservices-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-4.0+-3178C6)

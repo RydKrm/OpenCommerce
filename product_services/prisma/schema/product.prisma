@@ -18,6 +18,27 @@ model Product {
   Reaction Reaction[]
   Reviews  Reviews[]
   Images   Images[]
-
   WishList WishList[]
+  Product_Inventory Product_Inventory[]
+
+}
+
+model Product_Inventory{
+  id String @id @default(cuid())
+  productId String @db.VarChar(30)
+  userId String? @db.VarChar(30)
+  quantity Int
+  price Int
+  type InventoryType  
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  Product Product @relation(references: [id],fields: [productId])
+
+  @@map("product_inventory")
+}
+
+enum InventoryType{
+  incoming
+  outgoing
 }
