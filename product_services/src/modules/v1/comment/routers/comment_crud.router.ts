@@ -1,23 +1,11 @@
-import auth from "@/auth/authenticate";
 import express from "express";
-import { ROLES } from "@/types/role";
 import commentCrudController from "../controllers/comment_crud.controller";
-import validator from "@/utils/validator";
-import commentCrudDto from "../dto/comment_crud.dto";
 
 const commentCrudRouter = express.Router();
 
-commentCrudRouter.post(
-  "/create",
-  validator(commentCrudDto.create),
-  commentCrudController.create
-);
+commentCrudRouter.post("/create", commentCrudController.create);
 
-commentCrudRouter.patch(
-  "/update/:commentId",
-  validator(commentCrudDto.update),
-  commentCrudController.update
-);
+commentCrudRouter.patch("/update/:commentId", commentCrudController.update);
 commentCrudRouter.get("/single/:id", commentCrudController.getSingleComment);
 
 commentCrudRouter.get(

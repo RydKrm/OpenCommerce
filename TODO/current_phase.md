@@ -1,11 +1,9 @@
 ## User Services
 
-- login / register
-- update profile
-- update info
-- wish list
-- compare product
--
+- login / register - done
+- update profile - done
+- update info - done
+- wish list - done
 
 ## Product Services
 
@@ -26,4 +24,3 @@
 - Manage Inventory
 - Track Order
 - Payment Status
--

@@ -2,82 +2,77 @@ import prisma from "@/database/prisma";
 import { IComment } from "../interface/comment.interface";
 import pagination from "@/lib/pagination/pagination";
 import { Request } from "express";
-class CommentCrudService {
-  async create(data: IComment) {
-    const newComment = await prisma.comment.create({
-      data,
-    });
-    return newComment;
-  }
+import { CreateCategoryType } from "../../category/dto/category.dto";
+import { CreateCommentDtoType } from "../dto/comment_crud.dto";
+import sendData from "@/lib/response/send_data";
 
-  async getAllByUser(req: Request) {
-    const userId = Number(req.params.userId);
-    const commentList = await pagination(req, prisma.comment, { userId }, {});
-    return commentList;
-  }
+export const create = async (data: CreateCommentDtoType) => {
+  const { images, ...rest } = data;
+  const newComment = await prisma.comment.create({
+    data: rest,
+  });
+  return sendData(200, "Comment created successfully", newComment);
+};
 
-  async getAllByProduct(req: Request) {
-    const productId = Number(req.params.productId);
-    const commentList = await pagination(
-      req,
-      prisma.comment,
-      { productId },
-      {}
-    );
-    return commentList;
-  }
+export const getAllByUser = async (req: Request) => {
+  const userId = Number(req.params.userId);
+  const commentList = await pagination(req, prisma.comment, { userId }, {});
+  return commentList;
+};
 
-  async getAllByReview(req: Request) {
-    const reviewId = Number(req.params.reviewId);
-    const commentList = await pagination(req, prisma.comment, { reviewId }, {});
-    return commentList;
-  }
+export const getAllByProduct = async (req: Request) => {
+  const productId = Number(req.params.productId);
+  const commentList = await pagination(req, prisma.comment, { productId }, {});
+  return commentList;
+};
 
-  async getAllByPost(req: Request) {
-    const postId = Number(req.params.postId);
-    const commentList = await pagination(
-      req,
-      prisma.comment,
-      { postId: postId },
-      {}
-    );
-    return commentList;
-  }
+export const getAllByReview = async (req: Request) => {
+  const reviewId = Number(req.params.reviewId);
+  const commentList = await pagination(req, prisma.comment, { reviewId }, {});
+  return commentList;
+};
 
-  async getSingleComment(commentId: number) {
-    const comment = await prisma.comment.findFirst({
+export const getAllByPost = async (req: Request) => {
+  const postId = Number(req.params.postId);
+  const commentList = await pagination(
+    req,
+    prisma.comment,
+    { postId: postId },
+    {}
+  );
+  return commentList;
+};
+
+export const getSingleComment = async (commentId: number) => {
+  const comment = await prisma.comment.findFirst({
+    where: {
+      id: commentId,
+    },
+  });
+  if (!comment) {
+    throw new Error("Comment not found");
+  }
+  return comment;
+};
+
+export const updateComment = async (commentId: number, data: IComment) => {
+  const updatedComment = await prisma.comment.update({
+    where: {
+      id: commentId,
+    },
+    data,
+  });
+  return updatedComment;
+};
+
+export const deleteComment = async (commentId: number) => {
+  try {
+    const comment = await prisma.comment.delete({
       where: {
         id: commentId,
       },
     });
-    if (!comment) {
-      throw new Error("Comment not found");
-    }
-    return comment;
+  } catch (error) {
+    throw new Error("Comment not found");
   }
-
-  async updateComment(commentId: number, data: IComment) {
-    const updatedComment = await prisma.comment.update({
-      where: {
-        id: commentId,
-      },
-      data,
-    });
-    return updatedComment;
-  }
-
-  async deleteComment(commentId: number) {
-    try {
-      const comment = await prisma.comment.delete({
-        where: {
-          id: commentId,
-        },
-      });
-    } catch (error) {
-      throw new Error("Comment not found");
-    }
-  }
-}
-
-const commentCrudService = new CommentCrudService();
-export default commentCrudService;
+};
