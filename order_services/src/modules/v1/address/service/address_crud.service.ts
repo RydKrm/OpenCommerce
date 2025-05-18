@@ -1,89 +1,80 @@
 // write me service for address crud
 import prisma from "@/database/prisma";
 import { IAddress } from "../interface/address.interface";
-import crudLibrary from "@/lib/crud/crud.lib";
 import { Request } from "express";
-import { ROLES } from "@/types/role";
 import IRequest from "@/types/IRequest";
+import { CreateAddressType, UpdateAddressType } from "../dto/address.dto";
+import sendData from "@/lib/response/send_data";
+import { IQuery } from "@/types/IQuery";
+import { send } from "process";
 
-class AddressCRUDService {
-  createAddress = async (data: IAddress) => {
-    const newAddress = await prisma.address.create({
-      data: {
-        userId: data.userId,
-        addressLine1: data?.addressLine1,
-        addressLine2: data?.addressLine2,
-        city: data?.city,
-        state: data?.state,
-        country: data?.country,
-        postalCode: data?.postalCode,
-      },
-    });
-    return newAddress;
-  };
+export const createAddress = async (data: CreateAddressType) => {
+  const newAddress = await prisma.address.create({
+    data,
+  });
+  return sendData(200, "Address created successfully", newAddress);
+};
 
-  // Get Single address
-  getSingleAddress = async (id: string) => {
-    const address = await prisma.address.findUnique({
-      where: {
-        id: Number(id),
-      },
-    });
-    return address;
-  };
+// Get Single address
+export const getSingleAddress = async (id: string) => {
+  const address = await prisma.address.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (!address) return sendData(400, "Address not found by id");
+  return sendData(200, "Address retrieved successfully", address);
+};
 
-  // Get all address
-  getAllAddress = async (req: Request) => {
-    const { skip = 0, limit = 10 } = req.query;
-    const { userId } = req.params;
-    const list = await prisma.address.findMany({
-      where: {
-        userId: Number(userId),
-      },
-      skip: Number(skip),
-      take: Number(limit),
-    });
+// Get all address
+export const getAllAddress = async (userId: string, query: IQuery) => {
+  const { skip = 0, limit = 10 } = query;
+  const list = await prisma.address.findMany({
+    where: {
+      userId: Number(userId),
+    },
+    skip: Number(skip),
+    take: Number(limit),
+  });
 
-    const total = await prisma.address.count({
-      where: {
-        userId: Number(userId),
-      },
-    });
+  const total = await prisma.address.count({
+    where: {
+      userId: Number(userId),
+    },
+  });
 
-    return { total, list };
-  };
+  return sendData(200, "Address retrieved successfully", { list, total });
+};
 
-  // Update address
+// Update address
 
-  updateAddress = async (req: IRequest) => {
-    const { id } = req.params;
-    const { userId, ...data } = req.body;
+export const updateAddress = async (
+  addressId: string,
+  data: UpdateAddressType
+) => {
+  try {
     const address = await prisma.address.update({
       where: {
-        id: Number(id),
+        id: addressId,
       },
-      data: {
-        ...data,
+      data: data,
+    });
+    return sendData(200, "Address updated successfully", address);
+  } catch (error) {
+    return sendData(400, "Address not updated");
+  }
+};
+
+// Delete address
+export const deleteAddress = async (addressId: string) => {
+  try {
+    const address = await prisma.address.delete({
+      where: {
+        id: addressId,
       },
     });
-    return address;
-  };
-
-  // Delete address
-  deleteAddress = async (req: IRequest) => {
-    try {
-      const { id } = req.params;
-      const address = await prisma.address.delete({
-        where: {
-          id: Number(id),
-        },
-      });
-      return address;
-    } catch (error) {
-      throw new Error("Address not found by id");
-    }
-  };
-  // Get address by userId
-}
-
-export default new AddressCRUDService();
+    return sendData(200, "Address deleted successfully", address);
+  } catch (error) {
+    return sendData(400, "Address not deleted");
+  }
+};

@@ -10,17 +10,17 @@
 - Product CRUD - Done
 - Product list page
 - Product filtering
-- product comment
-- product comment reply
+- product comment - Done
+- product comment reply - done
 - product review
 - category
 - inventory
 
 ## Order Services
 
-- Create Order
-- User Address
-- Update order Status
+- Create Order - code
+- User Address - code
+- Update order Status - code
 - Manage Inventory
 - Track Order
 - Payment Status

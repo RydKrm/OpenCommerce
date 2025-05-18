@@ -5,8 +5,9 @@ import { Request } from "express";
 import { CreateCategoryType } from "../../category/dto/category.dto";
 import { CreateCommentDtoType } from "../dto/comment_crud.dto";
 import sendData from "@/lib/response/send_data";
+import { IQuery } from "@/types/IQuery";
 
-export const create = async (data: CreateCommentDtoType) => {
+export const createComment = async (data: CreateCommentDtoType) => {
   const { images, ...rest } = data;
   const newComment = await prisma.comment.create({
     data: rest,
@@ -14,65 +15,96 @@ export const create = async (data: CreateCommentDtoType) => {
   return sendData(200, "Comment created successfully", newComment);
 };
 
-export const getAllByUser = async (req: Request) => {
-  const userId = Number(req.params.userId);
-  const commentList = await pagination(req, prisma.comment, { userId }, {});
-  return commentList;
+export const commentListByUser = async (userId: string, query: IQuery) => {
+  const { limit = 10, skip = 0 } = query;
+  const list = await prisma.comment.findMany({
+    where: {
+      userId,
+    },
+    take: Number(limit),
+    skip: Number(skip),
+  });
+
+  const totalCount = await prisma.comment.count({
+    where: {
+      userId: Number(userId),
+    },
+  });
+
+  return sendData(200, "Comments fetched successfully", { list, totalCount });
 };
 
-export const getAllByProduct = async (req: Request) => {
-  const productId = Number(req.params.productId);
-  const commentList = await pagination(req, prisma.comment, { productId }, {});
-  return commentList;
+export const commentListByProduct = async (
+  productId: string,
+  query: IQuery
+) => {
+  const { limit = 10, skip = 0 } = query;
+  const list = await prisma.comment.findMany({
+    where: {
+      productId,
+    },
+    take: Number(limit),
+    skip: Number(skip),
+  });
+
+  const totalCount = await prisma.comment.count({
+    where: {
+      userId: Number(productId),
+    },
+  });
+
+  return sendData(200, "Comments fetched successfully", { list, totalCount });
 };
 
-export const getAllByReview = async (req: Request) => {
-  const reviewId = Number(req.params.reviewId);
-  const commentList = await pagination(req, prisma.comment, { reviewId }, {});
-  return commentList;
-};
+export const commentListByPost = async (postId: string, query: IQuery) => {
+  const { limit = 10, skip = 0 } = query;
+  const list = await prisma.comment.findMany({
+    where: {
+      postId,
+    },
+    take: Number(limit),
+    skip: Number(skip),
+  });
 
-export const getAllByPost = async (req: Request) => {
-  const postId = Number(req.params.postId);
-  const commentList = await pagination(
-    req,
-    prisma.comment,
-    { postId: postId },
-    {}
-  );
-  return commentList;
-};
+  const totalCount = await prisma.comment.count({
+    where: {
+      userId: Number(postId),
+    },
+  });
 
-export const getSingleComment = async (commentId: number) => {
+  return sendData(200, "Comments fetched successfully", { list, totalCount });
+};
+export const getSingleComment = async (commentId: string) => {
   const comment = await prisma.comment.findFirst({
     where: {
       id: commentId,
     },
   });
   if (!comment) {
-    throw new Error("Comment not found");
+    return sendData(400, "Comment not found by id");
   }
-  return comment;
+  return sendData(200, "Comment fetched successfully", comment);
 };
 
-export const updateComment = async (commentId: number, data: IComment) => {
+export const updateComment = async (commentId: string, data: IComment) => {
   const updatedComment = await prisma.comment.update({
     where: {
       id: commentId,
     },
     data,
   });
-  return updatedComment;
+  return sendData(200, "Comment updated successfully", updatedComment);
 };
 
-export const deleteComment = async (commentId: number) => {
+export const deleteComment = async (commentId: string) => {
   try {
     const comment = await prisma.comment.delete({
       where: {
         id: commentId,
       },
     });
+    return sendData(200, "Comment deleted successfully", comment);
   } catch (error) {
-    throw new Error("Comment not found");
+    return sendData(400, "Comment not found by id");
   }
 };
