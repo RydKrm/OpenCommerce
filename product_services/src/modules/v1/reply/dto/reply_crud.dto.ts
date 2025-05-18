@@ -1,15 +1,13 @@
 import { z } from "zod";
 
-class ReplyCrudDto {
-  create = z.object({
-    commentId: z.number({ message: "Comment id is required" }),
-    userId: z.number({ message: "User id is required" }),
-    content: z.string({ message: "Content is required" }),
-  });
-  update = z.object({
-    content: z.string({ message: "Content is required" }),
-  });
-}
+export const CreateReplyDto = z.object({
+  commentId: z.string().min(1),
+  userId: z.string().min(1),
+  content: z.string().min(1),
+  images: z.array(z.string()).optional(),
+});
 
-const replyCrudDto = new ReplyCrudDto();
-export default replyCrudDto;
+export const UpdateReplyDto = CreateReplyDto.partial();
+
+export type CreateReplyType = z.infer<typeof CreateReplyDto>;
+export type UpdateReplyType = z.infer<typeof UpdateReplyDto>;

@@ -2,82 +2,109 @@ import prisma from "@/database/prisma";
 import { IComment } from "../interface/comment.interface";
 import pagination from "@/lib/pagination/pagination";
 import { Request } from "express";
-class CommentCrudService {
-  async create(data: IComment) {
-    const newComment = await prisma.comment.create({
-      data,
-    });
-    return newComment;
-  }
+import { CreateCategoryType } from "../../category/dto/category.dto";
+import { CreateCommentDtoType } from "../dto/comment_crud.dto";
+import sendData from "@/lib/response/send_data";
+import { IQuery } from "@/types/IQuery";
 
-  async getAllByUser(req: Request) {
-    const userId = Number(req.params.userId);
-    const commentList = await pagination(req, prisma.comment, { userId }, {});
-    return commentList;
-  }
+export const createComment = async (data: CreateCommentDtoType) => {
+  const { images, ...rest } = data;
+  const newComment = await prisma.comment.create({
+    data: rest,
+  });
+  return sendData(200, "Comment created successfully", newComment);
+};
 
-  async getAllByProduct(req: Request) {
-    const productId = Number(req.params.productId);
-    const commentList = await pagination(
-      req,
-      prisma.comment,
-      { productId },
-      {}
-    );
-    return commentList;
-  }
+export const commentListByUser = async (userId: string, query: IQuery) => {
+  const { limit = 10, skip = 0 } = query;
+  const list = await prisma.comment.findMany({
+    where: {
+      userId,
+    },
+    take: Number(limit),
+    skip: Number(skip),
+  });
 
-  async getAllByReview(req: Request) {
-    const reviewId = Number(req.params.reviewId);
-    const commentList = await pagination(req, prisma.comment, { reviewId }, {});
-    return commentList;
-  }
+  const totalCount = await prisma.comment.count({
+    where: {
+      userId: Number(userId),
+    },
+  });
 
-  async getAllByPost(req: Request) {
-    const postId = Number(req.params.postId);
-    const commentList = await pagination(
-      req,
-      prisma.comment,
-      { postId: postId },
-      {}
-    );
-    return commentList;
-  }
+  return sendData(200, "Comments fetched successfully", { list, totalCount });
+};
 
-  async getSingleComment(commentId: number) {
-    const comment = await prisma.comment.findFirst({
+export const commentListByProduct = async (
+  productId: string,
+  query: IQuery
+) => {
+  const { limit = 10, skip = 0 } = query;
+  const list = await prisma.comment.findMany({
+    where: {
+      productId,
+    },
+    take: Number(limit),
+    skip: Number(skip),
+  });
+
+  const totalCount = await prisma.comment.count({
+    where: {
+      userId: Number(productId),
+    },
+  });
+
+  return sendData(200, "Comments fetched successfully", { list, totalCount });
+};
+
+export const commentListByPost = async (postId: string, query: IQuery) => {
+  const { limit = 10, skip = 0 } = query;
+  const list = await prisma.comment.findMany({
+    where: {
+      postId,
+    },
+    take: Number(limit),
+    skip: Number(skip),
+  });
+
+  const totalCount = await prisma.comment.count({
+    where: {
+      userId: Number(postId),
+    },
+  });
+
+  return sendData(200, "Comments fetched successfully", { list, totalCount });
+};
+export const getSingleComment = async (commentId: string) => {
+  const comment = await prisma.comment.findFirst({
+    where: {
+      id: commentId,
+    },
+  });
+  if (!comment) {
+    return sendData(400, "Comment not found by id");
+  }
+  return sendData(200, "Comment fetched successfully", comment);
+};
+
+export const updateComment = async (commentId: string, data: IComment) => {
+  const updatedComment = await prisma.comment.update({
+    where: {
+      id: commentId,
+    },
+    data,
+  });
+  return sendData(200, "Comment updated successfully", updatedComment);
+};
+
+export const deleteComment = async (commentId: string) => {
+  try {
+    const comment = await prisma.comment.delete({
       where: {
         id: commentId,
       },
     });
-    if (!comment) {
-      throw new Error("Comment not found");
-    }
-    return comment;
+    return sendData(200, "Comment deleted successfully", comment);
+  } catch (error) {
+    return sendData(400, "Comment not found by id");
   }
-
-  async updateComment(commentId: number, data: IComment) {
-    const updatedComment = await prisma.comment.update({
-      where: {
-        id: commentId,
-      },
-      data,
-    });
-    return updatedComment;
-  }
-
-  async deleteComment(commentId: number) {
-    try {
-      const comment = await prisma.comment.delete({
-        where: {
-          id: commentId,
-        },
-      });
-    } catch (error) {
-      throw new Error("Comment not found");
-    }
-  }
-}
-
-const commentCrudService = new CommentCrudService();
-export default commentCrudService;
+};

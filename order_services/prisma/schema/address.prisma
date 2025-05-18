@@ -5,6 +5,7 @@ model Address {
   addressLine2 String?
   city         String?
   state        String?
+  district     String?
   country      String?
   postalCode   String?
   isDefault    Boolean?  @default(false)

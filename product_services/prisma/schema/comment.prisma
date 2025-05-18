@@ -13,3 +13,13 @@ model Comment {
   Images  Images[]
   Reply   Reply[]
 }
+
+model Reply {
+  id        String   @id @default(cuid())
+  userId    Int
+  commentId String
+  content   String
+  createdAt DateTime @default(now())
+
+  Comment Comment @relation(fields: [commentId], references: [id])
+}

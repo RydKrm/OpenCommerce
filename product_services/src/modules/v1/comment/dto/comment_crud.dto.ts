@@ -1,17 +1,15 @@
 import { z } from "zod";
 
-class CommentCrudDto {
-  create = z.object({
-    productId: z.number({ message: "Product Id is required" }),
-    commentText: z.string({ message: "Content is required" }),
-    blogId: z.number({ message: "Blog Id is required" }).optional(),
-    postId: z.number({ message: "Post Id is required" }).optional(),
-    reviewId: z.number({ message: "Review Id is required" }).optional(),
-  });
-  update = z.object({
-    commentText: z.string({ message: "Content is required" }).optional(),
-  });
-}
+export const CreateCommentDto = z.object({
+  productId: z.string(),
+  commentText: z.string(),
+  images: z.string(z.string()).optional(),
+  blogId: z.string().optional(),
+  postId: z.string().optional(),
+  reviewId: z.string().optional(),
+});
 
-const commentCrudDto = new CommentCrudDto();
-export default commentCrudDto;
+export const UpdateCommentDto = CreateCommentDto.partial();
+
+export type CreateCommentDtoType = z.infer<typeof CreateCommentDto>;
+export type UpdateCommentDtoType = z.infer<typeof UpdateCommentDto>;

@@ -1,48 +1,64 @@
 import prisma from "@/database/prisma";
-import { IReply } from "../interface/reply.interface";
+import { CreateReplyType } from "../dto/reply_crud.dto";
+import sendData from "@/lib/response/send_data";
 
-class ReplyCrudService {
-  async create(data: IReply) {
-    const newReply = await prisma.reply.create({
-      data,
-    });
-    return newReply;
-  }
+export const createReply = async (data: CreateReplyType) => {
+  const { images, ...rest } = data;
+  const newReply = await prisma.reply.create({
+    data: rest,
+  });
+  return sendData(200, "Reply created successfully", newReply);
+};
 
-  async update(id: number, updatedReply: IReply) {
+export const updateReply = async (
+  id: string,
+  updatedReply: CreateReplyType
+) => {
+  try {
     await prisma.reply.update({
       where: { id },
       data: updatedReply,
     });
+    return sendData(200, "Reply updated successfully");
+  } catch (error) {
+    return sendData(400, "Reply not updated");
+  }
+};
+
+export const getSingleReply = async (replyId: string) => {
+  const reply = await prisma.reply.findFirst({
+    where: { id: replyId },
+  });
+
+  if (!reply) {
+    return sendData(400, "Reply not found by id");
   }
 
-  async getSingle(replyId: number) {
-    const reply = await prisma.reply.findFirst({
-      where: { id: replyId },
-    });
-    return reply;
-  }
+  return sendData(200, "Reply retrieved successfully", reply);
+};
 
-  async getAllReplyByUser(userId: number) {
-    const replies = await prisma.reply.findMany({
-      where: { userId },
-    });
-    return replies;
-  }
+export const getAllReplyByUser = async (userId: string) => {
+  const replies = await prisma.reply.findMany({
+    where: { userId: userId },
+  });
+  return sendData(200, "Replies retrieved successfully", replies);
+};
 
-  async getAllReplyByComment(commentId: number) {
-    const replies = await prisma.reply.findMany({
-      where: { commentId },
-    });
-    return replies;
-  }
+export const getAllReplyByComment = async (commentId: string) => {
+  const replies = await prisma.reply.findMany({
+    where: { commentId },
+  });
+  return sendData(200, "Replies retrieved successfully", replies);
+};
 
-  async deleteReply(replyId: number) {
+export const deleteReply = async (replyId: string) => {
+  try {
     await prisma.reply.delete({
       where: { id: replyId },
     });
-  }
-}
 
-const replyCrudService = new ReplyCrudService();
-export default replyCrudService;
+    return sendData(200, "Reply deleted successfully");
+  } catch (error) {
+    return sendData(400, "Reply not deleted");
+  }
+};
