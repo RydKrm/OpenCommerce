@@ -1,12 +1,7 @@
-// write me service for address crud
 import prisma from "@/database/prisma";
-import { IAddress } from "../interface/address.interface";
-import { Request } from "express";
-import IRequest from "@/types/IRequest";
 import { CreateAddressType, UpdateAddressType } from "../dto/address.dto";
 import sendData from "@/lib/response/send_data";
 import { IQuery } from "@/types/IQuery";
-import { send } from "process";
 
 export const createAddress = async (data: CreateAddressType) => {
   const newAddress = await prisma.address.create({
@@ -31,7 +26,7 @@ export const getAllAddress = async (userId: string, query: IQuery) => {
   const { skip = 0, limit = 10 } = query;
   const list = await prisma.address.findMany({
     where: {
-      userId: Number(userId),
+      userId,
     },
     skip: Number(skip),
     take: Number(limit),
@@ -39,7 +34,7 @@ export const getAllAddress = async (userId: string, query: IQuery) => {
 
   const total = await prisma.address.count({
     where: {
-      userId: Number(userId),
+      userId,
     },
   });
 

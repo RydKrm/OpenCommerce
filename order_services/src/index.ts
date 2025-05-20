@@ -5,6 +5,8 @@ import rateLimiter from "./utils/rate-limiter";
 import { checkDatabaseConnection } from "./database/prisma";
 import cors from "cors";
 import morgan from "morgan";
+import IRequest from "./types/IRequest";
+import { ROLES } from "./types/role";
 // import { setupSwagger } from "./config/swagger.config";
 
 const app = express();
@@ -24,6 +26,12 @@ app.use(rateLimiter);
 
 // swagger docs
 // setupSwagger(app);
+
+app.use((req: IRequest, res, next) => {
+  req.user_id = req.headers.userid as string;
+  req.role = req.headers.role as ROLES;
+  next();
+});
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello, Order Server is UP!");

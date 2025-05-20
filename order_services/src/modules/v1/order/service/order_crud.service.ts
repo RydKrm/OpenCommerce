@@ -81,25 +81,27 @@ export const updateOrderStatus = async (
 
     return sendData(200, "Order status updated successfully", updatedOrder);
   } catch (error) {
+    console.log(error);
     return sendData(400, "Error updating order status");
   }
 };
 
 // Delete an order by ID
 export const deleteOrder = async (orderId: string) => {
-  const deletedOrder = await prisma.orders.delete({
-    where: {
-      id: orderId,
-    },
-  });
-  if (deletedOrder) {
-    return sendData(404, "Order not found");
-  }
-
   await prisma.orderItem.deleteMany({
     where: {
       orderId: orderId,
     },
   });
+
+  const deletedOrder = await prisma.orders.delete({
+    where: {
+      id: orderId,
+    },
+  });
+  if (!deletedOrder) {
+    return sendData(404, "Order not found");
+  }
+
   return sendData(200, "Order deleted successfully");
 };

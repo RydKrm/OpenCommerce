@@ -2,7 +2,7 @@ import { asyncHandler } from "@/middleware";
 import IRequest from "@/types/IRequest";
 import { Response } from "express";
 import { CreateOrderDto } from "../dto/order_crud.dto";
-import orderCrudService from "../service/order_crud.service";
+import { createOrder, createOrderItem } from "../service/order_crud.service";
 import { productInventoryCheck } from "../broker/check_order.rpc";
 import { negativeResponse, positiveResponse } from "@/lib/response/response";
 
@@ -18,9 +18,9 @@ import { negativeResponse, positiveResponse } from "@/lib/response/response";
  * - After get verify order services make payment then create order and order item
  */
 
-export const createOrder = asyncHandler(
+export const createOrders = asyncHandler(
   async (req: IRequest, res: Response) => {
-    const userId = req.user_id;
+    const userId = req.user_id as string;
     const data = CreateOrderDto.parse({
       ...req.body,
       userId,
@@ -28,17 +28,17 @@ export const createOrder = asyncHandler(
 
     // check product inventory
     const isInventoryUpdated: boolean = await productInventoryCheck(
-      data.orderItems
+      data.orderItems,
+      userId
     );
     if (!isInventoryUpdated) {
       return negativeResponse(res, "Inventory Not Updated");
     }
     // create Order
-    const orderCreate = await orderCrudService.createOrder(data);
-    const createItem = orderCrudService.createOrderItem(
-      data.orderItems,
-      orderCreate.id
-    );
+    const orderCreate = await createOrder(data);
+    const createItem = await createOrderItem(data.orderItems, orderCreate.id);
     return positiveResponse(res, "Order Created Successfully");
   }
 );
+
+export default createOrders;

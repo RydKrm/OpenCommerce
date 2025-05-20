@@ -15,8 +15,9 @@ const addressCrudRouter = express.Router();
 
 addressCrudRouter.post(
   "/create",
-  asyncHandler(async (req: Request, res: Response) => {
-    const data = CreateAddressDto.parse(req.body);
+  asyncHandler(async (req: IRequest, res: Response) => {
+    const userId = req.user_id as string;
+    const data = CreateAddressDto.parse({ ...req.body, userId });
     const address = await createAddress(data);
     return sendResponse(res, address);
   })
