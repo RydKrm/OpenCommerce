@@ -1,42 +1,48 @@
 {
-  "wishlist": {
-    "url": "http://localhost:3000/api",
+  "order": {
+    "url": "http://localhost:3002/api",
     "routes": [
       {
-        "path": "v1/order/crud/create",
+        "path": "v1/order/basic/create",
         "method": ["POST"],
         "middlewares": ["auth"],
         "role": ["user"]
       },
       {
-        "path": "v1/order/crud/single/:orderId",
+        "path": "v1/order/basic/single/:orderId",
         "method": ["GET"],
         "middlewares": ["auth"],
         "role": ["user"]
       },
       {
-        "path": "v1/order/crud/cancel:/:orderId",
+        "path": "v1/order/basic/cancel:/:orderId",
         "method": ["PATCH"],
         "middlewares": ["auth"],
         "role": ["user", "seller"]
       },
       {
-        "path": "v1/order/crud/get-by-product/:productId",
+        "path": "v1/order/basic/get-by-product/:productId",
         "method": ["GET"],
         "middlewares": ["auth"],
         "role": ["seller"]
       },
       {
-        "path": "v1/order/crud/get-by-seller/:sellerId",
-        "method": ["GET"],
+        "path": "v1/order/basic/delete/:productId",
+        "method": ["DELETE"],
         "middlewares": ["auth"],
-        "role": ["seller"]
+        "role": ["user"]
       },
       {
-        "path": "v1/order/crud/update-status/:orderId",
-        "method": ["PATCH"],
+        "path": "v1/order/basic/by-user",
+        "method": ["GET"],
         "middlewares": ["auth"],
-        "role": ["seller"]
+        "role": ["user"]
+      },
+      {
+        "path": "v1/order/basic/update-status/:orderId",
+        "method": ["PUT"],
+        "middlewares": ["auth"],
+        "role": ["user"]
       }
     ]
   }

@@ -23,8 +23,6 @@ const createHandler = (hostname: string, path: string, method: string) => {
         });
       }
 
-      console.log("user id from api gateway ", req.user_id);
-
       // building the header object
       const header_object = {
         "user-agent": req.headers["user-agent"],

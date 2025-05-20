@@ -20,6 +20,7 @@ export const configureRoutes = (app: Express) => {
     service.routes.forEach((route) => {
       route.method.forEach((method) => {
         const handler = createHandler(hostname, route.path, method);
+        // console.log(`Route: ${route.path} - ${method}`);
 
         const role = (route?.role as ROLES[]) || [];
         const uploadFolder = name;

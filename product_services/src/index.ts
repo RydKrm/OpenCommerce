@@ -7,6 +7,9 @@ import cors from "cors";
 import morgan from "morgan";
 import { connectRabbitMQ } from "./broker/rabbitmq";
 import { startRPCServer } from "./modules/v1/product/broker/send_cart.broker";
+import IRequest from "./types/IRequest";
+import { ROLES } from "./types/role";
+import { startInventoryRPCServer } from "./modules/v1/product/broker/update_inventory.broker";
 // import { setupSwagger } from "./config/swagger.config";
 
 const app = express();
@@ -23,11 +26,18 @@ connectRabbitMQ();
 
 // consumer called
 startRPCServer();
+startInventoryRPCServer();
 
 app.use(cors());
 app.use(morgan("dev"));
 // Rate Limiting middleware
 app.use(rateLimiter);
+
+app.use((req: IRequest, res, next) => {
+  req.userId = req.headers.userid as string;
+  req.role = req.headers.role as ROLES;
+  next();
+});
 
 // swagger docs
 // setupSwagger(app);

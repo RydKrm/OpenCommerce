@@ -18,7 +18,7 @@ interface IProductInventory {
   type: "incoming" | "outgoing";
 }
 
-const checkInventory = async (products: IProduct[], userId: string) => {
+const checkInventory = async (products: IProduct[] = [], userId: string) => {
   const ids = products.map((item) => item.productId);
   const list = await prisma.product.findMany({
     where: {
@@ -76,10 +76,10 @@ const checkInventory = async (products: IProduct[], userId: string) => {
   return true;
 };
 
-export async function startRPCServer() {
+export async function startInventoryRPCServer() {
   const conn = await connect("amqp://localhost:5672");
   const channel = await conn.createChannel();
-  const channelName = "update_inventory";
+  const channelName = "update_inventories";
 
   await channel.assertQueue(channelName);
 
