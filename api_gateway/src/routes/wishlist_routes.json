@@ -33,7 +33,7 @@
         "role": ["user"]
       },
       {
-        "path": "v1/wishlist/by-product",
+        "path": "v1/wishlist/by-product/:productId",
         "method": ["GET"],
         "middlewares": ["auth"],
         "role": ["user"]

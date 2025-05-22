@@ -4,45 +4,36 @@ import Link from "next/link";
 import Image from "next/image";
 import { Trash2, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-// import { useWishlist } from "@/hooks/use-wishlist"
-// import { useCart } from "@/hooks/use-cart"
-import { toast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useEffect } from "react";
+import useWishlistStore from "@/api/useWishlistStore";
+import { observer } from "mobx-react-lite";
 
-export default function WishlistItems() {
-  // const { items, removeItem } = useWishlist()
-  // const { addItem } = useCart()
-  const [items, setItems] = useState<
-    {
-      id: string;
-      name: string;
-      price: number;
-      image: string;
-    }[]
-  >([]);
+export const WishlistItems = observer(() => {
+  const {
+    addToWishlist,
+    fetchWishlist,
+    removeFromWishlist,
+    skip,
+    limit,
+    isLoading,
+    wishlist,
+  } = useWishlistStore;
 
-  const handleRemoveItem = (id: string) => {
-    // removeItem(id);
-    toast({
-      title: "Item removed",
-      description: "The item has been removed from your wishlist",
-    });
-  };
+  useEffect(() => {
+    fetchWishlist();
+  }, [skip, limit]);
 
-  const handleAddToCart = (item: any) => {
-    // addItem({
-    //   ...item,
-    //   quantity: 1,
-    //   size: "M", // Default size
-    //   color: "Black", // Default color
-    // });
-    toast({
-      title: "Added to cart",
-      description: `${item.name} has been added to your cart`,
-    });
-  };
+  if (isLoading) {
+    return (
+      <div className="text-center py-12">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
-  if (items.length === 0) {
+  if (wishlist.length === 0) {
     return (
       <div className="text-center py-12">
         <h2 className="text-xl font-semibold mb-2">Your wishlist is empty</h2>
@@ -58,7 +49,7 @@ export default function WishlistItems() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {items.map((item) => (
+      {wishlist.map((item) => (
         <div
           key={item.id}
           className="border rounded-lg overflow-hidden bg-background">
@@ -79,19 +70,19 @@ export default function WishlistItems() {
                 {item.name}
               </h3>
             </Link>
-            <div className="font-semibold mt-1">${item.price.toFixed(2)}</div>
+            <div className="font-semibold mt-1">${item.price}</div>
             <div className="mt-4 flex space-x-2">
               <Button
                 className="flex-1"
                 size="sm"
-                onClick={() => handleAddToCart(item)}>
+                onClick={() => addToWishlist(item.id)}>
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 Add to Cart
               </Button>
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => handleRemoveItem(item.id)}>
+                onClick={() => removeFromWishlist(item.id)}>
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
@@ -100,4 +91,4 @@ export default function WishlistItems() {
       ))}
     </div>
   );
-}
+});
