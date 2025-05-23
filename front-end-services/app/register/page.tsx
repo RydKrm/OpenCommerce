@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-// import { RegisterForm } from "@/components/auth/register-form"
+import { RegisterForm } from "@/components/auth/register-form";
 
 export const metadata: Metadata = {
   title: "Register | ThreadZone",
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function RegisterPage() {
   return (
     <div className="container-custom max-w-md py-12">
-      {/* <RegisterForm /> */}
+      <RegisterForm />
     </div>
   );
 }

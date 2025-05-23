@@ -3,7 +3,6 @@ import { makeAutoObservable, runInAction } from "mobx";
 import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
-
 const API_BASE = `${API_URL}/user/profile`;
 
 class UserBasicStore {

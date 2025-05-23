@@ -1,15 +1,15 @@
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { products } from "@/lib/data"
+import { Button } from "@/components/ui/button";
+import { products } from "@/lib/data";
 
 export default function Home() {
   // Featured products (first 4 products)
-  const featuredProducts = products.slice(0, 4)
+  const featuredProducts = products.slice(0, 4);
 
   // New arrivals (next 4 products)
-  const newArrivals = products.slice(4, 8)
+  const newArrivals = products.slice(4, 8);
 
   return (
     <div className="flex flex-col">
@@ -22,13 +22,18 @@ export default function Home() {
               Summer Collection 2025
             </h1>
             <p className="text-lg text-white/90">
-              Discover our latest collection of premium clothing designed for comfort and style.
+              Discover our latest collection of premium clothing designed for
+              comfort and style.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button size="lg" asChild>
                 <Link href="/products">Shop Now</Link>
               </Button>
-              <Button size="lg" variant="outline" className="bg-white/10 text-white" asChild>
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-white/10 text-white"
+                asChild>
                 <Link href="/categories">Browse Categories</Link>
               </Button>
             </div>
@@ -36,7 +41,7 @@ export default function Home() {
         </div>
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <img
-            src="/placeholder.svg?height=600&width=1200"
+            src="/home/banner.jpg?height=600&width=1200"
             alt="Hero background"
             className="h-full w-full object-cover"
           />
@@ -47,8 +52,12 @@ export default function Home() {
       <section className="py-16">
         <div className="container">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold tracking-tight">Featured Products</h2>
-            <Link href="/products" className="flex items-center text-sm font-medium">
+            <h2 className="text-3xl font-bold tracking-tight">
+              Featured Products
+            </h2>
+            <Link
+              href="/products"
+              className="flex items-center text-sm font-medium">
               View All <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
@@ -57,8 +66,7 @@ export default function Home() {
               <Link
                 key={product.id}
                 href={`/products/${product.id}`}
-                className="group overflow-hidden rounded-lg border bg-background p-3 transition-colors hover:border-foreground"
-              >
+                className="group overflow-hidden rounded-lg border bg-background p-3 transition-colors hover:border-foreground">
                 <div className="aspect-square overflow-hidden rounded-md bg-secondary">
                   <img
                     src={product.images[0] || "/placeholder.svg"}
@@ -68,12 +76,16 @@ export default function Home() {
                 </div>
                 <div className="pt-3">
                   <h3 className="font-medium">{product.name}</h3>
-                  <p className="text-sm text-muted-foreground">{product.category}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {product.category}
+                  </p>
                   <div className="mt-1 flex items-center justify-between">
                     <p className="font-medium">${product.price.toFixed(2)}</p>
                     {product.rating && (
                       <div className="flex items-center">
-                        <span className="text-sm font-medium">{product.rating}</span>
+                        <span className="text-sm font-medium">
+                          {product.rating}
+                        </span>
                         <span className="ml-1 text-yellow-500">★</span>
                       </div>
                     )}
@@ -88,14 +100,15 @@ export default function Home() {
       {/* Categories Banner */}
       <section className="bg-muted py-16">
         <div className="container">
-          <h2 className="text-3xl font-bold tracking-tight text-center mb-10">Shop by Category</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-center mb-10">
+            Shop by Category
+          </h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {["Men", "Women", "Accessories"].map((category) => (
               <Link
                 key={category}
                 href={`/categories/${category.toLowerCase()}`}
-                className="group relative overflow-hidden rounded-lg"
-              >
+                className="group relative overflow-hidden rounded-lg">
                 <div className="absolute inset-0 bg-black/30 transition-colors group-hover:bg-black/40" />
                 <div className="relative flex aspect-[4/3] items-center justify-center">
                   <h3 className="text-2xl font-bold text-white">{category}</h3>
@@ -118,7 +131,9 @@ export default function Home() {
         <div className="container">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-bold tracking-tight">New Arrivals</h2>
-            <Link href="/products?new=true" className="flex items-center text-sm font-medium">
+            <Link
+              href="/products?new=true"
+              className="flex items-center text-sm font-medium">
               View All <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
@@ -127,8 +142,7 @@ export default function Home() {
               <Link
                 key={product.id}
                 href={`/products/${product.id}`}
-                className="group overflow-hidden rounded-lg border bg-background p-3 transition-colors hover:border-foreground"
-              >
+                className="group overflow-hidden rounded-lg border bg-background p-3 transition-colors hover:border-foreground">
                 <div className="aspect-square overflow-hidden rounded-md bg-secondary">
                   <img
                     src={product.images[0] || "/placeholder.svg"}
@@ -138,12 +152,16 @@ export default function Home() {
                 </div>
                 <div className="pt-3">
                   <h3 className="font-medium">{product.name}</h3>
-                  <p className="text-sm text-muted-foreground">{product.category}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {product.category}
+                  </p>
                   <div className="mt-1 flex items-center justify-between">
                     <p className="font-medium">${product.price.toFixed(2)}</p>
                     {product.rating && (
                       <div className="flex items-center">
-                        <span className="text-sm font-medium">{product.rating}</span>
+                        <span className="text-sm font-medium">
+                          {product.rating}
+                        </span>
                         <span className="ml-1 text-yellow-500">★</span>
                       </div>
                     )}
@@ -159,7 +177,9 @@ export default function Home() {
       <section className="bg-primary py-16">
         <div className="container">
           <div className="mx-auto max-w-xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-primary-foreground">Subscribe to our newsletter</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-primary-foreground">
+              Subscribe to our newsletter
+            </h2>
             <p className="mt-2 text-primary-foreground/90">
               Get the latest updates on new products and upcoming sales.
             </p>
@@ -175,5 +195,5 @@ export default function Home() {
         </div>
       </section>
     </div>
-  )
+  );
 }
