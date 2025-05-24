@@ -3,6 +3,7 @@ model Product {
   name          String
   categoryId    String
   price         Float
+  sku           String?
   previousPrice Float?   @map("previous_price")
   description   String
   quantity      Int
@@ -12,6 +13,7 @@ model Product {
   reviewCount   Int      @default(0) @map("review")
   status        Boolean  @default(true)
   createdAt     DateTime @default(now())
+  updateAt      DateTime @updatedAt
 
   Category          Category            @relation(fields: [categoryId], references: [id])
   Comment           Comment[]
@@ -20,6 +22,38 @@ model Product {
   Images            Images[]
   WishList          WishList[]
   Product_Inventory Product_Inventory[]
+  Product_Variant   Product_Variant[]
+  Product_Property  Product_Property[]
+}
+
+model Product_Variant {
+  id            String   @id @default(cuid())
+  productId     String
+  price         Float
+  previousPrice Float?   @map("previous_price")
+  image         String?
+  sku           String?
+  quantity      Int
+  status        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  Product          Product            @relation(fields: [productId], references: [id])
+  Product_Property Product_Property[]
+
+  @@map("product_variant")
+}
+
+model Product_Property {
+  id        String  @id @default(cuid())
+  productId String?
+  variantId String?
+  key       String
+  value     String
+
+  Product Product?         @relation(fields: [productId], references: [id])
+  Variant Product_Variant? @relation(fields: [variantId], references: [id])
+
+  @@map("product_property")
 }
 
 model Product_Inventory {

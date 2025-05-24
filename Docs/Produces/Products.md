@@ -1,0 +1,30 @@
+Products :-
+
+- name: Product 1
+- price: 100
+- previous_price: 150
+- discount: 10%
+- sku: SKU123456
+- description: This is product 1
+- image: product1.jpg
+- category: Category 1
+- quantity: 10
+- status: active
+- tags:
+  - tag1
+  - tag2
+  - tag3
+- total_views: 1000
+- total_sales: 1000
+- total_rating: 5
+- total_comments: 100
+- total_likes: 100
+- Variants :-
+  - price: 100
+  - image: variant1.jpg
+  - quantity: 10
+  - properties :
+    - property1
+    - property2
+    - property3
+    - property4
