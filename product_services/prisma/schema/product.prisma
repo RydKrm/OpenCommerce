@@ -3,17 +3,20 @@ model Product {
   name          String
   categoryId    String
   price         Float
+  slug          String   @unique
   sku           String?
   previousPrice Float?   @map("previous_price")
   description   String
   quantity      Int
+  isDeleted     Boolean  @default(false) @map("is_deleted")
   rating        Float    @default(0)
-  visitCount    Int      @default(0)
-  commentCount  Int      @default(0) @map("comment")
-  reviewCount   Int      @default(0) @map("review")
+  totalSold     Int      @default(0) @map("total_sold")
+  totalLike     Int      @default(0) @map("total_like")
+  totalVisit    Int      @default(0) @map("total_visit")
+  totalComment  Int      @default(0) @map("total_comment")
   status        Boolean  @default(true)
   createdAt     DateTime @default(now())
-  updateAt      DateTime @updatedAt
+  updatedAt     DateTime @updatedAt
 
   Category          Category            @relation(fields: [categoryId], references: [id])
   Comment           Comment[]

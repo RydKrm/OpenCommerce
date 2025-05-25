@@ -1,29 +1,35 @@
 import { z } from "zod";
 
+export const ProductProperty = z.object({
+  productId: z.string().optional(),
+  variantId: z.string().optional(),
+  key: z.string(),
+  value: z.string(),
+});
+
+export const ProductVariant = z.object({
+  productId: z.string(),
+  price: z.number(),
+  previousPrice: z.number().optional(),
+  quantity: z.number(),
+  image: z.string(),
+  properties: z.array(ProductProperty),
+});
+
 export const CreateProductDto = z
   .object({
-    name: z
-      .string({ message: "Product name is required" })
-      .min(3, { message: "Name must be greater than 5 character" }),
-    categoryId: z.string({ message: "Category Id is required" }),
+    name: z.string().min(3),
+    categoryId: z.string(),
     images: z.array(z.string()),
-    price: z
-      .string({ message: "Price is required" })
-      .transform((item) => Number(item)),
+    price: z.string().transform((item) => Number(item)),
     previousPrice: z
       .string()
       .transform((item) => Number(item))
       .optional(),
-    description: z
-      .string({ message: "Description is required" })
-      .min(10, { message: "Description must be greater than 10 character" }),
-    quantity: z
-      .string({ message: "Quantity field is required" })
-      .transform((item) => Number(item)),
-    rating: z
-      .string()
-      .transform((item) => Number(item))
-      .optional(),
+    description: z.string().min(10),
+    quantity: z.string().transform((item) => Number(item)),
+    variants: z.array(ProductVariant).optional(),
+    properties: z.array(ProductProperty).optional(),
   })
   .strict();
 
