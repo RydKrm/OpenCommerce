@@ -5,7 +5,8 @@ import { IQuery } from "@/types/IQuery";
 
 class ProductCrudService {
   async createProduct(product: CreateProductType) {
-    const { images, ...rest } = product;
+    const { images, variants, properties, ...rest } = product;
+
     const newProduct = await prisma.product.create({
       data: {
         ...rest,
@@ -15,13 +16,30 @@ class ProductCrudService {
             image_type: "product",
           })),
         },
+        Product_Property: properties?.map((prop) => ({
+          key: prop.key,
+          value: prop.value,
+        })),
+        Product_Variant: variants?.map((variant) => ({
+          price: variant.price,
+          previousPrice: variant.previousPrice,
+          quantity: variant.quantity,
+          sku: variant.sku,
+          image: variant.image,
+          Product_Property: {
+            create: variant.properties?.map((vp) => ({
+              key: vp.key,
+              value: vp.value,
+            })),
+          },
+        })),
       },
       include: {
-        Images: {
-          select: {
-            image_id: true,
-            image_type: true,
-            image_url: true,
+        Images: true,
+        Product_Property: true,
+        Product_Variant: {
+          include: {
+            Product_Property: true,
           },
         },
       },
@@ -29,22 +47,40 @@ class ProductCrudService {
 
     return sendData(200, "Product created successfully", newProduct);
   }
+
   async updateProduct(id: string, updatedProduct: UpdateProductType) {
-    const updateProduct = await prisma.product.update({
-      where: { id },
-      data: updatedProduct,
+    const { images, properties, variants, ...rest } = updatedProduct;
+
+    // Clear old properties and variants if needed
+    await prisma.product_Property.deleteMany({
+      where: { productId: id },
     });
-    return sendData(200, "Product updated successfully", updateProduct);
+
+    const updated = await prisma.product.update({
+      where: { id },
+      data: {
+        ...rest,
+        Product_Property: {
+          create: properties?.map((prop) => ({
+            key: prop.key,
+            value: prop.value,
+          })),
+        },
+        // Note: updating variants should ideally be handled separately
+      },
+      include: {
+        Product_Property: true,
+      },
+    });
+
+    return sendData(200, "Product updated successfully", updated);
   }
 
   async updateProductStatus(productId: string) {
     const isExists = await prisma.product.findFirst({
       where: { id: productId },
     });
-
-    if (!isExists) {
-      throw new Error("Product not found by id");
-    }
+    if (!isExists) throw new Error("Product not found by id");
 
     const updatedProduct = await prisma.product.update({
       where: { id: productId },
@@ -54,16 +90,10 @@ class ProductCrudService {
   }
 
   async deleteProduct(id: string) {
-    const isExist = await prisma.product.findFirst({
-      where: { id },
-    });
-    if (!isExist) {
-      return sendData(400, "Product not found by id");
-    }
+    const isExist = await prisma.product.findFirst({ where: { id } });
+    if (!isExist) return sendData(400, "Product not found by id");
 
-    await prisma.product.delete({
-      where: { id },
-    });
+    await prisma.product.delete({ where: { id } });
 
     return sendData(200, "Product deleted successfully");
   }
@@ -71,39 +101,35 @@ class ProductCrudService {
   async getAllProducts(query: IQuery) {
     const { limit = 10, skip = 0, search = "", categoryId } = query;
 
-    const find: any = {};
-
-    if (categoryId) {
-      find["categoryId"] = categoryId;
-    }
-
+    const filter: any = {};
+    if (categoryId) filter.categoryId = categoryId;
     if (search) {
-      find["name"] = {
+      filter.name = {
         contains: search,
         mode: "insensitive",
       };
     }
 
     const products = await prisma.product.findMany({
-      where: find,
+      where: filter,
       take: Number(limit),
       skip: Number(skip),
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
       include: {
         Images: true,
         Category: true,
+        Product_Variant: {
+          include: { Product_Property: true },
+        },
+        Product_Property: true,
       },
     });
 
-    const total = await prisma.product.count({
-      where: find,
-    });
+    const total = await prisma.product.count({ where: filter });
 
     return sendData(200, "Products fetched successfully", {
       list: products,
-      total: total,
+      total,
     });
   }
 
@@ -116,14 +142,19 @@ class ProductCrudService {
         Comment: true,
         Reaction: true,
         Reviews: true,
+        Product_Property: true,
+        Product_Variant: {
+          include: {
+            Product_Property: true,
+          },
+        },
       },
     });
-    if (!product) {
-      return sendData(400, "Product not found by id");
-    }
+    if (!product) return sendData(400, "Product not found by id");
+
     return sendData(200, "Product fetched successfully", product);
   }
 }
-const productCrudService = new ProductCrudService();
 
+const productCrudService = new ProductCrudService();
 export default productCrudService;
