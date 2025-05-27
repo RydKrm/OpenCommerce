@@ -19,6 +19,9 @@ const serverUpload = () => {
       return res.status(400).json({ error: "No files found" });
     }
 
+    console.log("fileList", fileList);
+    console.log("req.body", req.body);
+
     try {
       const formData = new FormData();
 
@@ -26,8 +29,8 @@ const serverUpload = () => {
       for (const file of fileList) {
         formData.append(
           file.fieldname,
-          fs.createReadStream(file.path), // Important: Use createReadStream
-          file.originalname // Set the filename
+          fs.createReadStream(file.path),
+          file.originalname
         );
       }
 

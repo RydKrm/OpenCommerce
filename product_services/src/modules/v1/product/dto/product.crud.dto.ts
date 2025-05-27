@@ -1,19 +1,28 @@
 import { z } from "zod";
 
-export const ProductProperty = z.object({
-  productId: z.string().optional(),
-  variantId: z.string().optional(),
-  key: z.string(),
-  value: z.string(),
-});
+export const ProductProperty = z.array(
+  z.object({
+    productId: z.string().optional(),
+    variantId: z.string().optional(),
+    key: z.string(),
+    value: z.string(),
+  })
+);
 
 export const ProductVariant = z.object({
-  productId: z.string(),
-  price: z.number(),
-  previousPrice: z.number().optional(),
-  quantity: z.number(),
+  price: z.string().transform((item) => Number(item)),
+  previousPrice: z
+    .string()
+    .transform((item) => Number(item))
+    .optional(),
+  quantity: z.string().transform((item) => Number(item)),
   image: z.string(),
-  properties: z.array(ProductProperty),
+  properties: z
+    .string()
+    .transform((value) => {
+      return ProductProperty.parse(JSON.parse(value));
+    })
+    .optional(),
 });
 
 export const CreateProductDto = z
@@ -29,7 +38,12 @@ export const CreateProductDto = z
     description: z.string().min(10),
     quantity: z.string().transform((item) => Number(item)),
     variants: z.array(ProductVariant).optional(),
-    properties: z.array(ProductProperty).optional(),
+    properties: z
+      .string()
+      .transform((value) => {
+        return ProductProperty.parse(JSON.parse(value));
+      })
+      .optional(),
   })
   .strict();
 

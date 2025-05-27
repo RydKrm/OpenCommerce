@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,9 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Plus, Minus, Upload, X, ImageIcon, Package } from "lucide-react";
+import productStore, { ICreateProduct } from "@/api/product/useProductStore";
+import { observer } from "mobx-react-lite";
+import { create } from "axios";
 
 // Types based on the Prisma schema
 interface ProductProperty {
@@ -39,19 +42,19 @@ interface ProductVariant {
   properties: ProductProperty[];
 }
 
-interface ProductFormData {
-  name: string;
-  categoryId: string;
-  price: number;
-  sku?: string;
-  previousPrice?: number;
-  description: string;
-  quantity: number;
-  status: boolean;
-  properties: ProductProperty[];
-  variants: ProductVariant[];
-  images: string[];
-}
+// interface ProductFormData {
+//   name: string;
+//   categoryId: string;
+//   price: number;
+//   sku?: string;
+//   previousPrice?: number;
+//   description: string;
+//   quantity: number;
+//   status: boolean;
+//   properties: ProductProperty[];
+//   variants: ProductVariant[];
+//   images: string[];
+// }
 
 const mockCategories = [
   { id: "cat1", name: "Electronics" },
@@ -61,13 +64,12 @@ const mockCategories = [
   { id: "cat5", name: "Sports" },
 ];
 
-export default function CreateProductPage() {
+export const CreateProductPage = observer(() => {
   const [activeTab, setActiveTab] = useState("basic");
-  const [formData, setFormData] = useState<ProductFormData>({
+  const [formData, setFormData] = useState<ICreateProduct>({
     name: "",
     categoryId: "",
     price: 0,
-    sku: "",
     previousPrice: 0,
     description: "",
     quantity: 0,
@@ -201,10 +203,34 @@ export default function CreateProductPage() {
     }));
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setFormData((prev) => ({
+          ...prev,
+          images: [...prev.images, reader.result as string],
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Product data:", formData);
-    // Handle form submission
+  };
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const { isLoading, fetchProductList, createProduct, productList } =
+    productStore;
+  const handleClick = () => {
+    if (inputRef.current) {
+      inputRef.current.click(); // Trigger hidden input
+    }
+
+    createProduct(formData);
   };
 
   return (
@@ -246,18 +272,6 @@ export default function CreateProductPage() {
                         required
                       />
                     </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="sku">SKU</Label>
-                      <Input
-                        id="sku"
-                        value={formData.sku}
-                        onChange={(e) =>
-                          setFormData({ ...formData, sku: e.target.value })
-                        }
-                        placeholder="Enter SKU"
-                      />
-                    </div>
                   </div>
 
                   {/* Rich Text Editor for Description */}
@@ -266,8 +280,22 @@ export default function CreateProductPage() {
                     onChange={(value) =>
                       setFormData({ ...formData, description: value })
                     }
-                    placeholder="Enter a detailed product description. Use the toolbar to format text, add lists, links, and more..."
                   />
+
+                  {/* <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
+                      placeholder="Enter product description"
+                    />
+                  </div> */}
 
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
@@ -364,6 +392,7 @@ export default function CreateProductPage() {
                     <Label className="text-base font-medium">
                       Product Images
                     </Label>
+
                     <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
                       <ImageIcon className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                       <p className="text-sm text-muted-foreground mb-4">
@@ -374,27 +403,48 @@ export default function CreateProductPage() {
                         Supported formats: JPG, PNG, WebP. Max size: 5MB per
                         image
                       </p>
-                      <Button type="button" variant="outline">
+
+                      {/* Trigger button for hidden input */}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleClick}>
                         <Upload className="w-4 h-4 mr-2" />
                         Choose Images
                       </Button>
+
+                      {/* Hidden file input */}
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        ref={inputRef}
+                        className="hidden"
+                        onChange={handleImageUpload}
+                      />
                     </div>
 
                     {/* Image Preview Area */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {/* This would show uploaded images */}
-                      {Array.from({ length: 0 }).map((_, index) => (
+                      {formData.images?.map((img, index) => (
                         <div
                           key={index}
-                          className="relative border rounded-lg p-2">
-                          <div className="aspect-square bg-muted rounded-md flex items-center justify-center">
-                            <ImageIcon className="w-8 h-8 text-muted-foreground" />
+                          className="relative border rounded-lg p-2 overflow-hidden">
+                          <div className="aspect-square bg-muted rounded-md flex items-center justify-center overflow-hidden">
+                            <img
+                              src={img}
+                              alt={`preview-${index}`}
+                              className="object-cover w-full h-full"
+                            />
                           </div>
                           <Button
                             type="button"
                             variant="outline"
                             size="icon"
-                            className="absolute -top-2 -right-2 w-6 h-6">
+                            className="absolute -top-2 -right-2 w-6 h-6"
+                            onClick={() => {
+                              // Optional: Handle removing image
+                            }}>
                             <X className="w-3 h-3" />
                           </Button>
                         </div>
@@ -719,4 +769,4 @@ export default function CreateProductPage() {
       </main>
     </div>
   );
-}
+});

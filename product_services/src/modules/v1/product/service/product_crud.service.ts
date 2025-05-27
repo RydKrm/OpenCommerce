@@ -2,37 +2,59 @@ import prisma from "@/database/prisma";
 import { CreateProductType, UpdateProductType } from "../dto/product.crud.dto";
 import sendData from "@/lib/response/send_data";
 import { IQuery } from "@/types/IQuery";
+import { generateSlug } from "@/utils/generate-slug";
+import generateSKU from "@/utils/generate-sku";
 
 class ProductCrudService {
   async createProduct(product: CreateProductType) {
-    const { images, variants, properties, ...rest } = product;
+    const { images, variants = [], properties = [], ...rest } = product;
+    const category = await prisma.category.findFirst({
+      where: {
+        id: rest.categoryId,
+      },
+    });
+
+    if (!category) return sendData(400, "Category not found by id");
+
+    // create slug from product name
+    const slug = generateSlug(rest.name);
+    const sku = generateSKU(rest.name, category.name);
 
     const newProduct = await prisma.product.create({
       data: {
         ...rest,
+        slug,
         Images: {
           create: images.map((image) => ({
             image_url: image,
             image_type: "product",
           })),
         },
-        Product_Property: properties?.map((prop) => ({
-          key: prop.key,
-          value: prop.value,
-        })),
-        Product_Variant: variants?.map((variant) => ({
-          price: variant.price,
-          previousPrice: variant.previousPrice,
-          quantity: variant.quantity,
-          sku: variant.sku,
-          image: variant.image,
-          Product_Property: {
-            create: variant.properties?.map((vp) => ({
-              key: vp.key,
-              value: vp.value,
+        Product_Property: {
+          createMany: {
+            data: properties?.map((prop) => ({
+              key: prop.key,
+              value: prop.value,
             })),
           },
-        })),
+        },
+        Product_Variant: {
+          createMany: {
+            data: variants?.map((variant) => ({
+              price: variant.price,
+              previousPrice: variant.previousPrice,
+              quantity: variant.quantity,
+              sku: sku,
+              image: variant.image,
+              Product_Property: {
+                create: variant.properties?.map((vp) => ({
+                  key: vp.key,
+                  value: vp.value,
+                })),
+              },
+            })),
+          },
+        },
       },
       include: {
         Images: true,
