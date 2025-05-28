@@ -4,20 +4,17 @@ const API_URL = process.env.REACT_APP_API_URL;
 const API_BASE = `${API_URL}/product/basic`;
 
 export interface IProductVariant {
-  id: string;
   price: number;
   previousPrice?: number;
-  quantity: number;
+  quantity: string;
   image?: string;
   properties: {
-    id: string;
     key: string;
     value: string;
   }[];
 }
 
 export interface ICreateProduct {
-  id?: string;
   name: string;
   categoryId: string;
   images: string[];
@@ -27,7 +24,6 @@ export interface ICreateProduct {
   quantity: number;
   status: boolean;
   properties: {
-    id: string;
     key: string;
     value: string;
   }[];
@@ -36,7 +32,6 @@ export interface ICreateProduct {
 
 class ProductStore {
   product: ICreateProduct = {
-    id: "",
     name: "",
     categoryId: "",
     images: [],
