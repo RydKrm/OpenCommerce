@@ -10,13 +10,45 @@ export const ProductProperty = z.array(
 );
 
 export const ProductVariant = z.object({
-  price: z.string().transform((item) => Number(item)),
+  price: z.number().transform((item) => Number(item)),
   previousPrice: z
-    .string()
+    .number()
     .transform((item) => Number(item))
     .optional(),
-  quantity: z.string().transform((item) => Number(item)),
-  image: z.string(),
+  quantity: z.number().transform((item) => Number(item)),
+  properties: z
+    .object({
+      productId: z.string().optional(),
+      variantId: z.string().optional(),
+      key: z.string(),
+      value: z.string(),
+    })
+    .optional(),
+});
+
+export const CreateProductDto = z.object({
+  name: z.string().min(3),
+  categoryId: z.string(),
+  images: z.array(z.string()),
+  price: z.number().transform((item) => Number(item)),
+  previousPrice: z
+    .number()
+    .transform((item) => Number(item))
+    .optional(),
+  description: z.string().min(10),
+  quantity: z.number().transform((item) => Number(item)),
+  variants: z
+    .array(
+      z.string().transform((item) => {
+        const variantArray = JSON.parse(item);
+        return variantArray.map((item: any) => {
+          ProductVariant.parse(item);
+          return item;
+        });
+      })
+    )
+
+    .optional(),
   properties: z
     .string()
     .transform((value) => {
@@ -24,28 +56,6 @@ export const ProductVariant = z.object({
     })
     .optional(),
 });
-
-export const CreateProductDto = z
-  .object({
-    name: z.string().min(3),
-    categoryId: z.string(),
-    images: z.array(z.string()),
-    price: z.string().transform((item) => Number(item)),
-    previousPrice: z
-      .string()
-      .transform((item) => Number(item))
-      .optional(),
-    description: z.string().min(10),
-    quantity: z.string().transform((item) => Number(item)),
-    variants: z.array(ProductVariant).optional(),
-    properties: z
-      .string()
-      .transform((value) => {
-        return ProductProperty.parse(JSON.parse(value));
-      })
-      .optional(),
-  })
-  .strict();
 
 export const UpdateProductDto = CreateProductDto.partial();
 

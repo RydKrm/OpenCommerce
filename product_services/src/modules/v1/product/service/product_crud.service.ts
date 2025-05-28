@@ -30,31 +30,31 @@ class ProductCrudService {
             image_type: "product",
           })),
         },
-        Product_Property: {
-          createMany: {
-            data: properties?.map((prop) => ({
-              key: prop.key,
-              value: prop.value,
-            })),
-          },
-        },
-        Product_Variant: {
-          createMany: {
-            data: variants?.map((variant) => ({
-              price: variant.price,
-              previousPrice: variant.previousPrice,
-              quantity: variant.quantity,
-              sku: sku,
-              image: variant.image,
-              Product_Property: {
-                create: variant.properties?.map((vp) => ({
-                  key: vp.key,
-                  value: vp.value,
-                })),
-              },
-            })),
-          },
-        },
+        // Product_Property: {
+        //   createMany: {
+        //     data: properties?.map((prop) => ({
+        //       key: prop.key,
+        //       value: prop.value,
+        //     })),
+        //   },
+        // },
+        // Product_Variant: {
+        //   createMany: {
+        //     data: variants?.map((variant) => ({
+        //       price: variant.price,
+        //       previousPrice: variant.previousPrice,
+        //       quantity: variant.quantity,
+        //       sku: sku,
+        //       image: variant.image,
+        //       Product_Property: {
+        //         create: variant.properties?.map((vp) => ({
+        //           key: vp.key,
+        //           value: vp.value,
+        //         })),
+        //       },
+        //     })),
+        //   },
+        // },
       },
       include: {
         Images: true,
@@ -82,12 +82,12 @@ class ProductCrudService {
       where: { id },
       data: {
         ...rest,
-        Product_Property: {
-          create: properties?.map((prop) => ({
-            key: prop.key,
-            value: prop.value,
-          })),
-        },
+        // Product_Property: {
+        //   create: properties?.map((prop) => ({
+        //     key: prop.key,
+        //     value: prop.value,
+        //   })),
+        // },
         // Note: updating variants should ideally be handled separately
       },
       include: {

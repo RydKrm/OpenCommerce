@@ -1,35 +1,46 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
-import { DashboardHeader } from "@/components/dashboard-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RichTextEditor } from "@/components/rice-text-editor";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TabsContent } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Upload, X, ImageIcon } from "lucide-react";
-import { ProductFormData } from "@/app/dashboard/products/create/page";
+import { ICreateProduct } from "@/api/product/useProductStore";
+import { useRef } from "react";
 
 interface ProductPropertyProps {
-  formData: ProductFormData;
-  setFormData: React.Dispatch<React.SetStateAction<ProductFormData>>;
+  formData: ICreateProduct;
+  setFormData: React.Dispatch<React.SetStateAction<ICreateProduct>>;
 }
 
 const BasicForm: React.FC<ProductPropertyProps> = ({
   formData,
   setFormData,
 }) => {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, ...Array.from(files)],
+      }));
+    }
+  };
+
+  const removeImage = (indexToRemove: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== indexToRemove),
+    }));
+  };
+
   return (
     <TabsContent value="basic" className="space-y-6">
       <Card>
@@ -48,18 +59,6 @@ const BasicForm: React.FC<ProductPropertyProps> = ({
                 }
                 placeholder="Enter product name"
                 required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="sku">SKU</Label>
-              <Input
-                id="sku"
-                value={formData.sku}
-                onChange={(e) =>
-                  setFormData({ ...formData, sku: e.target.value })
-                }
-                placeholder="Enter SKU"
               />
             </div>
           </div>
@@ -149,26 +148,28 @@ const BasicForm: React.FC<ProductPropertyProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="status"
-              checked={formData.status}
-              onCheckedChange={(checked) =>
-                setFormData({ ...formData, status: checked })
-              }
-            />
-            <Label htmlFor="status">Product Active</Label>
-          </div>
-
           <Separator />
 
           {/* Product Images Section */}
           <div className="space-y-4">
             <Label className="text-base font-medium">Product Images</Label>
-            <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
+            {/* File input (hidden) */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handleFilesChange}
+            />
+
+            {/* Upload box */}
+            <div
+              className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center cursor-pointer"
+              onClick={() => fileInputRef.current?.click()}>
               <ImageIcon className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
               <p className="text-sm text-muted-foreground mb-4">
-                Drag and drop multiple images here, or click to select files
+                Drag and drop or click to upload images
               </p>
               <p className="text-xs text-muted-foreground mb-4">
                 Supported formats: JPG, PNG, WebP. Max size: 5MB per image
@@ -180,17 +181,19 @@ const BasicForm: React.FC<ProductPropertyProps> = ({
             </div>
 
             {/* Image Preview Area */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {/* This would show uploaded images */}
-              {Array.from({ length: 0 }).map((_, index) => (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+              {formData.images.map((file, index) => (
                 <div key={index} className="relative border rounded-lg p-2">
-                  <div className="aspect-square bg-muted rounded-md flex items-center justify-center">
-                    <ImageIcon className="w-8 h-8 text-muted-foreground" />
-                  </div>
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`preview-${index}`}
+                    className="aspect-square object-cover rounded-md w-full"
+                  />
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
+                    onClick={() => removeImage(index)}
                     className="absolute -top-2 -right-2 w-6 h-6">
                     <X className="w-3 h-3" />
                   </Button>

@@ -10,14 +10,11 @@ import { TabsContent } from "@/components/ui/tabs";
 import { X, Plus, Package, Minus, ImageIcon, Upload } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@radix-ui/react-menubar";
-import {
-  ProductFormData,
-  ProductVariant,
-} from "@/app/dashboard/products/create/page";
+import { ICreateProduct, IProductVariant } from "@/api/product/useProductStore";
 
 interface ProductVariantFormProps {
-  formData: ProductFormData;
-  setFormData: React.Dispatch<React.SetStateAction<ProductFormData>>;
+  formData: ICreateProduct;
+  setFormData: React.Dispatch<React.SetStateAction<ICreateProduct>>;
 }
 
 interface ProductProperty {
@@ -32,13 +29,12 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
 }) => {
   // Variant Management
   const addVariant = () => {
-    const newVariant: ProductVariant = {
+    const newVariant: IProductVariant = {
       id: `variant_${Date.now()}`,
       price: 0,
       previousPrice: 0,
-      sku: "",
       quantity: 0,
-      status: true,
+      image: undefined as unknown as File,
       properties: [],
     };
     setFormData((prev) => ({
@@ -49,7 +45,7 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
 
   const updateVariant = (
     variantId: string,
-    field: keyof ProductVariant,
+    field: keyof IProductVariant,
     value: any
   ) => {
     setFormData((prev) => ({
@@ -162,37 +158,50 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {/* Variant Image Upload */}
-                    <div className="space-y-2">
-                      <Label>Variant Image</Label>
-                      <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 text-center">
-                        <ImageIcon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                        <p className="text-xs text-muted-foreground mb-2">
-                          Upload variant image
-                        </p>
-                        <Button type="button" variant="outline" size="sm">
-                          <Upload className="w-3 h-3 mr-2" />
-                          Choose File
-                        </Button>
-                      </div>
+                    <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 text-center">
+                      {/* <img
+                        src={URL.createObjectURL(variant.image)}
+                        alt="Variant Preview"
+                        className="mx-auto mt-2 h-24 object-contain rounded-md"
+                      /> */}
+
+                      <input
+                        id={`file-input-${variant.id}`}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            updateVariant(variant.id, "image", file);
+                          }
+                        }}
+                      />
+                      <ImageIcon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Upload variant image
+                      </p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const input = document.getElementById(
+                            `file-input-${variant.id}`
+                          ) as HTMLInputElement;
+                          input?.click();
+                        }}>
+                        <Upload className="w-3 h-3 mr-2" />
+                        Choose File
+                      </Button>
                     </div>
 
                     {/* Variant Basic Info */}
                     <div className="grid gap-4 md:grid-cols-3">
                       <div className="space-y-2">
-                        <Label>Variant SKU</Label>
-                        <Input
-                          value={variant.sku || ""}
-                          onChange={(e) =>
-                            updateVariant(variant.id, "sku", e.target.value)
-                          }
-                          placeholder="Variant SKU"
-                        />
-                      </div>
-                      <div className="space-y-2">
                         <Label>Price ($)</Label>
                         <Input
                           type="number"
-                          step="0.01"
                           value={variant.price}
                           onChange={(e) =>
                             updateVariant(
@@ -237,15 +246,6 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
                           }
                           placeholder="0"
                         />
-                      </div>
-                      <div className="flex items-center space-x-2 pt-6">
-                        <Switch
-                          checked={variant.status}
-                          onCheckedChange={(checked) =>
-                            updateVariant(variant.id, "status", checked)
-                          }
-                        />
-                        <Label>Variant Active</Label>
                       </div>
                     </div>
 

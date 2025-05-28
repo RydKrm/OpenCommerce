@@ -8,11 +8,11 @@ import { Label } from "@/components/ui/label";
 
 import { TabsContent } from "@/components/ui/tabs";
 import { X, Plus, Package } from "lucide-react";
-import { ProductFormData } from "@/app/dashboard/products/create/page";
+import { ICreateProduct } from "@/api/product/useProductStore";
 
 interface ProductPropertyProps {
-  formData: ProductFormData;
-  setFormData: React.Dispatch<React.SetStateAction<ProductFormData>>;
+  formData: ICreateProduct;
+  setFormData: React.Dispatch<React.SetStateAction<ICreateProduct>>;
 }
 
 interface ProductProperty {
@@ -26,11 +26,11 @@ const ProductPropertyForm: React.FC<ProductPropertyProps> = ({
   setFormData,
 }) => {
   // Product Properties Management
-  const addProductProperty = (key: string, value: string) => {
+  const addProductProperty = () => {
     const newProperty: ProductProperty = {
       id: `prop_${Date.now()}`,
-      key: "",
-      value: "",
+      key: ``,
+      value: ``,
     };
     setFormData((prev) => ({
       ...prev,
@@ -65,9 +65,7 @@ const ProductPropertyForm: React.FC<ProductPropertyProps> = ({
             <span>Product Properties</span>
             <Button
               type="button"
-              onClick={() => {
-                addProductProperty;
-              }}
+              onClick={addProductProperty}
               variant="outline">
               <Plus className="w-4 h-4 mr-2" />
               Add Property
