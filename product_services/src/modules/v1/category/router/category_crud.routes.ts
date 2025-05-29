@@ -2,11 +2,7 @@ import express from "express";
 import categoryCrudController from "../controller/category_crud.controller";
 const category_crud_router = express.Router();
 
-category_crud_router.post(
-  "/create",
-  // auth([ROLES.ADMIN]),
-  categoryCrudController.create
-);
+category_crud_router.post("/create", categoryCrudController.create);
 
 category_crud_router.get("/all", categoryCrudController.getAllCategory);
 

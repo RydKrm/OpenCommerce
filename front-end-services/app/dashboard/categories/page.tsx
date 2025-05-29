@@ -1,16 +1,21 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { DashboardHeader } from "@/components/dashboard-header"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
-import { Plus, Edit, Trash2, FolderTree } from "lucide-react"
-import { useState } from "react"
+import { DashboardHeader } from "@/components/dashboard-header";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Edit, Trash2, FolderTree } from "lucide-react";
+import { useState } from "react";
+import { observer } from "mobx-react-lite";
+import useCategoryStore, {
+  ICategory,
+  ICreateCategory,
+} from "@/api/category/useCategoryStore";
 
 const mockCategories = [
   {
@@ -41,25 +46,36 @@ const mockCategories = [
     productCount: 32,
     status: "active",
   },
-]
+];
 
-export default function CategoriesPage() {
-  const [showForm, setShowForm] = useState(false)
-  const [formData, setFormData] = useState({
+const CategoriesPage = observer(() => {
+  const {
+    categories,
+    createCategory,
+    getCategoryById,
+    getCategoryList,
+    isLoading,
+  } = useCategoryStore;
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState<ICreateCategory>({
     name: "",
     description: "",
-  })
+    image: null,
+    parentId: "",
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Category data:", formData)
-    setFormData({ name: "", description: "" })
-    setShowForm(false)
-  }
+    e.preventDefault();
+    console.log("Category data:", formData);
+    setShowForm(false);
+  };
 
   return (
     <div className="flex flex-col">
-      <DashboardHeader title="Category Management" description="Organize your products into categories" />
+      <DashboardHeader
+        title="Category Management"
+        description="Organize your products into categories"
+      />
 
       <main className="flex-1 p-4 lg:p-6 space-y-6">
         <div className="grid gap-6 lg:grid-cols-3">
@@ -77,7 +93,7 @@ export default function CategoriesPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {mockCategories.map((category) => (
+                  {categories.map((category) => (
                     <div key={category.id} className="border rounded-lg p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-3">
@@ -86,9 +102,13 @@ export default function CategoriesPage() {
                           </div>
                           <div>
                             <h3 className="font-medium">{category.name}</h3>
-                            <p className="text-sm text-muted-foreground mb-2">{category.description}</p>
+                            <p className="text-sm text-muted-foreground mb-2">
+                              {category.description}
+                            </p>
                             <div className="flex items-center gap-2">
-                              <Badge variant="secondary">{category.productCount} products</Badge>
+                              <Badge variant="secondary">
+                                {category.totalItem} products
+                              </Badge>
                               <Badge variant="default">{category.status}</Badge>
                             </div>
                           </div>
@@ -123,7 +143,9 @@ export default function CategoriesPage() {
                       <Input
                         id="categoryName"
                         value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, name: e.target.value })
+                        }
                         placeholder="Enter category name"
                         required
                       />
@@ -134,9 +156,56 @@ export default function CategoriesPage() {
                       <Textarea
                         id="categoryDescription"
                         value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            description: e.target.value,
+                          })
+                        }
                         placeholder="Enter category description"
                         rows={3}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="categoryDescription">
+                        Parent Category
+                      </Label>
+                      <Input
+                        id="categoryDescription"
+                        value={formData.description}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            description: e.target.value,
+                          })
+                        }
+                        placeholder="Enter category description"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="categoryImage">Image</Label>
+                      <input
+                        type="file"
+                        id="categoryImage"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                              // File is loaded (though you're not using the dataURL here)
+                              setFormData((prev) => ({
+                                ...prev,
+                                image: file,
+                              }));
+                            };
+                            reader.readAsDataURL(file);
+                          } else {
+                            alert("No file selected");
+                          }
+                        }}
                       />
                     </div>
 
@@ -144,7 +213,10 @@ export default function CategoriesPage() {
                       <Button type="submit" className="flex-1">
                         Create Category
                       </Button>
-                      <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setShowForm(false)}>
                         Cancel
                       </Button>
                     </div>
@@ -156,5 +228,7 @@ export default function CategoriesPage() {
         </div>
       </main>
     </div>
-  )
-}
+  );
+});
+
+export default CategoriesPage;

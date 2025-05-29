@@ -9,13 +9,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { categoriesData } from "@/data/categories";
+import { observer } from "mobx-react-lite";
+import useCategoryStore from "@/api/category/useCategoryStore";
 
 export const metadata = {
   title: "Categories | ThreadZone",
   description: "Browse our product categories",
 };
 
-export default function CategoriesPage() {
+const CategoriesPage = observer(() => {
+  const { category, categories, isLoading, createCategory } = useCategoryStore;
+
   return (
     <div className="container-custom py-8">
       <div className="space-y-6">
@@ -25,9 +29,9 @@ export default function CategoriesPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categoriesData.map((category) => (
+          {categories.map((category) => (
             <Card
-              key={category.id}
+              key={category.name}
               className="overflow-hidden transition-all hover:shadow-lg">
               <div className="aspect-video relative">
                 <Image
@@ -40,16 +44,14 @@ export default function CategoriesPage() {
               </div>
               <CardHeader>
                 <CardTitle>{category.name}</CardTitle>
-                <CardDescription>
-                  {category.productCount} products
-                </CardDescription>
+                <CardDescription>{category.totalItem} products</CardDescription>
               </CardHeader>
               <CardContent>
                 <p>{category.description}</p>
               </CardContent>
               <CardFooter>
                 <Link
-                  href={`/categories/${category.id}`}
+                  href={`/categories/${category.image}`}
                   className="text-sm text-primary font-medium">
                   Browse Category
                 </Link>
@@ -60,4 +62,6 @@ export default function CategoriesPage() {
       </div>
     </div>
   );
-}
+});
+
+export default CategoriesPage;

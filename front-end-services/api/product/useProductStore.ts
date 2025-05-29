@@ -69,7 +69,6 @@ class ProductStore {
     formData.append("description", data.description);
     formData.append("quantity", data.quantity.toString());
     formData.append("properties", JSON.stringify(data.properties));
-    formData.append("variants", JSON.stringify(data.variants));
     if (data.previousPrice) {
       formData.append("previousPrice", data.previousPrice.toString());
     }

@@ -24,6 +24,7 @@ import {
   ThumbsUp,
   Reply,
 } from "lucide-react";
+import { useCart } from "@/providers/cart-provider";
 
 // Mock product data with all variants and properties
 const mockProduct = {
@@ -239,6 +240,18 @@ export default function ProductSinglePage({
           100
       )
     : 0;
+
+  const { addItem } = useCart();
+
+  const addToCart = () => {
+    addItem({
+      id: selectedVariant.id,
+      name: mockProduct.name,
+      price: selectedVariant.price,
+      quantity,
+      image: selectedVariant.image,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -464,7 +477,7 @@ export default function ProductSinglePage({
                 </div>
               </div>
 
-              <Button className="w-full" size="lg">
+              <Button className="w-full" size="lg" onClick={addToCart}>
                 <ShoppingCart className="w-4 h-4 mr-2" />
                 Add to Cart - ${(selectedVariant.price * quantity).toFixed(2)}
               </Button>
