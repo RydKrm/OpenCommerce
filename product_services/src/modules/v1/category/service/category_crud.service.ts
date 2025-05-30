@@ -1,13 +1,14 @@
 import prisma from "@/database/prisma";
-import { ICategory } from "../interface/category.interface";
 import { CreateCategoryType, UpdateCategoryType } from "../dto/category.dto";
-import { send } from "node:process";
 import sendData from "@/lib/response/send_data";
 
 interface CategoryWithChildren {
   id: string;
   name: string;
-  children: CategoryWithChildren[]; // Recursive type for children
+  description: string;
+  totalItem: number;
+  image: string | null;
+  children: CategoryWithChildren[];
 }
 
 class CategoryService {
@@ -71,8 +72,13 @@ class CategoryService {
       where: {
         parentId: parentId,
       },
-      include: {
+      select: {
         children: true,
+        id: true,
+        name: true,
+        description: true,
+        totalItem: true,
+        image: true,
       },
     });
 
@@ -83,6 +89,9 @@ class CategoryService {
         const data: CategoryWithChildren = {
           id: category.id,
           name: category.name,
+          description: category.description,
+          totalItem: category.totalItem,
+          image: category?.image || null,
           children: await this.buildCategoryTree(category.id),
         };
         return data;

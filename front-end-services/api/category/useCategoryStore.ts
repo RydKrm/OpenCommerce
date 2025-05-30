@@ -1,23 +1,26 @@
+import axios from "axios";
 import axiosInstance from "@/config/axiosInstance";
 import { makeAutoObservable, runInAction } from "mobx";
+
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-const API_BASE = `${API_URL}/product/basic`;
+const API_BASE = `${API_URL}/category/profile`;
 
 export interface ICategory {
   id: string;
   name: string;
-  image?: string | null | File;
+  image?: File;
   description: string;
   parentId: string;
   totalItem: number;
   status: boolean;
+  children: ICategory[];
 }
 
 export interface ICreateCategory {
   name: string;
   image?: string | null | File;
   description: string;
-  parentId: string;
+  parentId?: string;
 }
 
 class CategoryStore {
@@ -42,23 +45,26 @@ class CategoryStore {
     this.categories = categories;
   }
 
-  async createCategory(data: ICreateCategory) {
-    this.isLoading = true;
-
+  createCategory = async (data: ICreateCategory) => {
     const formData = new FormData();
     formData.append("name", data.name);
-    formData.append("image", data.image as string);
+    if (data.image) {
+      formData.append("image", data.image as File);
+    }
     formData.append("description", data.description);
-    formData.append("parentId", data.parentId);
+    if (data.parentId) formData.append("parentId", data.parentId);
+
+    runInAction(() => {
+      this.isLoading = true;
+      this.message = "";
+    });
+
+    console.log("images ", formData);
 
     try {
-      runInAction(() => {
-        this.message = "";
-        this.isLoading = true;
-      });
-      const res = await axiosInstance.post(`${API_BASE}/create`, formData, {
+      const res = await axios.post(`${API_BASE}/create`, formData, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       });
       if (res.status === 200) {
@@ -66,88 +72,110 @@ class CategoryStore {
           this.message = (res.data as any).message;
           this.category = (res.data as any).data;
         });
+        this.getCategoryList();
       }
-    } catch (error) {
+    } catch (error: any) {
       runInAction(() => {
-        this.message = (error as any).response.data.message;
+        this.message = error?.response?.data?.message || "Something went wrong";
       });
     } finally {
-      this.isLoading = false;
+      runInAction(() => {
+        this.isLoading = false;
+      });
     }
-  }
+  };
 
-  async getCategoryList() {
+  getCategoryList = async () => {
+    runInAction(() => {
+      this.isLoading = true;
+    });
+
     try {
-      const res = await axiosInstance.get(`${API_BASE}/list`);
+      const res = await axiosInstance.get(`${API_BASE}/all`);
       if (res.status === 200) {
         runInAction(() => {
-          this.categories = (res.data as any).data;
-          this.total = (res.data as any).totalItem;
+          this.categories = (res.data as any).results;
+          // this.total = res.data.totalItem;
         });
       }
     } catch (error) {
+      console.error("Fetch category list failed:", error);
     } finally {
-      this.isLoading = false;
+      runInAction(() => {
+        this.isLoading = false;
+      });
     }
-  }
+  };
 
-  async getCategoryById(id: string) {
-    try {
+  getCategoryById = async (id: string) => {
+    runInAction(() => {
       this.isLoading = true;
+    });
+
+    try {
       const res = await axiosInstance.get(`${API_BASE}/get/${id}`);
       if (res.status === 200) {
         runInAction(() => {
-          this.category = (res.data as any).data;
+          this.category = (res.data as any).result;
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       runInAction(() => {
-        this.message = (error as any).response.data.message;
+        this.message = error?.response?.data?.message || "Something went wrong";
       });
     } finally {
-      this.isLoading = false;
+      runInAction(() => {
+        this.isLoading = false;
+      });
     }
-  }
+  };
 
-  async updateCategory(id: string, data: ICreateCategory) {
-    try {
+  updateCategory = async (id: string, data: ICreateCategory) => {
+    runInAction(() => {
       this.isLoading = true;
+    });
+
+    try {
       const res = await axiosInstance.put(`${API_BASE}/update/${id}`, data);
-      if (res.status === 200) {
-        runInAction(() => {
-          this.category = (res.data as any).data;
-        });
-      } else {
-        runInAction(() => {
-          this.message = (res.data as any).message;
-        });
-      }
-    } catch (error) {
       runInAction(() => {
-        this.message = (error as any).response.data.message;
+        this.category = (res.data as any).result;
+        this.message = (res.data as any).message;
+      });
+    } catch (error: any) {
+      runInAction(() => {
+        this.message = error?.response?.data?.message || "Something went wrong";
       });
     } finally {
-      this.isLoading = false;
+      runInAction(() => {
+        this.isLoading = false;
+      });
     }
-  }
+  };
 
-  async deleteCategory(id: string) {
-    try {
+  deleteCategory = async (id: string) => {
+    runInAction(() => {
       this.isLoading = true;
+    });
+
+    try {
       const res = await axiosInstance.delete(`${API_BASE}/delete/${id}`);
       if (res.status === 200) {
         runInAction(() => {
+          this.message = (res.data as any).message;
           this.category = (res.data as any).data;
+          this.getCategoryList();
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       runInAction(() => {
-        this.message = (error as any).response.data.message;
+        this.message = error?.response?.data?.message || "Something went wrong";
       });
     } finally {
-      this.isLoading = false;
+      runInAction(() => {
+        this.isLoading = false;
+      });
     }
-  }
+  };
 }
 
 const useCategoryStore = new CategoryStore();

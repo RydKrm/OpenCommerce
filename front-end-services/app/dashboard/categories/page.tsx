@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,51 +8,87 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, FolderTree } from "lucide-react";
-import { useState } from "react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  FolderTree,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import useCategoryStore, {
   ICategory,
   ICreateCategory,
 } from "@/api/category/useCategoryStore";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-const mockCategories = [
-  {
-    id: 1,
-    name: "Electronics",
-    description: "Electronic devices and accessories",
-    productCount: 45,
-    status: "active",
-  },
-  {
-    id: 2,
-    name: "Clothing",
-    description: "Apparel and fashion items",
-    productCount: 120,
-    status: "active",
-  },
-  {
-    id: 3,
-    name: "Books",
-    description: "Books and educational materials",
-    productCount: 78,
-    status: "active",
-  },
-  {
-    id: 4,
-    name: "Home & Garden",
-    description: "Home improvement and gardening supplies",
-    productCount: 32,
-    status: "active",
-  },
-];
+const ChildCategory: React.FC<{ child: ICategory }> = ({ child }) => {
+  const [open, setOpen] = useState(false);
+
+  const toggleChildren = () => {
+    if (child.children.length > 0) {
+      setOpen(!open);
+    }
+  };
+
+  return (
+    <div>
+      <DropdownMenuItem
+        onClick={toggleChildren}
+        className="ml-4 pl-4 border-l-2 flex items-start justify-between gap-2 cursor-pointer">
+        <div>
+          <p className="text-sm font-medium">{child.name}</p>
+          <p className="text-sm text-muted-foreground">{child.description}</p>
+          <Badge variant="secondary" className="ml-2">
+            {child.children.length} categories
+          </Badge>
+        </div>
+
+        {/* {child.children.length > 0 &&
+          (open ? (
+            <ChevronDown className="h-4 w-4 mt-1" />
+          ) : (
+            <ChevronRight className="h-4 w-4 mt-1" />
+          ))} */}
+      </DropdownMenuItem>
+
+      {child.children.length > 0 && (
+        // <div className="ml-6 mt-1 space-y-1">
+        //   {child.children.map((grandchild) => (
+        //     <ChildCategory key={grandchild.id} child={grandchild} />
+        //   ))}
+        // </div>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger></DropdownMenuTrigger>
+          <div className="flex items-center gap-2">
+            <div className="mt-2 space-y-2">
+              <DropdownMenuContent className="w-80">
+                {child.children.map((child) => (
+                  <ChildCategory key={child.id} child={child} />
+                ))}
+              </DropdownMenuContent>
+            </div>
+          </div>
+        </DropdownMenu>
+      )}
+    </div>
+  );
+};
 
 const CategoriesPage = observer(() => {
   const {
     categories,
     createCategory,
-    getCategoryById,
     getCategoryList,
+    deleteCategory,
     isLoading,
   } = useCategoryStore;
   const [showForm, setShowForm] = useState(false);
@@ -61,13 +96,31 @@ const CategoriesPage = observer(() => {
     name: "",
     description: "",
     image: null,
-    parentId: "",
   });
+
+  useEffect(() => {
+    getCategoryList();
+  }, []);
+
+  // for Setting parent Id
+  const handleParentChange = (parentId: string) => {
+    setFormData({ ...formData, parentId });
+    setShowForm(!showForm);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Category data:", formData);
+    createCategory(formData);
     setShowForm(false);
+    setFormData({
+      name: "",
+      description: "",
+      image: null,
+    });
+  };
+
+  const handleDeleteCategory = (id: string) => {
+    deleteCategory(id);
   };
 
   return (
@@ -80,6 +133,7 @@ const CategoriesPage = observer(() => {
       <main className="flex-1 p-4 lg:p-6 space-y-6">
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Categories List */}
+
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
@@ -93,37 +147,75 @@ const CategoriesPage = observer(() => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {categories.map((category) => (
-                    <div key={category.id} className="border rounded-lg p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
-                            <FolderTree className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h3 className="font-medium">{category.name}</h3>
-                            <p className="text-sm text-muted-foreground mb-2">
-                              {category.description}
-                            </p>
-                            <div className="flex items-center gap-2">
-                              <Badge variant="secondary">
-                                {category.totalItem} products
-                              </Badge>
-                              <Badge variant="default">{category.status}</Badge>
+                  {isLoading === true && <div> Loading... </div>}
+                  {isLoading === false &&
+                    categories.map((category) => (
+                      <div key={category.id} className="border rounded-lg p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
+                              <FolderTree className="w-5 h-5" />
+                            </div>
+                            <div className="flex flex-col">
+                              <div>
+                                <h3 className="font-medium">{category.name}</h3>
+                                <p className="text-sm text-muted-foreground mb-2">
+                                  {category.description}
+                                </p>
+                              </div>
+                              <div className="flex items-center flex-row">
+                                <Badge variant="secondary">
+                                  {category.totalItem} products
+                                </Badge>
+
+                                {category.children.length > 0 && (
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger>
+                                      <Badge
+                                        variant="secondary"
+                                        className="ml-2">
+                                        {category.children.length} categories
+                                      </Badge>
+                                    </DropdownMenuTrigger>
+                                    <div className="flex items-center gap-2">
+                                      <div className="mt-2 space-y-2">
+                                        <DropdownMenuContent className="w-80">
+                                          {category.children.map((child) => (
+                                            <ChildCategory
+                                              key={child.id}
+                                              child={child}
+                                            />
+                                          ))}
+                                        </DropdownMenuContent>
+                                      </div>
+                                    </div>
+                                  </DropdownMenu>
+                                )}
+                                <Button
+                                  variant="default"
+                                  className="ml-2 rounded-xl h-5 w-28 text-xs"
+                                  onClick={() => {
+                                    handleParentChange(category.id);
+                                  }}>
+                                  + Add category
+                                </Button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button variant="ghost" size="sm">
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteCategory(category.id)}>
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                            {/* <Button variant="ghost" size="sm">
+                              <Trash2 className="w-4 h-4" />
+                            </Button> */}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </CardContent>
             </Card>
@@ -167,22 +259,15 @@ const CategoriesPage = observer(() => {
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="categoryDescription">
-                        Parent Category
-                      </Label>
+                    {/* <div className="space-y-2">
+                      <Label htmlFor="categoryParent">Parent Category</Label>
                       <Input
-                        id="categoryDescription"
-                        value={formData.description}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            description: e.target.value,
-                          })
-                        }
-                        placeholder="Enter category description"
+                        id="categoryParent"
+                        value={formData.parentId}
+                        disabled
+                        placeholder="Parent Category"
                       />
-                    </div>
+                    </div> */}
 
                     <div className="space-y-2">
                       <Label htmlFor="categoryImage">Image</Label>

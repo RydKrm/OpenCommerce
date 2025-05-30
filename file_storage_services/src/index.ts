@@ -8,7 +8,8 @@ import router from "./routes/routes";
 const app = express();
 const PORT = 3004;
 dotenv.config();
-
+// Serve static files from the 'uploads' folder
+app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 
 app.use(cors());

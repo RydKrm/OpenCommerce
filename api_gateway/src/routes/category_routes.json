@@ -5,8 +5,9 @@
       {
         "path": "v1/category/profile/create",
         "method": ["POST"],
-        "middlewares": ["auth"],
-        "role": ["user"]
+        "middlewares": ["upload"],
+        "role": [],
+        "uploadFolder": "category"
       },
       {
         "path": "v1/category/profile/all",

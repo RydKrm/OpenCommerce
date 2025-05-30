@@ -15,12 +15,12 @@ const serverUpload = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const fileList = req.files as Express.Multer.File[];
 
+    console.log("fileList", fileList);
+    console.log("req.body", req.body);
+
     if (!fileList || fileList.length === 0) {
       return res.status(400).json({ error: "No files found" });
     }
-
-    console.log("fileList", fileList);
-    console.log("req.body", req.body);
 
     try {
       const formData = new FormData();

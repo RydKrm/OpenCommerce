@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -8,17 +9,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { categoriesData } from "@/data/categories";
 import { observer } from "mobx-react-lite";
 import useCategoryStore from "@/api/category/useCategoryStore";
+import { useEffect } from "react";
 
-export const metadata = {
-  title: "Categories | ThreadZone",
-  description: "Browse our product categories",
-};
+// export const metadata = {
+//   title: "Categories | ThreadZone",
+//   description: "Browse our product categories",
+// };
 
 const CategoriesPage = observer(() => {
-  const { category, categories, isLoading, createCategory } = useCategoryStore;
+  const { categories, isLoading, getCategoryList } = useCategoryStore;
+
+  useEffect(() => {
+    getCategoryList();
+  }, []);
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="container-custom py-8">
@@ -35,7 +42,7 @@ const CategoriesPage = observer(() => {
               className="overflow-hidden transition-all hover:shadow-lg">
               <div className="aspect-video relative">
                 <Image
-                  src={category.image || "/placeholder.svg"}
+                  src={`http://localhost:3004/${category.image as any}`}
                   alt={category.name}
                   className="object-cover"
                   fill

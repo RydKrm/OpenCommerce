@@ -5,13 +5,14 @@ const getAccessToken = () =>
 const getRefreshToken = () =>
   typeof window !== "undefined" ? localStorage.getItem("refreshToken") : null;
 
+// added bearer token
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
+    Authorization: `Bearer ${getAccessToken()}`,
   },
-  withCredentials: true,
 });
 
 const redirectToLogin = () => {

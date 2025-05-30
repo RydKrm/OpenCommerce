@@ -79,14 +79,16 @@ class ProductStore {
 
     //then append variants without images
 
-    const variants = data.variants.map((variant) => {
-      const { image, ...rest } = variant;
-      if (image) {
-        formData.append(`${variant.id}`, image);
-      }
-      return rest;
-    });
-    formData.append("variants", JSON.stringify(variants));
+    if (data.variants.length) {
+      const variants = data.variants.map((variant) => {
+        const { image, ...rest } = variant;
+        if (image) {
+          formData.append(`${variant.id}`, image);
+        }
+        return rest;
+      });
+      formData.append("variants", JSON.stringify(variants));
+    }
 
     // then append the images with their id
 

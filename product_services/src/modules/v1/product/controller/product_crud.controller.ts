@@ -7,9 +7,10 @@ import sendResponse from "@/lib/response/send_response";
 
 class ProductCrudController {
   create = asyncHandler(async (req: IRequest, res: Response) => {
-    console.log("Request body ", req.body);
-    console.log("Request variants ", JSON.parse(req.body.variants[0]));
+    // console.log("Request body ", req.body);
+    // console.log("Request variants ", JSON.parse(req.body.variants[0]));
     const data = CreateProductDto.parse(req.body);
+    console.log("Request body data ", data);
     const result = await productCrudService.createProduct(data);
     return sendResponse(res, result);
   });

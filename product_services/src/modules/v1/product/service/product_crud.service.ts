@@ -14,6 +14,8 @@ class ProductCrudService {
       },
     });
 
+    console.log("category not present ----------------------------------- ");
+
     if (!category) return sendData(400, "Category not found by id");
 
     // create slug from product name

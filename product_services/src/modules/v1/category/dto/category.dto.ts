@@ -6,6 +6,7 @@ export const CreateCategoryDto = z.object({
     .min(3, { message: "Name must be greater then 3 5 character" })
     .max(255, { message: "Name must be less then 255 character" })
     .nonempty(),
+  image: z.string().optional(),
   description: z.string({ message: "Description is required" }).nonempty(),
   parentId: z.string({ message: "Parent ID is required" }).optional(),
 });
