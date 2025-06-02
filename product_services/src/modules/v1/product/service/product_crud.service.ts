@@ -1,9 +1,15 @@
+import { ProductVariantType } from "./../dto/product.crud.dto";
 import prisma from "@/database/prisma";
 import { CreateProductType, UpdateProductType } from "../dto/product.crud.dto";
 import sendData from "@/lib/response/send_data";
 import { IQuery } from "@/types/IQuery";
-import { generateSlug } from "@/utils/generate-slug";
+import { generateUniqueSlug } from "@/utils/generate-slug";
 import generateSKU from "@/utils/generate-sku";
+
+interface IProductVariant extends ProductVariantType {
+  id: string;
+  image: string;
+}
 
 class ProductCrudService {
   async createProduct(product: CreateProductType) {
@@ -14,12 +20,12 @@ class ProductCrudService {
       },
     });
 
-    console.log("category not present ----------------------------------- ");
+    const productVariants = variants as IProductVariant[];
 
     if (!category) return sendData(400, "Category not found by id");
 
     // create slug from product name
-    const slug = generateSlug(rest.name);
+    const slug = generateUniqueSlug(rest.name);
     const sku = generateSKU(rest.name, category.name);
 
     const newProduct = await prisma.product.create({
@@ -32,31 +38,25 @@ class ProductCrudService {
             image_type: "product",
           })),
         },
-        // Product_Property: {
-        //   createMany: {
-        //     data: properties?.map((prop) => ({
-        //       key: prop.key,
-        //       value: prop.value,
-        //     })),
-        //   },
-        // },
-        // Product_Variant: {
-        //   createMany: {
-        //     data: variants?.map((variant) => ({
-        //       price: variant.price,
-        //       previousPrice: variant.previousPrice,
-        //       quantity: variant.quantity,
-        //       sku: sku,
-        //       image: variant.image,
-        //       Product_Property: {
-        //         create: variant.properties?.map((vp) => ({
-        //           key: vp.key,
-        //           value: vp.value,
-        //         })),
-        //       },
-        //     })),
-        //   },
-        // },
+        Product_Property: {
+          createMany: {
+            data: properties?.map((prop) => ({
+              key: prop.key,
+              value: prop.value,
+            })),
+          },
+        },
+        Product_Variant: {
+          createMany: {
+            data: productVariants?.map((variant) => ({
+              price: variant.price,
+              previousPrice: variant.previousPrice,
+              quantity: variant.quantity,
+              sku: sku,
+              image: variant.image,
+            })),
+          },
+        },
       },
       include: {
         Images: true,
@@ -69,7 +69,48 @@ class ProductCrudService {
       },
     });
 
-    return sendData(200, "Product created successfully", newProduct);
+    if (!newProduct) return sendData(400, "Product not created");
+
+    const variantPropertyList: any = [];
+
+    console.log("newProduct", newProduct);
+
+    newProduct.Product_Variant.forEach((variant) => {
+      variant.Product_Property.forEach((property) => {
+        variantPropertyList.push({
+          key: property.key,
+          value: property.value,
+          variantId: variant.id,
+        });
+      });
+    });
+
+    console.log("variantPropertyList", variantPropertyList);
+
+    const variantsList = await prisma.product_Property.createMany({
+      data: variantPropertyList,
+    });
+
+    if (!variantsList) return sendData(400, "Product not created");
+
+    return sendData(200, "Product created successfully", {
+      ...newProduct,
+      // Product_Variant: variantsList,
+    });
+  }
+
+  async addedImagesInVariant(
+    variants: IProductVariant[],
+    imagesList: { id: string; image_url: string }[]
+  ) {
+    const variantsWithImages = variants.map((variant) => {
+      const image = imagesList.find((image) => image.id === variant.id);
+      if (image) {
+        variant.image = image.image_url;
+      }
+      return variant;
+    });
+    return variantsWithImages;
   }
 
   async updateProduct(id: string, updatedProduct: UpdateProductType) {

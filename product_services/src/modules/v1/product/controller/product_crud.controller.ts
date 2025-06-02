@@ -9,9 +9,35 @@ class ProductCrudController {
   create = asyncHandler(async (req: IRequest, res: Response) => {
     // console.log("Request body ", req.body);
     // console.log("Request variants ", JSON.parse(req.body.variants[0]));
+    // console.log("Request body data ", req.body);
+    const {
+      name,
+      categoryId,
+      price,
+      description,
+      quantity,
+      properties,
+      previousPrice,
+      variants,
+      ...variantsImage
+    } = req.body;
     const data = CreateProductDto.parse(req.body);
-    console.log("Request body data ", data);
-    const result = await productCrudService.createProduct(data);
+
+    const variantImageList: { id: string; image_url: string }[] = [];
+
+    for (const key in variantsImage) {
+      variantImageList.push({ id: key, image_url: variantsImage[key][0] });
+    }
+
+    const variantsList = await productCrudService.addedImagesInVariant(
+      JSON.parse(variants),
+      variantImageList
+    );
+
+    const result = await productCrudService.createProduct({
+      ...data,
+      variants: variantsList,
+    });
     return sendResponse(res, result);
   });
 

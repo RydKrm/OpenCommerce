@@ -43,10 +43,8 @@ export const CreateProductDto = z.object({
     .string()
     .transform((item) => {
       const variantArray = JSON.parse(item);
-      console.log("variant items  ", variantArray);
       return variantArray.map((item: any) => {
-        ProductVariant.parse(item);
-        return item;
+        return ProductVariant.parse(item);
       });
     })
     .optional(),
@@ -59,6 +57,6 @@ export const CreateProductDto = z.object({
 });
 
 export const UpdateProductDto = CreateProductDto.partial();
-
+export type ProductVariantType = z.infer<typeof CreateProductDto>;
 export type CreateProductType = z.infer<typeof CreateProductDto>;
 export type UpdateProductType = z.infer<typeof UpdateProductDto>;

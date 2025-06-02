@@ -15,8 +15,8 @@ const serverUpload = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const fileList = req.files as Express.Multer.File[];
 
-    console.log("fileList", fileList);
-    console.log("req.body", req.body);
+    // console.log("fileList", fileList);
+    // console.log("req.body", req.body);
 
     if (!fileList || fileList.length === 0) {
       return res.status(400).json({ error: "No files found" });
@@ -55,6 +55,8 @@ const serverUpload = () => {
 
       const filesList = response.data.files;
 
+      console.log("Files lists ", filesList);
+
       const fileData: any = {};
 
       for (const files in filesList) {
@@ -67,6 +69,8 @@ const serverUpload = () => {
           req.body[fieldName] = fileData[file.fieldname];
         }
       }
+
+      console.log("req.body after file upload", req.body);
       // Delete the uploaded files from API Gateway after sending
       await Promise.all(fileList.map((file) => unlink(file.path)));
 
