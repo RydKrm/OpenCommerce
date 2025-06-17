@@ -46,17 +46,6 @@ class ProductCrudService {
             })),
           },
         },
-        Product_Variant: {
-          createMany: {
-            data: productVariants?.map((variant) => ({
-              price: variant.price,
-              previousPrice: variant.previousPrice,
-              quantity: variant.quantity,
-              sku: sku,
-              image: variant.image,
-            })),
-          },
-        },
       },
       include: {
         Images: true,
@@ -71,32 +60,57 @@ class ProductCrudService {
 
     if (!newProduct) return sendData(400, "Product not created");
 
-    const variantPropertyList: any = [];
+    // if the many product created successfully, we can now create variants
+    // and their properties are also created
 
-    console.log("newProduct", newProduct);
+    for (const variant of productVariants) {
+      const variantProperties =
+        variant.properties?.map((prop) => ({
+          productId: newProduct.id,
+          key: prop.key,
+          value: prop.value,
+        })) || [];
 
-    newProduct.Product_Variant.forEach((variant) => {
-      variant.Product_Property.forEach((property) => {
-        variantPropertyList.push({
-          key: property.key,
-          value: property.value,
-          variantId: variant.id,
-        });
+      const variantData = {
+        price: variant.price,
+        previousPrice: variant.previousPrice,
+        quantity: variant.quantity,
+        image: variant.image,
+        productId: newProduct.id,
+        sku: sku,
+      };
+
+      // Create the variant with its properties
+      const createdVariant = await prisma.product_Variant.create({
+        data: {
+          ...variantData,
+          Product_Property: {
+            createMany: {
+              data: variantProperties,
+            },
+          },
+        },
       });
+    }
+
+    const getProduct = await prisma.product.findUnique({
+      where: { id: newProduct.id },
+      include: {
+        Images: true,
+        Category: true,
+        Comment: true,
+        Reaction: true,
+        Reviews: true,
+        Product_Property: true,
+        Product_Variant: {
+          include: {
+            Product_Property: true,
+          },
+        },
+      },
     });
 
-    console.log("variantPropertyList", variantPropertyList);
-
-    const variantsList = await prisma.product_Property.createMany({
-      data: variantPropertyList,
-    });
-
-    if (!variantsList) return sendData(400, "Product not created");
-
-    return sendData(200, "Product created successfully", {
-      ...newProduct,
-      // Product_Variant: variantsList,
-    });
+    return sendData(200, "Product created successfully", getProduct);
   }
 
   async addedImagesInVariant(
