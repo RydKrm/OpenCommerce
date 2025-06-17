@@ -1,6 +1,6 @@
 {
   "product": {
-    "url": "http://localhost:3000/api",
+    "url": "http://product_service:3000/api",
     "routes": [
       {
         "path": "v1/product/basic/create",

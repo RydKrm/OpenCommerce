@@ -1,6 +1,6 @@
 {
   "wishlist": {
-    "url": "http://localhost:3001/api",
+    "url": "http://user_service:3001/api",
     "routes": [
       {
         "path": "v1/wishlist/create",

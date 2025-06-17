@@ -1,6 +1,6 @@
 {
   "order": {
-    "url": "http://localhost:3002/api",
+    "url": "http://order_service:3002/api",
     "routes": [
       {
         "path": "v1/order/basic/create",
