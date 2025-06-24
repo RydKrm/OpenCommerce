@@ -4,23 +4,11 @@ import Image from "next/image";
 import { Truck } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { CartItem, useCart } from "@/providers/cart-provider";
 // import { useCart } from "@/hooks/use-cart"
 
 export default function CheckoutSummary() {
-  // const { items } = useCart()
-
-  const items = [
-    {
-      id: "1",
-      name: "Product 1",
-      price: 19.99,
-      image: "/placeholder.svg?height=48&width=48",
-      quantity: 1,
-      size: "M",
-      color: "Black",
-    },
-    // Add more items here
-  ];
+  const { items } = useCart();
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -40,7 +28,10 @@ export default function CheckoutSummary() {
             <div className="flex gap-3">
               <div className="w-12 h-12 relative rounded overflow-hidden flex-shrink-0">
                 <Image
-                  src={item.image || "/placeholder.svg?height=48&width=48"}
+                  src={
+                    `${process.env.NEXT_PUBLIC_IMAGE_URL}/${item.image}` ||
+                    "/placeholder.svg?height=48&width=48"
+                  }
                   alt={item.name}
                   className="object-cover"
                   fill

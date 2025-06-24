@@ -178,10 +178,26 @@ class ProductCrudService {
   }
 
   async getAllProducts(query: IQuery) {
-    const { limit = 10, skip = 0, search = "", categoryId } = query;
+    const {
+      limit = 10,
+      skip = 0,
+      search = "",
+      categoryId,
+      minPrice,
+      maxPrice,
+      sortBy,
+    } = query;
 
     const filter: any = {};
-    if (categoryId) filter.categoryId = categoryId;
+    if (categoryId) {
+      const categoryList = categoryId.split(",");
+      filter.OR = [];
+      categoryList.forEach((category) => {
+        filter.OR.push({
+          categoryId: category,
+        });
+      });
+    }
     if (search) {
       filter.name = {
         contains: search,
@@ -189,11 +205,36 @@ class ProductCrudService {
       };
     }
 
+    if (minPrice && maxPrice) {
+      filter.AND = [
+        {
+          price: {
+            gte: Number(minPrice),
+            lte: Number(maxPrice),
+          },
+        },
+      ];
+    }
+
+    let orderBy: any = { createdAt: "desc" };
+
+    if (sortBy === "price_asc") {
+      orderBy = { price: "asc" };
+    } else if (sortBy === "price_desc") {
+      orderBy = { price: "desc" };
+    } else if (sortBy === "name_asc") {
+      orderBy = { name: "asc" };
+    } else if (sortBy === "rating_desc") {
+      orderBy = { Reviews: { _count: "desc" } };
+    }
+
+    console.log("filter ", filter);
+
     const products = await prisma.product.findMany({
       where: filter,
       take: Number(limit),
       skip: Number(skip),
-      orderBy: { createdAt: "desc" },
+      orderBy,
       include: {
         Images: true,
         Category: true,
@@ -230,6 +271,28 @@ class ProductCrudService {
       },
     });
     if (!product) return sendData(400, "Product not found by id");
+
+    return sendData(200, "Product fetched successfully", product);
+  }
+
+  async getProductBySlug(slug: string) {
+    const product = await prisma.product.findUnique({
+      where: { slug },
+      include: {
+        Images: true,
+        Category: true,
+        Comment: true,
+        Reaction: true,
+        Reviews: true,
+        Product_Property: true,
+        Product_Variant: {
+          include: {
+            Product_Property: true,
+          },
+        },
+      },
+    });
+    if (!product) return sendData(400, "Product not found by slug");
 
     return sendData(200, "Product fetched successfully", product);
   }

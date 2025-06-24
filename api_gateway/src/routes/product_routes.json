@@ -32,6 +32,11 @@
         "middlewares": []
       },
       {
+        "path": "v1/product/basic/by-slug/:slug",
+        "method": ["GET"],
+        "middlewares": []
+      },
+      {
         "path": "v1/product/basic/delete/:productId",
         "method": ["DELETE"],
         "middlewares": []

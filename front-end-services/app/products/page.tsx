@@ -12,10 +12,12 @@ export default function ProductsPage({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const category =
-    typeof searchParams.category === "string"
-      ? searchParams.category
-      : undefined;
+  let selectedCategories: string[] = [];
+  if (Array.isArray(searchParams.category)) {
+    selectedCategories = searchParams.category as string[];
+  } else if (typeof searchParams.category === "string") {
+    selectedCategories = [searchParams.category];
+  }
   const sort =
     typeof searchParams.sort === "string" ? searchParams.sort : undefined;
   const search =
@@ -34,7 +36,7 @@ export default function ProductsPage({
       <h1 className="text-3xl font-bold mb-6">All Products</h1>
       <Suspense fallback={<ProductListSkeleton />}>
         <ProductList
-          category={category}
+          selectedCategories={selectedCategories}
           sort={sort}
           search={search}
           minPrice={minPrice}

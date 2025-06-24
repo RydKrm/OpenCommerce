@@ -1,6 +1,7 @@
 import axiosInstance from "@/config/axiosInstance";
 import axios from "axios";
 import { makeAutoObservable, runInAction } from "mobx";
+import { ICategory } from "../category/useCategoryStore";
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 const API_BASE = `${API_URL}/product/basic`;
 
@@ -16,6 +17,7 @@ export interface IProductVariant {
   previousPrice?: number;
   quantity: number;
   image: File;
+  sku: string;
   properties: IProductProperty[];
 }
 
@@ -31,6 +33,21 @@ export interface ICreateProduct {
   variants: IProductVariant[];
 }
 
+export interface IProductList extends ICreateProduct {
+  Category: ICategory;
+  status: boolean;
+  Images: { image_id: string; image_url: string }[];
+  slug: string;
+  sku: string;
+  id: string;
+  rating: number;
+  createdAt: Date;
+  updatedAt: Date;
+  Product_Property: IProductProperty[];
+  Product_Variant: IProductVariant[];
+  totalSold: number;
+}
+
 class ProductStore {
   product: ICreateProduct = {
     name: "",
@@ -44,7 +61,8 @@ class ProductStore {
     variants: [],
   };
 
-  productList: ICreateProduct[] = [];
+  productList: IProductList[] = [];
+  singleProduct: IProductList | null = null;
   isLoading: boolean = false;
   error: any = null;
   message: string = "";
@@ -60,7 +78,7 @@ class ProductStore {
     // this.isLoading = true;
     // create a form data using data
     const formData = new FormData();
-    console.log(" url ", `${API_BASE}/create`);
+    // console.log(" url ", `${API_BASE}/create`);
 
     // append data to form data
     formData.append("name", data.name);
@@ -115,16 +133,43 @@ class ProductStore {
   }
 
   // fetch product list
-  async fetchProductList() {
+  async fetchProductList(
+    options: {
+      search?: string;
+      categoryId?: string;
+      minPrice?: number;
+      maxPrice?: number;
+      sortBy?: string;
+      skip?: number;
+      limit?: number;
+    } = {}
+  ) {
     this.isLoading = true;
     try {
+      const {
+        search = "",
+        categoryId = "",
+        minPrice,
+        maxPrice,
+        sortBy = "",
+        skip = this.skip,
+        limit = this.limit,
+      } = options;
+      const params = new URLSearchParams();
+      params.append("skip", String(skip));
+      params.append("limit", String(limit));
+      if (search) params.append("search", search);
+      if (categoryId) params.append("categoryId", categoryId);
+      if (minPrice !== undefined) params.append("minPrice", String(minPrice));
+      if (maxPrice !== undefined) params.append("maxPrice", String(maxPrice));
+      if (sortBy) params.append("sortBy", sortBy);
       const res = await axiosInstance.get(
-        `${API_BASE}/all?skip=${this.skip}&limit=${this.limit}`
+        `${API_BASE}/list?${params.toString()}`
       );
       if (res.status === 200) {
         runInAction(() => {
-          this.productList = (res.data as any)?.result;
-          this.total = (res.data as any)?.total;
+          this.productList = (res.data as any)?.results.list;
+          this.total = (res.data as any)?.results.total;
           this.message = (res.data as any)?.message;
           this.isLoading = false;
           this.error = null;
@@ -134,6 +179,31 @@ class ProductStore {
           this.error = res.data as unknown as null;
           this.isLoading = false;
           this.message = (res.data as any)?.message;
+        });
+      }
+    } catch (err) {
+      runInAction(() => {
+        this.error = err as unknown as null;
+        this.isLoading = false;
+      });
+    }
+  }
+
+  async findBySlug(id: string) {
+    this.isLoading = true;
+    try {
+      const res = await axiosInstance.get(`${API_BASE}/by-slug/${id}`);
+      if (res.status === 200) {
+        runInAction(() => {
+          console.log(res.data);
+          this.singleProduct = (res.data as any).results;
+          this.isLoading = false;
+          this.error = null;
+        });
+      } else {
+        runInAction(() => {
+          this.error = res.data as unknown as null;
+          this.isLoading = false;
         });
       }
     } catch (err) {

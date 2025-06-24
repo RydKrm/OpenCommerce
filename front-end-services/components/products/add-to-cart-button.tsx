@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 // import { useCart } from "@/hooks/use-cart"
 import { toast } from "@/hooks/use-toast";
 import type { Product } from "@/types";
+import { IProductList } from "@/api/product/useProductStore";
 
 interface AddToCartButtonProps {
-  product: Product;
+  product: IProductList;
   className?: string;
+  variantId?: string;
 }
 
 const addItem = (product: Product) => {};
@@ -17,6 +19,7 @@ const addItem = (product: Product) => {};
 export default function AddToCartButton({
   product,
   className,
+  variantId,
 }: AddToCartButtonProps) {
   // const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState("");
@@ -35,16 +38,6 @@ export default function AddToCartButton({
       });
       return;
     }
-
-    // addItem({
-    //   id: product.id,
-    //   name: product.name,
-    //   price: product.price,
-    //   images: product.images,
-    //   quantity: quantity,
-    //   size: selectedSize,
-    //   color: selectedColor,
-    // });
 
     toast({
       title: "Added to cart",

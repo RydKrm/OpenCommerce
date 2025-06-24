@@ -70,6 +70,12 @@ class ProductCrudController {
     return sendResponse(res, product);
   });
 
+  findBySlug = asyncHandler(async (req: Request, res: Response) => {
+    const productId = req.params.slug;
+    const product = await productCrudService.getProductBySlug(productId);
+    return sendResponse(res, product);
+  });
+
   delete = asyncHandler(async (req: Request, res: Response) => {
     const productId = req.params.productId;
     const deletedProduct = await productCrudService.deleteProduct(productId);

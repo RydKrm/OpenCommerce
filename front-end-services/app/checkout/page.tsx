@@ -1,20 +1,19 @@
-import type { Metadata } from "next"
-import { redirect } from "next/navigation"
-import CheckoutForm from "@/components/checkout/checkout-form"
-import CheckoutSummary from "@/components/checkout/checkout-summary"
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import CheckoutForm from "@/components/checkout/checkout-form";
+import CheckoutSummary from "@/components/checkout/checkout-summary";
 
 export const metadata: Metadata = {
   title: "Checkout | ThreadZone",
   description: "Complete your purchase",
-}
+};
 
-export default function CheckoutPage() {
-  // In a real app, you would check if the user is authenticated and has items in cart
-  const isAuthenticated = true // This would come from your auth system
-  const hasItems = true // This would come from your cart state
+const CheckoutPage = () => {
+  const isAuthenticated = true;
+  const hasItems = true;
 
   if (!isAuthenticated || !hasItems) {
-    redirect("/cart")
+    redirect("/cart");
   }
 
   return (
@@ -30,5 +29,7 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default CheckoutPage;

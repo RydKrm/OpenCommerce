@@ -11,6 +11,8 @@ productCrudRoute.patch(
   productCrudController.updateStatus
 );
 
+productCrudRoute.get("/by-slug/:slug", productCrudController.findBySlug);
+
 productCrudRoute.get("/list", productCrudController.getAll);
 
 productCrudRoute.get("/details/:productId", productCrudController.details);

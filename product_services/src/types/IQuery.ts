@@ -3,4 +3,8 @@ export interface IQuery {
   skip?: number;
   search?: string;
   categoryId?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  sortBy?: string;
+
 }

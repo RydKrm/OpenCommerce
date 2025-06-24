@@ -1,51 +1,54 @@
-"use client"
+"use client";
 
-import { DashboardHeader } from "@/components/dashboard-header"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Search, Filter, Plus, Edit, Trash2 } from "lucide-react"
-import { useState } from "react"
-import Link from "next/link"
+import { DashboardHeader } from "@/components/dashboard-header";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Search, Filter, Plus, Edit, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { observer } from "mobx-react-lite";
+import productStore from "@/api/product/useProductStore";
+import Image from "next/image";
 
-const mockProducts = [
-  { id: 1, name: "Wireless Headphones", category: "Electronics", price: 99.99, stock: 45, status: "active" },
-  { id: 2, name: "Cotton T-Shirt", category: "Clothing", price: 24.99, stock: 120, status: "active" },
-  { id: 3, name: "JavaScript Guide", category: "Books", price: 39.99, stock: 8, status: "low-stock" },
-  { id: 4, name: "Garden Tools Set", category: "Home & Garden", price: 149.99, stock: 0, status: "out-of-stock" },
-  { id: 5, name: "Running Shoes", category: "Sports", price: 129.99, stock: 67, status: "active" },
-]
+const ProductsPage = observer(() => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
 
-export default function ProductsPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
+  const { limit, skip, productList } = productStore;
 
-  const filteredProducts = mockProducts.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = categoryFilter === "all" || product.category === categoryFilter
-    const matchesStatus = statusFilter === "all" || product.status === statusFilter
-    return matchesSearch && matchesCategory && matchesStatus
-  })
+  useEffect(() => {
+    productStore.fetchProductList();
+  }, [limit, skip]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge variant="default">Active</Badge>
+        return <Badge variant="default">Active</Badge>;
       case "low-stock":
-        return <Badge variant="secondary">Low Stock</Badge>
+        return <Badge variant="secondary">Low Stock</Badge>;
       case "out-of-stock":
-        return <Badge variant="destructive">Out of Stock</Badge>
+        return <Badge variant="destructive">Out of Stock</Badge>;
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline">{status}</Badge>;
     }
-  }
+  };
 
   return (
     <div className="flex flex-col">
-      <DashboardHeader title="All Products" description="Manage your product inventory" />
+      <DashboardHeader
+        title="All Products"
+        description="Manage your product inventory"
+      />
 
       <main className="flex-1 p-4 lg:p-6 space-y-6">
         {/* Filters */}
@@ -110,7 +113,7 @@ export default function ProductsPage() {
         {/* Products Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Products ({filteredProducts.length})</CardTitle>
+            <CardTitle>Products {productList.length}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -126,18 +129,32 @@ export default function ProductsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredProducts.map((product) => (
-                    <tr key={product.id} className="border-b hover:bg-muted/50">
+                  {productList.map((product) => (
+                    <tr
+                      key={product.categoryId}
+                      className="border-b hover:bg-muted/50">
                       <td className="p-2">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-muted rounded-md"></div>
+                          <div className="w-10 h-10 bg-muted rounded-md">
+                            <Image
+                              src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${product.Images[0].image_url}`}
+                              alt={product.name}
+                              width={40}
+                              height={40}
+                              className="object-cover w-full h-full rounded-md"
+                            />
+                          </div>
                           <span className="font-medium">{product.name}</span>
                         </div>
                       </td>
-                      <td className="p-2">{product.category}</td>
+                      <td className="p-2">{product.Category.name}</td>
                       <td className="p-2">${product.price}</td>
-                      <td className="p-2">{product.stock}</td>
-                      <td className="p-2">{getStatusBadge(product.status)}</td>
+                      <td className="p-2">{product.quantity}</td>
+                      <td className="p-2">
+                        {product.status
+                          ? getStatusBadge("active")
+                          : getStatusBadge("Out of stock")}
+                      </td>
                       <td className="p-2">
                         <div className="flex gap-2">
                           <Button variant="ghost" size="sm">
@@ -157,5 +174,7 @@ export default function ProductsPage() {
         </Card>
       </main>
     </div>
-  )
-}
+  );
+});
+
+export default ProductsPage;
