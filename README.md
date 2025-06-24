@@ -11,6 +11,9 @@ A Scalable, Distributed Online Shopping System
 
 This project is a modern e-commerce platform built using microservices architecture where each core component operates as an independent service with its own database, communicating through RabbitMQ for seamless inter-service operations. Designed for high availability and scalability, the system handles everything from user management to order processing with efficiency and reliability.
 
+<!-- ![Microservice Image](./Docs/readme_image.png) -->
+<img src="./Docs/readme_image.png" alt="Microservice Image" width="700" height="650" align="center" />
+
 ## Key Highlights
 
 ✔ Decoupled Architecture: Six independent services (User, Product, Order, Notification, File Storage, and API Gateway) ensure fault isolation and independent scalability.
