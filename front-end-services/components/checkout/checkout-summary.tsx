@@ -18,6 +18,8 @@ export default function CheckoutSummary() {
   const tax = subtotal * 0.1; // 10% tax
   const total = subtotal + shipping + tax;
 
+  console.log("Cart Items Lists : ", items);
+
   return (
     <Card className="p-6">
       <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
@@ -46,11 +48,6 @@ export default function CheckoutSummary() {
                     x{item.quantity}
                   </span>
                 </div>
-                {item.size && item.color && (
-                  <div className="text-xs text-muted-foreground">
-                    Size: {item.size} | Color: {item.color}
-                  </div>
-                )}
               </div>
             </div>
             <div className="font-medium">

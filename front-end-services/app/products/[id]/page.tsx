@@ -39,17 +39,21 @@ const ProductSinglePage = observer(({ params }: { params: any }) => {
   useEffect(() => {
     productStore.findBySlug(id);
   }, [id]);
-  
+
   useEffect(() => {
     if (productStore.singleProduct) {
       // Use product images by default
-      const productImages = (productStore.singleProduct.Images || []).map(img => ({
-        ...img,
-        image_url: (img.image_url as string)?.replace(/\\/g, "/") || '',
-      }));
+      const productImages = (productStore.singleProduct.Images || []).map(
+        (img) => ({
+          ...img,
+          image_url: (img.image_url as string)?.replace(/\\/g, "/") || "",
+        })
+      );
       setAllImages(productImages);
       // Set first variant as selected
-      setSelectedVariant(productStore.singleProduct.Product_Variant?.[0] || null);
+      setSelectedVariant(
+        productStore.singleProduct.Product_Variant?.[0] || null
+      );
     }
   }, [productStore.singleProduct]);
 
@@ -83,13 +87,19 @@ const ProductSinglePage = observer(({ params }: { params: any }) => {
    */
 
   const addToCart = () => {
-    if (!selectedVariant || typeof selectedVariant.price !== "number" || !selectedVariant.id) return;
+    if (
+      !selectedVariant ||
+      typeof selectedVariant.price !== "number" ||
+      !selectedVariant.id
+    )
+      return;
     addItem({
-      id: selectedVariant.id,
+      id: singleProduct?.id as string,
       name: singleProduct?.name || "Unknown Product",
       price: selectedVariant.price,
       quantity,
       image: allImage[currentImageIndex]?.image_url || "/placeholder.svg",
+      variantId: selectedVariant.id,
     });
   };
 
@@ -98,14 +108,17 @@ const ProductSinglePage = observer(({ params }: { params: any }) => {
     setSelectedVariant(variant);
     setCurrentImageIndex(0);
     // If the variant has an image, use it; otherwise, use product images
-    if (variant.image && typeof variant.image === 'string') {
+    if (variant.image && typeof variant.image === "string") {
       setAllImages([
-        { image_id: variant.id, image_url: (variant.image as string)?.replace(/\\/g, "/") || '' },
+        {
+          image_id: variant.id,
+          image_url: (variant.image as string)?.replace(/\\/g, "/") || "",
+        },
       ]);
     } else {
-      const productImages = (singleProduct?.Images || []).map(img => ({
+      const productImages = (singleProduct?.Images || []).map((img) => ({
         ...img,
-        image_url: (img.image_url as string)?.replace(/\\/g, "/") || '',
+        image_url: (img.image_url as string)?.replace(/\\/g, "/") || "",
       }));
       setAllImages(productImages);
     }
@@ -139,19 +152,26 @@ const ProductSinglePage = observer(({ params }: { params: any }) => {
               previousPrice={selectedVariant?.previousPrice}
               quantity={selectedVariant?.quantity ?? 0}
             />
-            {singleProduct?.Product_Property && singleProduct.Product_Property.length > 0 && (
-              <ProductProperties properties={singleProduct.Product_Property} />
-            )}
-            {singleProduct?.Product_Variant && singleProduct.Product_Variant.length > 0 && (
-              <VariantSelector
-                variants={singleProduct.Product_Variant}
-                selectedVariant={selectedVariant}
-                setSelectedVariant={handleVariantSelect}
-              />
-            )}
-            {Array.isArray((selectedVariant as any)?.Product_Property) && (selectedVariant as any).Product_Property.length > 0 && (
-              <VariantDetails properties={(selectedVariant as any).Product_Property} />
-            )}
+            {singleProduct?.Product_Property &&
+              singleProduct.Product_Property.length > 0 && (
+                <ProductProperties
+                  properties={singleProduct.Product_Property}
+                />
+              )}
+            {singleProduct?.Product_Variant &&
+              singleProduct.Product_Variant.length > 0 && (
+                <VariantSelector
+                  variants={singleProduct.Product_Variant}
+                  selectedVariant={selectedVariant}
+                  setSelectedVariant={handleVariantSelect}
+                />
+              )}
+            {Array.isArray((selectedVariant as any)?.Product_Property) &&
+              (selectedVariant as any).Product_Property.length > 0 && (
+                <VariantDetails
+                  properties={(selectedVariant as any).Product_Property}
+                />
+              )}
             <div className="space-y-4">
               <QuantitySelector
                 quantity={quantity}
@@ -174,7 +194,10 @@ const ProductSinglePage = observer(({ params }: { params: any }) => {
           </div>
         </div>
         <ProductDescription description={singleProduct?.description || ""} />
-        <QuestionsSection newComment={newComment} setNewComment={setNewComment} />
+        <QuestionsSection
+          newComment={newComment}
+          setNewComment={setNewComment}
+        />
       </div>
     </div>
   );

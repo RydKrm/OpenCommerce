@@ -46,6 +46,7 @@ export interface IProductList extends ICreateProduct {
   Product_Property: IProductProperty[];
   Product_Variant: IProductVariant[];
   totalSold: number;
+  variantId: string;
 }
 
 class ProductStore {

@@ -9,8 +9,6 @@ export type CartItem = {
   price: number;
   image: string;
   quantity: number;
-  size?: string;
-  color?: string;
   variantId?: string;
 };
 
@@ -65,10 +63,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems((prevItems) => {
       // Check if item already exists in cart
       const existingItemIndex = prevItems.findIndex(
-        (item) =>
-          item.id === newItem.id &&
-          item.size === newItem.size &&
-          item.color === newItem.color
+        (item) => item.id === newItem.id
       );
 
       if (existingItemIndex > -1) {

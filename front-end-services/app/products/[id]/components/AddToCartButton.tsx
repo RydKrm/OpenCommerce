@@ -7,13 +7,24 @@ interface AddToCartButtonProps {
   quantity: number;
   onAddToCart: () => void;
   disabled?: boolean;
+  variantId?: string;
 }
 
-const AddToCartButton: React.FC<AddToCartButtonProps> = ({ price, quantity, onAddToCart, disabled }) => (
-  <Button className="w-full" size="lg" onClick={onAddToCart} disabled={disabled}>
+const AddToCartButton: React.FC<AddToCartButtonProps> = ({
+  price,
+  quantity,
+  variantId,
+  onAddToCart,
+  disabled,
+}) => (
+  <Button
+    className="w-full"
+    size="lg"
+    onClick={onAddToCart}
+    disabled={disabled}>
     <ShoppingCart className="w-4 h-4 mr-2" />
     Add to Cart - ${(price * quantity).toFixed(2)}
   </Button>
 );
 
-export default AddToCartButton; 
+export default AddToCartButton;
