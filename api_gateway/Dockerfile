@@ -10,5 +10,11 @@ COPY ./ ./
 FROM node:22-alpine
 WORKDIR /app
 COPY --from=builder /app ./
+
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
+
 EXPOSE 8081
-CMD ["npm","run","dev"]
+
+# Use entrypoint to create folders before running dev
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
