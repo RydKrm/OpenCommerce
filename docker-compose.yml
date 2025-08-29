@@ -19,6 +19,44 @@ services:
       interval: 5s
       retries: 5
 
+  # ----------------- MIGRATION JOBS -----------------
+  migrate_users:
+    build:
+      context: ./users_services
+    command: npx prisma migrate dev
+    environment:
+      - DATABASE_URL=postgresql://postgres:1234@postgres:5432/ecommerce-users?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  migrate_products:
+    build:
+      context: ./product_services
+    command: npx prisma migrate dev
+    environment:
+      - DATABASE_URL=postgresql://postgres:1234@postgres:5432/ecommerce-products?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  migrate_orders:
+    build:
+      context: ./order_services
+    command: npx prisma migrate dev
+    environment:
+      - DATABASE_URL=postgresql://postgres:1234@postgres:5432/ecommerce-orders?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  # ----------------- SERVICES -----------------
   user_service:
     build:
       context: ./users_services
@@ -32,9 +70,8 @@ services:
       - ACCESS_TOKEN_SECRET_KEY=ecommerce_access_token
       - PORT=3001
     depends_on:
-      postgres:
-       condition: service_healthy
-    # command: ["sh", "./wait-for-postgres.sh", "postgres", "postgres", "1234", "npx prisma migrate dev && npm run dev"]
+      - migrate_users
+    command: npm run dev
     networks:
       - backend
 
@@ -51,9 +88,8 @@ services:
       - ACCESS_TOKEN_SECRET_KEY=ecommerce_access_token
       - PORT=3000
     depends_on:
-      postgres:
-       condition: service_healthy
-    # command: ["sh", "./wait-for-postgres.sh", "postgres", "postgres", "1234", "npx prisma migrate dev && npm run dev"]
+      - migrate_products
+    command: npm run dev
     networks:
       - backend
 
@@ -70,9 +106,8 @@ services:
       - ACCESS_TOKEN_SECRET_KEY=ecommerce_access_token
       - PORT=3002
     depends_on:
-      postgres:
-       condition: service_healthy
-    # command: ["sh", "./wait-for-postgres.sh", "postgres", "orders_user", "1234", "npx prisma migrate dev && npm run dev"]
+      - migrate_orders
+    command: npm run dev
     networks:
       - backend
 
@@ -131,11 +166,13 @@ services:
     depends_on:
       - redis
 
+# ----------------- VOLUMES -----------------
 volumes:
   pgdata:
   rabbitmq_data:
   redis_data:
 
+# ----------------- NETWORK -----------------
 networks:
   backend:
     driver: bridge
