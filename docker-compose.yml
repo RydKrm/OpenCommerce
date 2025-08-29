@@ -1,6 +1,24 @@
 version: "3.9"
 
 services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5431:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 5
+
   user_service:
     build:
       context: ./users_services
@@ -12,10 +30,11 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:1234@postgres:5432/ecommerce-users?schema=public
       - ACCESS_TOKEN_SECRET_KEY=ecommerce_access_token
-      - CLOUDINARY_CLOUD_NAME=dk4ee7pjt
-      - CLOUDINARY_API_KEY=562313272941643
-      - CLOUDINARY_API_SECRET=79NWnDzd8cRs0RegetuDEOEdfN0
       - PORT=3001
+    depends_on:
+      postgres:
+       condition: service_healthy
+    # command: ["sh", "./wait-for-postgres.sh", "postgres", "postgres", "1234", "npx prisma migrate dev && npm run dev"]
     networks:
       - backend
 
@@ -30,10 +49,11 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:1234@postgres:5432/ecommerce-products?schema=public
       - ACCESS_TOKEN_SECRET_KEY=ecommerce_access_token
-      - CLOUDINARY_CLOUD_NAME=dk4ee7pjt
-      - CLOUDINARY_API_KEY=562313272941643
-      - CLOUDINARY_API_SECRET=79NWnDzd8cRs0RegetuDEOEdfN0
       - PORT=3000
+    depends_on:
+      postgres:
+       condition: service_healthy
+    # command: ["sh", "./wait-for-postgres.sh", "postgres", "postgres", "1234", "npx prisma migrate dev && npm run dev"]
     networks:
       - backend
 
@@ -48,10 +68,11 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:1234@postgres:5432/ecommerce-orders?schema=public
       - ACCESS_TOKEN_SECRET_KEY=ecommerce_access_token
-      - CLOUDINARY_CLOUD_NAME=dk4ee7pjt
-      - CLOUDINARY_API_KEY=562313272941643
-      - CLOUDINARY_API_SECRET=79NWnDzd8cRs0RegetuDEOEdfN0
-      - PORT=3001
+      - PORT=3002
+    depends_on:
+      postgres:
+       condition: service_healthy
+    # command: ["sh", "./wait-for-postgres.sh", "postgres", "orders_user", "1234", "npx prisma migrate dev && npm run dev"]
     networks:
       - backend
 
@@ -92,19 +113,6 @@ services:
       RABBITMQ_DEFAULT_PASS: user
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-    networks:
-      - backend
-
-  postgres:
-    image: postgres:15
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=1234
-    ports:
-      - "5431:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
     networks:
       - backend
 

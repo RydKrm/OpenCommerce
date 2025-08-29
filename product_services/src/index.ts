@@ -5,16 +5,16 @@ import rateLimiter from "./utils/rate-limiter";
 import { checkDatabaseConnection } from "./database/prisma";
 import cors from "cors";
 import morgan from "morgan";
-import { connectRabbitMQ } from "./broker/rabbitmq";
-import { startRPCServer } from "./modules/v1/product/broker/send_cart.broker";
+// import { connectRabbitMQ } from "./broker/rabbitmq";
+// import { startRPCServer } from "./modules/v1/product/broker/send_cart.broker";
 import IRequest from "./types/IRequest";
 import { ROLES } from "./types/role";
-import { startInventoryRPCServer } from "./modules/v1/product/broker/update_inventory.broker";
+// import { startInventoryRPCServer } from "./modules/v1/product/broker/update_inventory.broker";
 // import { setupSwagger } from "./config/swagger.config";
 
 const app = express();
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
@@ -22,11 +22,11 @@ app.use(express.json());
 checkDatabaseConnection();
 
 // connect to rabbitmq
-connectRabbitMQ();
+// connectRabbitMQ();
 
 // consumer called
-startRPCServer();
-startInventoryRPCServer();
+// startRPCServer();
+// startInventoryRPCServer();
 
 app.use(
   cors({

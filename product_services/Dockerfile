@@ -11,7 +11,5 @@ RUN npx prisma generate
 FROM node:22-alpine
 WORKDIR /app
 COPY --from=builder /app ./
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
 EXPOSE 3000
-ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["npm","run","dev"]
