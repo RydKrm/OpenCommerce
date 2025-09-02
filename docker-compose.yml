@@ -134,6 +134,10 @@ services:
       - /app/node_modules
     environment:
       - ACCESS_TOKEN_SECRET_KEY=ecommerce_access_token
+      - FILE_SERVER_URL=http://file_storage_service:3004
+      - USER_SERVICE_URL=http://user_service:3001
+      - PRODUCT_SERVICE_URL=http://product_service:3000
+      - ORDER_SERVICE_URL=http://order_service:3002
     networks:
       - backend
 

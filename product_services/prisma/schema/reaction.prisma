@@ -6,4 +6,6 @@ model Reaction {
   type      String
 
   Product Product? @relation(fields: [productId], references: [id])
+
+  Product_V2 Product_V2[]
 }

@@ -8,4 +8,6 @@ model Reviews {
   Product Product   @relation(fields: [productId], references: [id])
   Images  Images[]
   Comment Comment[]
+
+  Product_V2 Product_V2[]
 }

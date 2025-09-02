@@ -4,6 +4,8 @@ const productCrudRoute = express.Router();
 
 productCrudRoute.post("/create", productCrudController.create);
 
+productCrudRoute.post("/create-v2", productCrudController.create_v2);
+
 productCrudRoute.patch("/update/:productId", productCrudController.update);
 
 productCrudRoute.patch(

@@ -7,9 +7,6 @@ import sendResponse from "@/lib/response/send_response";
 
 class ProductCrudController {
   create = asyncHandler(async (req: IRequest, res: Response) => {
-    // console.log("Request body ", req.body);
-    // console.log("Request variants ", JSON.parse(req.body.variants[0]));
-    // console.log("Request body data ", req.body);
     const {
       name,
       categoryId,
@@ -40,6 +37,12 @@ class ProductCrudController {
     });
     return sendResponse(res, result);
   });
+
+  create_v2 = asyncHandler(async (req: IRequest, res: Response) => {
+    const data = CreateProductDto.parse(req.body);
+    const result = await productCrudService.createProductV2(data);
+    return sendResponse(res, result);
+  })
 
   update = asyncHandler(async (req: Request, res: Response) => {
     const productId = req.params.productId;

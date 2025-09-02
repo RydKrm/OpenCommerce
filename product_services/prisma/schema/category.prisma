@@ -9,4 +9,6 @@ model Category {
   parent      Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
   children    Category[] @relation("CategoryToCategory")
   Product     Product[]
+
+  Product_V2 Product_V2[]
 }

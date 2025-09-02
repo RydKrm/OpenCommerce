@@ -44,6 +44,7 @@ model Product_Variant {
   Product_Property Product_Property[]
 
   @@map("product_variant")
+  Product_V2 Product_V2[]
 }
 
 model Product_Property {
@@ -57,6 +58,7 @@ model Product_Property {
   Variant Product_Variant? @relation(fields: [variantId], references: [id])
 
   @@map("product_property")
+  Product_V2 Product_V2[]
 }
 
 model Product_Inventory {
@@ -72,6 +74,38 @@ model Product_Inventory {
   Product Product @relation(references: [id], fields: [productId])
 
   @@map("product_inventory")
+  Product_V2 Product_V2[]
+}
+
+model Product_V2{
+  id            String   @id @default(cuid())
+  name          String
+  categoryId    String
+  price         Float
+  slug          String   @unique
+  sku           String?
+  previousPrice Float?   @map("previous_price")
+  description   String
+  quantity      Int
+  isDeleted     Boolean  @default(false) @map("is_deleted")
+  rating        Float    @default(0)
+  totalSold     Int      @default(0) @map("total_sold")
+  totalLike     Int      @default(0) @map("total_like")
+  totalVisit    Int      @default(0) @map("total_visit")
+  totalComment  Int      @default(0) @map("total_comment")
+  status        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  Category          Category            @relation(fields: [categoryId], references: [id])
+  Comment           Comment[]
+  Reaction          Reaction[]
+  Reviews           Reviews[]
+  Images            Images[]
+  WishList          WishList[]
+  Product_Inventory Product_Inventory[]
+  Product_Variant   Product_Variant[]
+  Product_Property  Product_Property[]
 }
 
 enum InventoryType {

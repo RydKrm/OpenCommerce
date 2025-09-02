@@ -1,12 +1,19 @@
 {
   "product": {
-    "url": "http://localhost:3000/api",
+    "url": "http://product_service:3000/api",
     "routes": [
       {
         "path": "v1/product/basic/create",
         "method": ["POST"],
         "middlewares": ["upload"],
-        "role": ["seller "],
+        "role": ["seller"],
+        "uploadFolder": "products"
+      },
+      {
+        "path": "v1/product/basic/create-v2",
+        "method": ["POST"],
+        "middlewares": ["upload"],
+        "role": ["seller"],
         "uploadFolder": "products"
       },
       {

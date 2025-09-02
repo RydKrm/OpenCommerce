@@ -13,7 +13,7 @@ interface IProductVariant extends ProductVariantType {
 
 class ProductCrudService {
   async createProduct(product: CreateProductType) {
-    const { images, variants = [], properties = [], ...rest } = product;
+    const { images = [], variants = [], properties = [], ...rest } = product;
     const category = await prisma.category.findFirst({
       where: {
         id: rest.categoryId,
@@ -112,6 +112,37 @@ class ProductCrudService {
 
     return sendData(200, "Product created successfully", getProduct);
   }
+
+  async createProductV2(product: CreateProductType) {
+    const { images = [], variants = [], properties = [], ...rest } = product;
+    const category = await prisma.category.findFirst({
+      where: {
+        id: rest.categoryId,
+      },
+    });
+    if (!category) return sendData(400, "Category not found by id");
+
+    const sku = generateSKU(rest.name, category?.name || "general");
+    
+    // create slug from product name
+    const slug = generateUniqueSlug(rest.name);
+
+    const newProduct = await prisma.product.create({
+      data: {
+        ...rest,
+        slug,
+        sku,
+        Images: {
+          create: images.map((image) => ({
+            image_url: image,
+            image_type: "product",
+          }))
+        }
+        
+      }})
+
+    return sendData(200, "Product V2 created successfully", newProduct);
+  }  
 
   async addedImagesInVariant(
     variants: IProductVariant[],

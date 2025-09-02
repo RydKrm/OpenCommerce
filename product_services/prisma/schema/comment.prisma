@@ -12,6 +12,8 @@ model Comment {
   Review  Reviews? @relation(fields: [reviewId], references: [id])
   Images  Images[]
   Reply   Reply[]
+
+  Product_V2 Product_V2[]
 }
 
 model Reply {

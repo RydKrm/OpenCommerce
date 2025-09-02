@@ -14,4 +14,6 @@ model Images {
   // For review
   review_id String?
   Reviews   Reviews? @relation(fields: [review_id], references: [id], map: "Images_Reviews_fkey")
+
+  Product_V2 Product_V2[]
 }

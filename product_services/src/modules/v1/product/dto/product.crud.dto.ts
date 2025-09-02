@@ -31,7 +31,7 @@ export const ProductVariant = z.object({
 export const CreateProductDto = z.object({
   name: z.string().min(3),
   categoryId: z.string(),
-  images: z.array(z.string()),
+  images: z.array(z.string()).optional(),
   price: z.string().transform((item) => Number(item)),
   previousPrice: z
     .string()
