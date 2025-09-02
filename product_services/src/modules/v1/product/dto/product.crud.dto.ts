@@ -54,6 +54,7 @@ export const CreateProductDto = z.object({
       return ProductProperty.parse(JSON.parse(value));
     })
     .optional(),
+  userId: z.string().optional(),
 });
 
 export const UpdateProductDto = CreateProductDto.partial();

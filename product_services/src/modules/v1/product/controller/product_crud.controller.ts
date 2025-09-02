@@ -40,7 +40,9 @@ class ProductCrudController {
 
   create_v2 = asyncHandler(async (req: IRequest, res: Response) => {
     const data = CreateProductDto.parse(req.body);
-    const result = await productCrudService.createProductV2(data);
+    const user_id = req.user?.id || "";
+    
+    const result = await productCrudService.createProductV2({...data, userId: user_id});
     return sendResponse(res, result);
   })
 

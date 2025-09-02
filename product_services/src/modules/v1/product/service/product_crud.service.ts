@@ -114,7 +114,9 @@ class ProductCrudService {
   }
 
   async createProductV2(product: CreateProductType) {
-    const { images = [], variants = [], properties = [], ...rest } = product;
+    const { images = [], variants = [], properties = [], userId, ...rest } = product;
+
+    console.log("rest ", rest);
     const category = await prisma.category.findFirst({
       where: {
         id: rest.categoryId,
@@ -137,11 +139,23 @@ class ProductCrudService {
             image_url: image,
             image_type: "product",
           }))
-        }
+        },
         
       }})
 
-    return sendData(200, "Product V2 created successfully", newProduct);
+      // create inventory for the product
+      const inventory = await prisma.product_Inventory.create({
+        data: {
+          productId: newProduct.id,
+          quantity: rest.quantity,
+          type:"incoming",
+          price: rest.price,
+          userId: userId || "",
+          
+        }
+        })
+
+    return sendData(200, "Product V2 created successfully", {...newProduct, inventory});
   }  
 
   async addedImagesInVariant(
