@@ -16,7 +16,7 @@ const channel_name = "get_product_list";
 export async function getProductListRPC(
   data: string[]
 ): Promise<ProductListResponse> {
-  const conn = await amqp.connect("amqp://localhost:5672");
+  const conn = await amqp.connect("amqp://user:user@rabbitmq:5672");
   const channel = await conn.createChannel();
 
   const q = await channel.assertQueue("", { exclusive: true });

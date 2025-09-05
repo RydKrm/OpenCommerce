@@ -51,16 +51,18 @@ export class wishlistService {
     limit: number = 10,
     skip: number = 0
   ): Promise<IResponse> => {
+
     const wishLists = await prisma.wishlist.findMany({
       where: {
         user_id,
       },
-      skip: skip,
-      take: limit,
+      skip: Number(skip),
+      take: Number(limit),
     });
 
     const productIds = wishLists.map((item) => item.product_id);
-
+    
+    // rabbit mq call to get product details
     const product_list = await getProductListRPC(productIds);
 
     const totalCount = await prisma.wishlist.count({

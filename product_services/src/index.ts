@@ -5,7 +5,7 @@ import rateLimiter from "./utils/rate-limiter";
 import { checkDatabaseConnection } from "./database/prisma";
 import cors from "cors";
 import morgan from "morgan";
-// import { connectRabbitMQ } from "./broker/rabbitmq";
+import { connectRabbitMQ } from "./broker/rabbitmq";
 // import { startRPCServer } from "./modules/v1/product/broker/send_cart.broker";
 import IRequest from "./types/IRequest";
 import { ROLES } from "./types/role";
@@ -22,7 +22,7 @@ app.use(express.json());
 checkDatabaseConnection();
 
 // connect to rabbitmq
-// connectRabbitMQ();
+connectRabbitMQ();
 
 // consumer called
 // startRPCServer();

@@ -1,6 +1,6 @@
 {
   "comment": {
-    "url": "http://localhost:3000/api",
+    "url": "http://product_service:3000/api",
     "routes": [
       {
         "path": "v1/comment/crud/create",
