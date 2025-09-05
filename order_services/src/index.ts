@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import v1_route from "./modules/v1/v1.router";
 import { errorHandler } from "./middleware/errorMiddleware";
 import rateLimiter from "./utils/rate-limiter";
@@ -7,6 +7,7 @@ import cors from "cors";
 import morgan from "morgan";
 import IRequest from "./types/IRequest";
 import { ROLES } from "./types/role";
+import { connectRabbitMQ } from "./broker/rabbitmq";
 // import { setupSwagger } from "./config/swagger.config";
 
 const app = express();
@@ -24,10 +25,13 @@ app.use(morgan("dev"));
 // Rate Limiting middleware
 app.use(rateLimiter);
 
+// connect to rabbitmq
+connectRabbitMQ()
+
 // swagger docs
 // setupSwagger(app);
 
-app.use((req: IRequest, res, next) => {
+app.use((req: IRequest, res:Response, next:NextFunction) => {
   req.user_id = req.headers.userid as string;
   req.role = req.headers.role as ROLES;
   next();
