@@ -80,6 +80,7 @@ services:
       context: ./product_services
     ports:
       - "3000:3000"
+      - "50051:50051"
     volumes:
       - ./product_services:/app
       - /app/node_modules

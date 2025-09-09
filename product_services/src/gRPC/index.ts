@@ -17,7 +17,7 @@ export function startGrpcServer() {
         return;
       }
       server.start();
-      console.log(`gRPC server is running on port ${bindPort}`);
+      console.log(`gRPC server is running on port ${GRPC_SERVER_URL}:${bindPort}`);
     }
   );
 }

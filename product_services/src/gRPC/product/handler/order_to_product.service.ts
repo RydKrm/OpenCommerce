@@ -4,12 +4,16 @@ import * as grpc from '@grpc/grpc-js';
 
 export const CheckProduct = async(call: grpc.ServerUnaryCall<any,any>, callback:grpc.sendUnaryData<any>) =>{
 
-    const productList:{id:string, name:string, quantity:number}[] = call.request;
+    const products:{id:string, name:string, quantity:number}[] = call.request.product_list;
 
-    let isProductAvailable = true;
-    let unavailableProducts: string[] = [];
+    console.log("Product List Received for Check:", products);
+    if(!products || products.length === 0){
+        return callback(null, {products: []});
+    }
+
+
     const product_ids: string[] = [];
-    productList.forEach((product: { id: string; quantity: number; }) => {
+    products.forEach((product: { id: string; quantity: number; }) => {
         product_ids.push(product.id);
     });
 
@@ -27,21 +31,19 @@ export const CheckProduct = async(call: grpc.ServerUnaryCall<any,any>, callback:
         }
     })
 
-    productList.forEach((product: { id: string; quantity: number; }) => {
+    const product_check_list:{id:string; name:string; available_quantity:string; is_available:string }[] = [];
+
+    products.forEach((product: { id: string; quantity: number; }) => {
         const matchedProduct = getProductList.find(p => p.id === product.id);
-        if (!matchedProduct || matchedProduct.quantity < product.quantity) {
-            isProductAvailable = false;
-            unavailableProducts.push(product.id);
-        }
+        const productInfo:any = {}
+        productInfo['id'] = product.id;
+        productInfo['name'] = matchedProduct ? matchedProduct.name : "Unknown Product";
+        productInfo['available_quantity'] = matchedProduct ? matchedProduct.quantity : 0;
+        productInfo['is_available'] = matchedProduct && matchedProduct.quantity >= product.quantity;
+        product_check_list.push(productInfo);
     });
 
-    const response = {
-        isProductAvailable,
-        unavailableProducts,
-        products: getProductList
-    };
-
-    callback(null, response);
+    callback(null, {products: product_check_list});
 }
 
 export const UpdateInventory = async(call: grpc.ServerUnaryCall<any,any>, callback:grpc.sendUnaryData<any>) =>{
