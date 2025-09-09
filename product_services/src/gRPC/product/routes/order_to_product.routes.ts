@@ -3,7 +3,7 @@ import * as protoLoader from "@grpc/proto-loader";
 import path from "path";
 import { CheckProduct, UpdateInventory } from "../handler/order_to_product.service";
 
-const PROTO_PATH = path.join(__dirname, "./product/protos/order_product.proto");
+const PROTO_PATH = path.join(__dirname, "../protos/order_product.proto");
 
 // Load proto
 const packageDef = protoLoader.loadSync(PROTO_PATH, {
@@ -15,7 +15,7 @@ const packageDef = protoLoader.loadSync(PROTO_PATH, {
 });
 
 const protoDescriptor = grpc.loadPackageDefinition(packageDef) as any;
-export const productPackage = protoDescriptor.product;
+export const productPackage = protoDescriptor.order_to_product;
 
 export const productServiceImpl = {
     CheckProduct,

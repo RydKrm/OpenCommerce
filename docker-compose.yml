@@ -87,6 +87,8 @@ services:
       - DATABASE_URL=postgresql://postgres:1234@postgres:5432/ecommerce-products?schema=public
       - ACCESS_TOKEN_SECRET_KEY=ecommerce_access_token
       - PORT=3000
+      - GRPC_SERVER_URL=product_service
+      - GRPC_PORT=50051
     depends_on:
       - migrate_products
     command: npm run dev

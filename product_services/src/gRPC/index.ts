@@ -7,8 +7,9 @@ export function startGrpcServer() {
   server.addService(productPackage.ProductService.service, productServiceImpl);
 
   const PORT = process.env.GRPC_PORT || 50051;
+  const GRPC_SERVER_URL = process.env.GRPC_SERVER_URL || "localhost";
   server.bindAsync(
-    `0.0.0.0:${PORT}`,
+    `${GRPC_SERVER_URL}:${PORT}`,
     grpc.ServerCredentials.createInsecure(),
     (err, bindPort) => {
       if (err) {

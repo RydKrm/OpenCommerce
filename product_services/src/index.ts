@@ -9,6 +9,7 @@ import { connectRabbitMQ } from "./broker/rabbitmq";
 // import { startRPCServer } from "./modules/v1/product/broker/send_cart.broker";
 import IRequest from "./types/IRequest";
 import { ROLES } from "./types/role";
+import { startGrpcServer } from "./gRPC";
 // import { startInventoryRPCServer } from "./modules/v1/product/broker/update_inventory.broker";
 // import { setupSwagger } from "./config/swagger.config";
 
@@ -68,6 +69,10 @@ app.use(errorHandler);
 //   res.json(setupSwagger);
 // });
 
+// GRPC Server
+startGrpcServer();
+
+// REST API server
 app.listen(PORT, () => {
   console.log(`Server is running on port : ${PORT}`);
 });
