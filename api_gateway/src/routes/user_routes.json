@@ -17,8 +17,8 @@
       {
         "path": "v1/user/profile/update/:userId",
         "method": ["PATCH"],
-        "middlewares": [],
-        "role": []
+        "middlewares": ["auth"],
+        "role": ["user", "admin"]
       },
       {
         "path": "v1/user/profile/update-status/:userId",
@@ -41,10 +41,10 @@
       {
         "path": "v1/user/profile/delete/:userId",
         "method": ["DELETE"],
-        "middlewares": [],
-        "role": []
+        "middlewares": ["auth"],
+        "role": ["user", "admin"]
       },
-      {
+      { 
         "path": "v1/user/profile/get-all-by-category/:categoryId",
         "method": ["GET"],
         "middlewares": [],

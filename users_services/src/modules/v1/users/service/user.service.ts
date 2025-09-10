@@ -92,8 +92,12 @@ export class UserService {
     }
 
     const allUser = await prisma.user.findMany({
+      where: query,
       skip,
       take: limit,
+      omit:{
+        password:true
+      }
     });
     const count = await prisma.user.count();
     return sendData(200, "User Data", { list: allUser, count });
@@ -114,12 +118,19 @@ export class UserService {
     }
   };
 
-  deleteUser = async (id: string): Promise<IResponse> => {
+  deleteUser = async (id: string) => {
+    try {
+      if(!id){
+      return sendData(400, "User id is required");
+    }
     const user = await prisma.user.delete({ where: { id } });
     if (!user) {
       return sendData(400, "User not found by id");
     }
     return sendData(200, "User deleted successfully");
+    } catch (error) {
+      return sendData(400, "User not found by id");
+    }
   };
 }
 

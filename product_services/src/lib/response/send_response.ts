@@ -1,7 +1,7 @@
 import IResponse from "@/types/IResponse";
 import { Response } from "express";
 
-const sendResponse = (res: Response, data: IResponse) => {
+const sendResponse = (res: Response, data: IResponse):any => {
   res.status(data.statusCode).json({
     statusCode: data.statusCode,
     message: data.message,

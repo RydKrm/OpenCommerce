@@ -217,9 +217,16 @@ class ProductCrudService {
     const isExist = await prisma.product.findFirst({ where: { id } });
     if (!isExist) return sendData(400, "Product not found by id");
 
-    await prisma.product.delete({ where: { id } });
+    try {
+      await prisma.product_Inventory.deleteMany({ where: { productId: id } });
+      await prisma.product_Property.deleteMany({ where: { productId: id } });
+      await prisma.product_Variant.deleteMany({ where: { productId: id } });
+      await prisma.product.delete({ where: { id } });
 
     return sendData(200, "Product deleted successfully");
+    } catch (error) {
+      return sendData(400, "Failed to delete product");
+    }
   }
 
   async getAllProducts(query: IQuery) {

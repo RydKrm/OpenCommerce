@@ -118,13 +118,17 @@ class CategoryService {
     if (!category) return;
 
     // Delete all child categories first
-    for (const child of category.children) {
+    try {
+      for (const child of category.children) {
       await this.deleteTree(child.id); // Recursively delete the child
       await prisma.category.delete({
         where: {
           id: child.id, // Delete each child category
         },
       });
+    }
+    } catch (error) {
+      throw new Error("Failed to delete child categories");
     }
   };
 
@@ -147,6 +151,8 @@ class CategoryService {
       throw new Error("Category not found by id");
     }
 
+    try {
+      
     // Delete the category and its subcategories
     await this.deleteTree(id);
 
@@ -181,8 +187,14 @@ class CategoryService {
         id,
       },
     });
-
-    return sendData(200, "Category deleted successfully");
+     return sendData(200, "Category deleted successfully");
+    } catch (error : any) {
+      if(error.code === 'P2014') {
+        return sendData(400,"Cannot delete category with existing products. Please remove associated products first.");
+      } else {
+        return sendData(400,"Failed to delete category");
+      }
+    }
   };
 }
 

@@ -41,7 +41,7 @@ class UserController {
   });
 
   deleteUser = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.params.userId;
+    const userId = req.params.user_id;
     return sendResponse(res, await userService.deleteUser(userId));
   });
 }

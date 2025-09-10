@@ -15,6 +15,6 @@ userProfileRouter.get("/details/:id", userController.getSingle);
 
 userProfileRouter.patch("/update/:id", userController.updateUser);
 
-userProfileRouter.delete("/delete/:id", userController.deleteUser);
+userProfileRouter.delete("/delete/:user_id", userController.deleteUser);
 
 export default userProfileRouter;
