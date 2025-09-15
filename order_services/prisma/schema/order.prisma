@@ -26,6 +26,7 @@ model OrderItem {
   categoryId  String
   orderId     String
   productId   String
+  sellerId  String?
   quantity    Int
   price        Float
   discountPrice Float?

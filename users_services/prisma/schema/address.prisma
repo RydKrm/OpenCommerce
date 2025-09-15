@@ -1,6 +1,7 @@
 model Address {
   id          String  @id @default(cuid())
-  userId      String
+  userId      String?
+  sellerId   String? 
   road        String?
   house       String?
   district    String?
@@ -8,6 +9,7 @@ model Address {
   country     String?
   description String?
 
-  User User @relation(fields: [userId], references: [id])
+  User  User? @relation(fields: [userId], references: [id])
+  Seller Seller? @relation(fields: [sellerId], references: [id])
   // Orders Orders[]
 }

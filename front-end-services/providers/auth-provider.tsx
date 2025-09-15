@@ -34,8 +34,8 @@ type AuthContextType = {
 // Create context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-const API_BASE = `${API_URL}/user/profile`;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_BASE = `${API_URL}/v1/user/profile`;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);

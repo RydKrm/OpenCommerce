@@ -1,6 +1,7 @@
 version: "3.9"
 
 services:
+  # ----------------- DATABASE -----------------
   postgres:
     image: postgres:15
     restart: always
@@ -144,6 +145,26 @@ services:
     networks:
       - backend
 
+  # ----------------- FRONTEND -----------------
+  # frontend:
+  #   build:
+  #     context: ./front-end-services
+  #     dockerfile: dockerfile
+  #   ports:
+  #     - "4000:4000"
+  #   volumes:
+  #     - ./my-v0-project:/app
+  #     - /app/node_modules
+  #   environment:
+  #     - NODE_ENV=development
+  #     - NEXT_PUBLIC_API_URL=http://api_gateway:8081
+  #     - WATCHPACK_POLLING=true
+  #   depends_on:
+  #     - api_gateway
+  #   networks:
+  #     - backend
+
+  # ----------------- INFRA -----------------
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -172,6 +193,8 @@ services:
       - "6378:8001"
     depends_on:
       - redis
+    networks:
+      - backend
 
 # ----------------- VOLUMES -----------------
 volumes:

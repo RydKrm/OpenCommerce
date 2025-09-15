@@ -1,0 +1,47 @@
+# # Dockerfile.dev
+# FROM node:20-alpine
+
+# WORKDIR /app
+
+# # Install dependencies
+# COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
+# RUN npm install
+
+# # Copy source
+# COPY . .
+
+# # Expose dev port
+# EXPOSE 4000
+
+# CMD ["npm", "run", "dev"]
+
+
+# FROM node:20-alpine
+
+# WORKDIR /app
+
+# # Install dependencies
+# COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
+# RUN npm install
+
+# # Copy source + configs
+# COPY . .
+# COPY tailwind.config.ts postcss.config.mjs ./
+
+# EXPOSE 4000
+
+# CMD ["npm", "run", "dev"]
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dependencies only
+COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
+RUN npm install
+
+# Expose port
+EXPOSE 4000
+
+CMD ["npm", "run", "dev"]
+

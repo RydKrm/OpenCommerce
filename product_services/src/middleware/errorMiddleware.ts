@@ -34,7 +34,8 @@ export const errorHandler = (
   let message: any = "";
   let status: any;
 
-  if (err instanceof ZodError) {
+  try {
+    if (err instanceof ZodError) {
     statusCode = 400;
     const zodErrorMessage = err.errors
       .map((item) => `${item.path.join(".")} is ${item.message}`)
@@ -62,11 +63,23 @@ export const errorHandler = (
     message = err.message;
   } else {
     console.log("err__", err);
-  }
-
-  res.status(statusCode).json({
+    res.status(statusCode).json({
     statusCode: statusCode,
     message: errorLogDetails?.message,
+    // @ts-ignore
     stack: process.env.NODE_ENV === "prod" ? null : err.stack,
   });
+  }
+
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      message: "Internal Server Error",
+      stack: process.env.NODE_ENV === "prod" ? null : err.stack,
+    });
+  }
+
+  
+
+  
 };

@@ -1,14 +1,64 @@
 import prisma from '@/database/prisma';
 import * as grpc from '@grpc/grpc-js';
-
+import * as jwt from 'jsonwebtoken';
 
 export const CheckProduct = async(call: grpc.ServerUnaryCall<any,any>, callback:grpc.sendUnaryData<any>) =>{
 
     const products:{id:string, name:string, quantity:number}[] = call.request.product_list;
+    const metadata = call.metadata.getMap();
+
+    // check for jwt authorization token in metadata
+    // check the validation of token in auth service
+    const auth = metadata.authorization || metadata.Authorization;
+    if(!auth){
+        const error = {
+            name: 'Unauthorized',
+            message: 'Authorization token is missing',
+            code: grpc.status.UNAUTHENTICATED,
+            details: 'Please provide a valid authorization token.'
+        }
+        return callback(error as grpc.ServiceError, null);
+    }
+
+    const JWT_TOKEN = process.env.GRPC_JWT_TOKEN || 'your_default_jwt_token';
+
+    if(auth !== `Bearer ${JWT_TOKEN}`){
+        const error = {
+            name: 'Unauthorized',
+            message: 'Invalid authorization token',
+            code: grpc.status.UNAUTHENTICATED,
+            details: 'The provided authorization token is invalid.'
+        }
+        return callback(error as grpc.ServiceError, null);
+    }
+
+    const tokenParts = (auth as string).split(' ')[1];
+
+    const data = jwt.verify(tokenParts, JWT_TOKEN) as jwt.JwtPayload;
+    
+    if(!data){
+        const error = {
+            name: 'Unauthorized',
+            message: 'Invalid token',
+            code: grpc.status.UNAUTHENTICATED,
+            details: 'The provided token is invalid or expired.'
+        }
+        return callback(error as grpc.ServiceError, null);
+    }
+    
+    
 
     console.log("Product List Received for Check:", products);
     if(!products || products.length === 0){
-        return callback(null, {products: []});
+
+        const error = {
+            name: 'InvalidArgument',
+            message: 'Product list is empty or not provided',
+            code: grpc.status.INVALID_ARGUMENT,
+            details: 'Please provide a valid product list with at least one product.'
+        }
+
+        return callback(error as grpc.ServiceError, null);
     }
 
 

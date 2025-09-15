@@ -2,8 +2,8 @@ import axios from "axios";
 import axiosInstance from "@/config/axiosInstance";
 import { makeAutoObservable, runInAction } from "mobx";
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-const API_BASE = `${API_URL}/category/profile`;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_BASE = `${API_URL}/v1/category/profile`;
 
 export interface ICategory {
   id: string;
@@ -23,6 +23,8 @@ export interface ICreateCategory {
   parentId?: string;
 }
 
+
+// test
 class CategoryStore {
   categories: ICategory[] = [];
   category: ICreateCategory = {

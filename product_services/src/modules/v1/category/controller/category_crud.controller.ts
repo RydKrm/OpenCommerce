@@ -7,6 +7,8 @@ import sendResponse from "@/lib/response/send_response";
 class CategoryCrudController {
   create = async (req: IRequest, res: Response) => {
 
+    console.log("req.body ------------>>>>>>>>>>>>>> ", req.body);
+
     const data = CreateCategoryDto.parse({
       ...req.body,
       // image: req.body?.image?.[0] || null,

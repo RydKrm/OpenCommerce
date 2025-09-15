@@ -1,0 +1,13 @@
+model Seller {
+    id          String    @id @default(cuid())
+    name        String
+    email       String    @unique
+    phoneNumber String    @unique
+    password    String
+    role        String    @default("seller")
+    createdAt   DateTime  @default(now())
+    Address Address[]
+
+
+    @@map("seller")
+}

@@ -27,6 +27,7 @@ class CategoryService {
       data: {
         ...data,
         parentId: data.parentId ? data.parentId : null,
+        image: data.image?.length ? data.image[0] : null,
       },
     });
     return sendData(200, "Category created successfully", newCategory);

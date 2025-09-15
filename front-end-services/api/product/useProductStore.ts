@@ -2,8 +2,8 @@ import axiosInstance from "@/config/axiosInstance";
 import axios from "axios";
 import { makeAutoObservable, runInAction } from "mobx";
 import { ICategory } from "../category/useCategoryStore";
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-const API_BASE = `${API_URL}/product/basic`;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_BASE = `${API_URL}/v1/product/basic`;
 
 export interface IProductProperty {
   id: string;
