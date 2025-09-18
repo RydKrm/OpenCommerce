@@ -10,6 +10,7 @@ import { observer } from "mobx-react-lite";
 import ProductPropertyForm from "@/components/products/create/ProductPropertyForm";
 import ProductVariantForm from "@/components/products/create/ProductVariantForm";
 import BasicForm from "@/components/products/create/BasicForm";
+import { redirect } from "next/navigation";
 
 // Types based on the Prisma schema
 
@@ -33,17 +34,10 @@ const CreateProductPage = observer(() => {
     e.preventDefault();
     console.log("Product data:", formData);
     createProduct(formData);
+    redirect("/dashboard/products");
   };
 
   const inputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleClick = () => {
-    if (inputRef.current) {
-      inputRef.current.click(); // Trigger hidden input
-    }
-
-    // createProduct();
-  };
 
   return (
     <div className="flex flex-col">
@@ -81,9 +75,6 @@ const CreateProductPage = observer(() => {
           <div className="flex gap-4 pt-6">
             <Button type="submit" className="flex-1">
               Create Product
-            </Button>
-            <Button type="button" variant="outline">
-              Save as Draft
             </Button>
             <Button type="button" variant="outline">
               Preview

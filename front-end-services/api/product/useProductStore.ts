@@ -2,6 +2,7 @@ import axiosInstance from "@/config/axiosInstance";
 import axios from "axios";
 import { makeAutoObservable, runInAction } from "mobx";
 import { ICategory } from "../category/useCategoryStore";
+import { redirect } from "next/navigation";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const API_BASE = `${API_URL}/v1/product/basic`;
 
@@ -47,6 +48,7 @@ export interface IProductList extends ICreateProduct {
   Product_Variant: IProductVariant[];
   totalSold: number;
   variantId: string;
+  is_featured: boolean;
 }
 
 class ProductStore {
@@ -122,6 +124,7 @@ class ProductStore {
           // this.isLoading = false;
           this.error = null;
           this.message = (res.data as any)?.message;
+          redirect("/dashboard/products");
         });
       }
     } catch (err) {
@@ -214,6 +217,79 @@ class ProductStore {
       });
     }
   }
+
+  async deleteProduct(id: string) {
+    // this.isLoading = true;
+    try {
+      const res = await axiosInstance.delete(`${API_BASE}/delete/${id}`);
+      if (res.status === 200) {
+        runInAction(() => {
+          this.message = (res.data as any)?.message;
+          this.error = null;
+          this.isLoading = false;
+          this.productList = this.productList.filter(
+            (product) => product.id !== id
+          );
+        });
+      } else {
+        runInAction(() => {
+          this.error = res.data as unknown as null;
+          this.isLoading = false;
+        });
+      }
+    } catch (err) {
+      runInAction(() => {
+        this.error = err as unknown as null;
+        this.isLoading = false;
+      });
+  }
+}
+
+  async updateFeaturedStatus(id: string) {
+    this.isLoading = true;
+    try {
+      // hit the api
+      const res = await axiosInstance.patch(`${API_BASE}/update-featured/${id}`);
+      if (res.status === 200) {
+        runInAction(() => {
+        this.isLoading = false;
+        this.error = null;
+        this.message = (res.data as any)?.message;
+        })
+        
+      }
+    } catch (error) {
+      runInAction(() => {
+        this.error = error as unknown as null;
+        this.isLoading = false;
+        this.message = (error as any)?.message;
+      })
+    }
+  }
+
+  async getFeaturedProductList(){
+    this.isLoading = true;
+    try {
+      const res = await axiosInstance.get(`${API_BASE}/featured/list`);
+      if(res.status === 200){
+        runInAction(() => {
+          this.productList = (res.data as any)?.results.list;
+          this.total = (res.data as any)?.results.total;
+          this.message = (res.data as any)?.message;
+          this.isLoading = false;
+          this.error = null;
+        });
+      }
+    } catch (error) {
+      this.isLoading = false;
+      runInAction(() => {
+        this.error = error as unknown as null;
+        this.isLoading = false;
+        this.message = (error as any)?.message;
+      })
+    }
+  }
+
 }
 
 const productStore = new ProductStore();

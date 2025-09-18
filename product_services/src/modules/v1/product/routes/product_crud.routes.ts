@@ -21,4 +21,15 @@ productCrudRoute.get("/details/:productId", productCrudController.details);
 
 productCrudRoute.delete("/delete/:productId", productCrudController.delete);
 
+productCrudRoute.patch(
+  "/update-featured/:productId",
+  productCrudController.updateFeaturedStatus
+);
+
+// Get all featured products
+productCrudRoute.get(
+  "/featured/list",
+  productCrudController.getAllFeaturedProducts
+);
+
 export default productCrudRoute;

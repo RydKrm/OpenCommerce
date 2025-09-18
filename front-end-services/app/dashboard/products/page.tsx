@@ -12,23 +12,40 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Search, Filter, Plus, Edit, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Search, Filter, Plus, Edit, Trash2, MoreHorizontal } from "lucide-react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import productStore from "@/api/product/useProductStore";
 import Image from "next/image";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { redirect } from "next/navigation";
 
 const ProductsPage = observer(() => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const { limit, skip, productList,deleteProduct } = productStore;
+  const [list, setList] = useState(productList);
 
-  const { limit, skip, productList } = productStore;
+  
+
+  const deleteSingleProduct = (id: string) => {
+    deleteProduct(id);
+    productStore.fetchProductList();
+  }
 
   useEffect(() => {
     productStore.fetchProductList();
   }, [limit, skip]);
+
+  const updateFeaturesStatus = (productId:string) =>{
+    // update the is_featured status of the product
+    console.log("Updating featured status for product ID:", productId);
+    productStore.updateFeaturedStatus(productId);
+    productStore.fetchProductList();
+  }
+
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -126,6 +143,7 @@ const ProductsPage = observer(() => {
                     <th className="text-left p-2">Stock</th>
                     <th className="text-left p-2">Status</th>
                     <th className="text-left p-2">Actions</th>
+                    {/* <th className="text-left p-2">More </th> */}
                   </tr>
                 </thead>
                 <tbody>
@@ -155,15 +173,38 @@ const ProductsPage = observer(() => {
                           ? getStatusBadge("active")
                           : getStatusBadge("Out of stock")}
                       </td>
-                      <td className="p-2">
+                      {/* <td className="p-2">
                         <div className="flex gap-2">
                           <Button variant="ghost" size="sm">
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" onClick={() => deleteSingleProduct(product.id)}>
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
+                      </td> */}
+                      <td className="p-2">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => redirect(`/products/${product.slug}`)}>
+                            View
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => updateFeaturesStatus(product.id)}>
+                            {product?.is_featured ? "Unfeature" : "Feature"}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-red-600"
+                            onClick={() => deleteSingleProduct(product.id)}
+                          >
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                       </td>
                     </tr>
                   ))}

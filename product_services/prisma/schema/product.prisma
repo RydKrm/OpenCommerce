@@ -7,6 +7,7 @@ model Product {
   sku           String?
   previousPrice Float?   @map("previous_price")
   seller_id     String?  @map("seller_id")
+  is_featured   Boolean  @default(false)
   description   String
   quantity      Int
   isDeleted     Boolean  @default(false) @map("is_deleted")

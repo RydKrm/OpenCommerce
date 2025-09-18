@@ -158,6 +158,8 @@ class ProductCrudService {
     return sendData(200, "Product V2 created successfully", {...newProduct, inventory});
   }  
 
+  // this function will add image url in the variant based on the id
+  // it's check the variant id with the image id and add the image url in the variant
   async addedImagesInVariant(
     variants: IProductVariant[],
     imagesList: { id: string; image_url: string }[]
@@ -348,6 +350,52 @@ class ProductCrudService {
 
     return sendData(200, "Product fetched successfully", product);
   }
+
+  // make a freature products
+  // a seller can make 5 products featured
+  async updateFeatureProduct(product_id: string, seller_id: string) {
+    
+    const [total_feature_product, isExists] = await Promise.all([
+      prisma.product.count({
+        where:{
+          is_featured: true,
+          seller_id
+        }
+      }),
+      prisma.product.findFirst({
+        where:{
+          id: product_id
+        }
+      })
+    ])
+    if(!isExists) return sendData(400, "Product not found by id");
+    if(!isExists?.is_featured && total_feature_product >= 5) return sendData(400, "You can only feature 5 products");
+    if(isExists.is_featured) return sendData(400, "Product is already featured");
+    const featuredProduct = await prisma.product.update({
+      where:{ id: product_id },
+      data:{ is_featured: isExists?.is_featured ? false : true }
+    })
+    return sendData(200, "Product featured successfully", featuredProduct);
+  }
+
+  async getFeaturedProducts(seller_id: string) {
+    const featuredProducts = await prisma.product.findMany({
+      where:{
+        is_featured: true,
+        seller_id
+      },
+      include:{
+        Images: true,
+        Category: true,
+        Product_Variant: {
+          include: { Product_Property: true },
+        },
+        Product_Property: true,
+      }
+    })
+    return sendData(200, "Featured products fetched successfully", featuredProducts);
+  }
+
 }
 
 const productCrudService = new ProductCrudService();

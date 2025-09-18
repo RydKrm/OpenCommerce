@@ -67,6 +67,17 @@
         "path": "v1/product/basic/related-products/:productId",
         "method": ["GET"],
         "middlewares": []
+      },
+      {
+        "path": "v1/product/basic/featured/list",
+        "method": ["GET"],
+        "middlewares": []
+      },
+      {
+        "path" : "v1/product/basic/update-featured/:productId",
+        "method": ["PATCH"],
+        "middlewares": ["auth"],
+        "role": ["user", "seller"]
       }
     ]
   }

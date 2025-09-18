@@ -26,16 +26,22 @@ class ProductCrudController {
       variantImageList.push({ id: key, image_url: variantsImage[key][0] });
     }
 
-    const variantsList = await productCrudService.addedImagesInVariant(
+    if(variants && variants?.length === 0){
+      const variantsList = await productCrudService.addedImagesInVariant(
       JSON.parse(variants),
       variantImageList
     );
-
     const result = await productCrudService.createProduct({
       ...data,
       variants: variantsList,
     });
     return sendResponse(res, result);
+    } else {
+      const result = await productCrudService.createProduct({
+        ...data,
+      });
+      return sendResponse(res, result);
+    }
   });
 
   create_v2 = asyncHandler(async (req: IRequest, res: Response) => {
@@ -86,6 +92,24 @@ class ProductCrudController {
     const deletedProduct = await productCrudService.deleteProduct(productId);
     return sendResponse(res, deletedProduct);
   });
+
+  updateFeaturedStatus = asyncHandler(async (req: IRequest, res: Response) => {
+    const productId = req.params.productId;
+    const seller_id = req.seller_id;
+    const updatedProduct = await productCrudService.updateFeatureProduct(
+      productId,
+      seller_id
+    );
+    return sendResponse(res, updatedProduct);
+  });
+
+  // get all featured products
+  getAllFeaturedProducts = asyncHandler(async (req: Request, res: Response) => {
+    const seller_id = (req as IRequest).seller_id;
+    const products = await productCrudService.getFeaturedProducts(seller_id);
+    return sendResponse(res, products);
+  });
+
 }
 
 const productCrudController = new ProductCrudController();
